@@ -1,0 +1,299 @@
+{
+  "insta2": {
+    "file": "assets/hd/insta2.webp",
+    "source": "https://www.pexels.com/photo/toddler-sitting-while-smiling-459953/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 1330,
+    "kind": "licensed stock photography",
+    "bytes": 124176
+  },
+  "baby": {
+    "file": "assets/hd/baby.webp",
+    "source": "https://www.pexels.com/photo/toddler-sitting-while-smiling-459953/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 1330,
+    "kind": "licensed stock photography",
+    "bytes": 124176
+  },
+  "blog2": {
+    "file": "assets/hd/blog2.webp",
+    "source": "https://www.pexels.com/photo/baby-sitting-in-a-feeding-chair-and-eating-11957376/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 1894,
+    "kind": "licensed stock photography",
+    "bytes": 357270
+  },
+  "kid": {
+    "file": "assets/hd/kid.webp",
+    "source": "https://www.pexels.com/photo/toddler-playing-with-colorful-toy-blocks-indoors-31137004/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 1333,
+    "kind": "licensed stock photography",
+    "bytes": 243194
+  },
+  "toddler": {
+    "file": "assets/hd/toddler.webp",
+    "source": "https://www.pexels.com/photo/photo-of-child-playing-with-wooden-blocks-3933279/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 3000,
+    "kind": "licensed stock photography",
+    "bytes": 565234
+  },
+  "insta5": {
+    "file": "assets/hd/insta5.webp",
+    "source": "https://www.pexels.com/photo/toddler-playing-with-colorful-toy-blocks-indoors-31137004/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 1333,
+    "kind": "licensed stock photography",
+    "bytes": 243194
+  },
+  "insta1": {
+    "file": "assets/hd/insta1.webp",
+    "source": "https://www.pexels.com/photo/a-newborn-baby-while-sleeping-15352299/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 1338,
+    "kind": "licensed stock photography",
+    "bytes": 254860
+  },
+  "newborn": {
+    "file": "assets/hd/newborn.webp",
+    "source": "https://www.pexels.com/photo/a-newborn-baby-while-sleeping-15352299/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 1338,
+    "kind": "licensed stock photography",
+    "bytes": 254860
+  },
+  "blog3": {
+    "file": "assets/hd/blog3.webp",
+    "source": "https://www.pexels.com/photo/a-toddler-sitting-on-white-carpet-holding-a-block-6692872/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 3000,
+    "kind": "licensed stock photography",
+    "bytes": 652102
+  },
+  "insta3": {
+    "file": "assets/hd/insta3.webp",
+    "source": "https://www.pexels.com/photo/adorable-baby-in-bathtub-with-rubber-ducks-34678845/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 1331,
+    "kind": "licensed stock photography",
+    "bytes": 52180
+  },
+  "insta4": {
+    "file": "assets/hd/insta4.webp",
+    "source": "https://www.pexels.com/photo/a-mother-caring-for-her-baby-6849309/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 1333,
+    "kind": "licensed stock photography",
+    "bytes": 256396
+  },
+  "avatar2": {
+    "file": "assets/hd/avatar2.webp",
+    "source": "https://www.pexels.com/photo/portrait-of-smiling-man-12311528/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 1333,
+    "kind": "licensed stock photography",
+    "bytes": 107324
+  },
+  "insta6": {
+    "file": "assets/hd/insta6.webp",
+    "source": "https://www.pexels.com/photo/expectant-mother-preparing-baby-nursery-room-36276518/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 3000,
+    "kind": "licensed stock photography",
+    "bytes": 391238
+  },
+  "avatar3": {
+    "file": "assets/hd/avatar3.webp",
+    "source": "https://www.pexels.com/photo/smiling-mother-sitting-with-sleeping-baby-and-talking-on-phone-27176102/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 1333,
+    "kind": "licensed stock photography",
+    "bytes": 253506
+  },
+  "avatar1": {
+    "file": "assets/hd/avatar1.webp",
+    "source": "https://www.pexels.com/photo/portrait-of-beautiful-woman-smiling-12626141/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 3020,
+    "kind": "licensed stock photography",
+    "bytes": 1097642
+  },
+  "hero": {
+    "file": "assets/hd/hero.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1536,
+    "height": 1024,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Happy baby in a pink bear-ear hood beside a teddy bear",
+    "bytes": 163362
+  },
+  "clothing": {
+    "file": "assets/hd/clothing.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1312,
+    "height": 1199,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Cream teddy print organic cotton baby romper and matching muslin",
+    "bytes": 242676
+  },
+  "wipes": {
+    "file": "assets/hd/wipes.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1536,
+    "height": 1024,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Pastel blue baby wipes pack with flip-top lid and soft diapers",
+    "bytes": 103488
+  },
+  "toys2": {
+    "file": "assets/hd/toys2.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1254,
+    "height": 1254,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Natural wooden pastel rainbow stacking toy",
+    "bytes": 134584
+  },
+  "blog1": {
+    "file": "assets/hd/blog1.webp",
+    "source": "https://www.pexels.com/photo/a-newborn-baby-while-sleeping-15352299/",
+    "license": "Pexels License",
+    "width": 2000,
+    "height": 1338,
+    "kind": "licensed stock photography",
+    "bytes": 254860
+  },
+  "feeding": {
+    "file": "assets/hd/feeding.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1254,
+    "height": 1254,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Sage silicone bear bowl, bib and wooden spoon",
+    "bytes": 64256
+  },
+  "diapers": {
+    "file": "assets/hd/diapers.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1254,
+    "height": 1254,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Newborn diapers and pastel blue sealed diaper pack",
+    "bytes": 76766
+  },
+  "clothing2": {
+    "file": "assets/hd/clothing2.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1254,
+    "height": 1254,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Floral baby bodysuit and blush pink bonnet",
+    "bytes": 200808
+  },
+  "toys": {
+    "file": "assets/hd/toys.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1254,
+    "height": 1254,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Pink plush bunny with cream tummy and long floppy ears",
+    "bytes": 190918
+  },
+  "feeding2": {
+    "file": "assets/hd/feeding2.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1254,
+    "height": 1254,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Peach baby feeding bottles with clear silicone nipples",
+    "bytes": 91136
+  },
+  "bath": {
+    "file": "assets/hd/bath.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1254,
+    "height": 1254,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Yellow rubber duck in a peach baby bath basin",
+    "bytes": 108584
+  },
+  "bath2": {
+    "file": "assets/hd/bath2.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1254,
+    "height": 1254,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Ivory baby towels and a folded blush hooded towel",
+    "bytes": 228892
+  },
+  "health": {
+    "file": "assets/hd/health.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1254,
+    "height": 1254,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "White and mint contactless forehead thermometer",
+    "bytes": 85248
+  },
+  "nursery2": {
+    "file": "assets/hd/nursery2.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1254,
+    "height": 1254,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Natural woven rattan baby bassinet on a wooden stand",
+    "bytes": 168656
+  },
+  "nursery": {
+    "file": "assets/hd/nursery.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1374,
+    "height": 1145,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Oak baby crib with a cream fitted mattress in a bright nursery",
+    "bytes": 252452
+  },
+  "mom": {
+    "file": "assets/hd/mom.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1024,
+    "height": 1536,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Pregnant woman in a cream maternity dress",
+    "bytes": 177702
+  },
+  "mom2": {
+    "file": "assets/hd/mom2.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1254,
+    "height": 1254,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Quilted blush diaper backpack with changing mat",
+    "bytes": 142418
+  },
+  "health2": {
+    "file": "assets/hd/health2.webp",
+    "source": "OpenAI ImageGen, original generated for KIDOBOX",
+    "width": 1254,
+    "height": 1254,
+    "kind": "AI-generated original commercial concept imagery",
+    "alt": "Wooden baby grooming brush, comb and nail clippers",
+    "bytes": 126292
+  }
+}
