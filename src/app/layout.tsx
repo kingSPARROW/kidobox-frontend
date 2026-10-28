@@ -55,7 +55,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${fredoka.variable} ${nunito.variable} h-full antialiased`}>
+    <html
+      lang="en"
+      data-theme="girl"
+      className={`${fredoka.variable} ${nunito.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -70,7 +75,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-white text-[#122e50]">
+      <body className="min-h-full flex flex-col bg-white text-[#122e50]" suppressHydrationWarning>
         <Providers>
           {children}
           <CartDrawer />
