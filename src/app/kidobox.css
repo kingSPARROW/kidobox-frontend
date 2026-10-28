@@ -1811,5 +1811,39 @@ html[data-theme="girl"] {
   mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.4) 15%, #000 40%) !important;
 }
 
+/* 5. Modern Lucide Section & Benefit Icons */
+.section-icon-wrap {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+  margin-right: 8px !important;
+  color: var(--pink, #ff268b) !important;
+  transition: transform 0.25s ease, color 0.25s ease !important;
+}
 
+[data-theme="boy"] .section-icon-wrap {
+  color: #0284c7 !important;
+}
 
+.benefit-svg {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 50% !important;
+  background: var(--pink-light, #fff0f6) !important;
+  color: var(--pink, #ff268b) !important;
+  margin-bottom: 12px !important;
+  transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease !important;
+}
+
+[data-theme="boy"] .benefit-svg {
+  background: #e0f2fe !important;
+  color: #0284c7 !important;
+}
+
+.benefit-card:hover .benefit-svg {
+  transform: scale(1.1) rotate(4deg) !important;
+}

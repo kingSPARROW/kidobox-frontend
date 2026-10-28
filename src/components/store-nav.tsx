@@ -5,12 +5,13 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCart } from '@/lib/cart-context';
 import { useGenderTheme } from '@/lib/theme-context';
+import { Truck, RotateCcw, ShieldCheck, Heart, Baby, ArrowLeftRight } from 'lucide-react';
 
 export function StoreNav() {
   const router = useRouter();
   const pathname = usePathname();
   const { itemCount, setIsOpen } = useCart();
-  const { gender, setGender, openThemeModal } = useGenderTheme();
+  const { gender, setGender } = useGenderTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [wishlistCount, setWishlistCount] = useState(0);
 
@@ -53,10 +54,10 @@ export function StoreNav() {
       <div className="topbar">
         <div className="container topbar-flex">
           <div className="topbar-items">
-            <span>🚚 &nbsp;Free shipping over ₹999</span>
-            <span>⟳ &nbsp;7-day easy returns</span>
-            <span>🛡 &nbsp;100% Original Products</span>
-            <span>💗 &nbsp;Little Needs. Big Smiles.</span>
+            <span><Truck size={14} style={{ verticalAlign: 'middle', marginRight: 5 }} />Free shipping over ₹999</span>
+            <span><RotateCcw size={14} style={{ verticalAlign: 'middle', marginRight: 5 }} />7-day easy returns</span>
+            <span><ShieldCheck size={14} style={{ verticalAlign: 'middle', marginRight: 5 }} />100% Original Products</span>
+            <span><Heart size={14} style={{ verticalAlign: 'middle', marginRight: 5 }} />Little Needs. Big Smiles.</span>
           </div>
 
           <div className="topbar-theme-selector">
@@ -64,25 +65,21 @@ export function StoreNav() {
               type="button"
               onClick={() => setGender(gender === 'boy' ? 'girl' : 'boy')}
               className="topbar-theme-toggle"
-              aria-label={`Current theme: ${gender === 'boy' ? 'Boy (Blue)' : 'Girl (Pink)'}. Click to toggle.`}
+              aria-label={`Current theme: ${gender === 'boy' ? 'Boy (Blue)' : 'Girl (Pink)'}. Click to switch theme.`}
             >
               {gender === 'boy' ? (
-                <span className="theme-pill boy-pill">
-                  👦 <strong>Boy Mode (Blue)</strong> <small>⇄</small>
+                <span className="theme-pill boy-pill" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <Baby size={15} />
+                  <strong>Boy Mode (Blue)</strong>
+                  <ArrowLeftRight size={12} style={{ opacity: 0.8 }} />
                 </span>
               ) : (
-                <span className="theme-pill girl-pill">
-                  👧 <strong>Girl Mode (Pink)</strong> <small>⇄</small>
+                <span className="theme-pill girl-pill" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <Baby size={15} />
+                  <strong>Girl Mode (Pink)</strong>
+                  <ArrowLeftRight size={12} style={{ opacity: 0.8 }} />
                 </span>
               )}
-            </button>
-            <button
-              type="button"
-              onClick={openThemeModal}
-              className="topbar-theme-pick"
-              aria-label="Open Theme Picker"
-            >
-              ⚙ Change
             </button>
           </div>
         </div>

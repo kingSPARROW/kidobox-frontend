@@ -8,8 +8,8 @@ import { ShoppingBag, Lock, Mail, ArrowRight, Loader2, ShieldCheck } from 'lucid
 export default function AdminLoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const [email, setEmail] = useState('merchant@homzy.com');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('admin@kidobox.com');
+  const [password, setPassword] = useState('admin123');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -33,19 +33,19 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f6f6f7] flex flex-col justify-center items-center p-4">
+    <div className="min-h-screen bg-[#fcf9f9] flex flex-col justify-center items-center p-4">
       <div className="w-full max-w-sm">
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="w-11 h-11 bg-[#1a1a1a] rounded-xl flex items-center justify-center text-white mx-auto mb-3 shadow-sm">
-            <ShoppingBag className="w-6 h-6 text-[#95bf47]" />
+          <div className="w-12 h-12 bg-gradient-to-tr from-[#ff268b] via-[#f43f5e] to-[#0284c7] rounded-2xl flex items-center justify-center text-white mx-auto mb-3 shadow-md">
+            <ShoppingBag className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-xl font-bold text-[#1a1a1a] tracking-tight">Log in</h1>
-          <p className="text-xs text-[#616161] mt-1">Continue to HOMZY Store Admin</p>
+          <h1 className="text-xl font-bold text-[#1a1a1a] tracking-tight">KIDOBOX Admin</h1>
+          <p className="text-xs text-[#616161] mt-1">Baby &amp; Toddler Store Management Console</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-xl border border-[#e1e3e5] p-6 shadow-[0_1px_0_rgba(0,0,0,0.05)]">
+        <div className="bg-white rounded-2xl border border-[#fed7e2] p-6 shadow-sm">
           {errorMsg && (
             <div className="mb-4 p-3 bg-[#fff4f2] border border-[#fedad4] text-[#8c1e0b] rounded-lg text-xs font-medium">
               {errorMsg}
@@ -53,14 +53,15 @@ export default function AdminLoginPage() {
           )}
 
           {/* Demo Hint */}
-          <div className="mb-5 p-3 bg-[#f1f2f4] rounded-lg text-xs text-[#303030] border border-[#e1e3e5]">
-            <div className="flex items-center gap-1.5 font-semibold text-[#1a1a1a] mb-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#008060]" />
+          <div className="mb-5 p-3 bg-[#fdf2f8] rounded-xl text-xs text-[#303030] border border-[#fbcfe8]">
+            <div className="flex items-center gap-1.5 font-semibold text-[#9d174d] mb-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#ff268b]" />
               Store Admin Credentials:
             </div>
-            <div className="font-mono text-[11px] text-[#616161]">
-              <div>Email: <span className="text-[#1a1a1a] font-bold">merchant@homzy.com</span></div>
-              <div>Pass: <span className="text-[#1a1a1a] font-bold">password123</span></div>
+            <div className="font-mono text-[11px] text-[#4b5563] space-y-0.5">
+              <div>Email: <span className="text-[#1a1a1a] font-bold">admin@kidobox.com</span></div>
+              <div>Pass: <span className="text-[#1a1a1a] font-bold">admin123</span></div>
+              <div className="text-[10px] text-[#9ca3af] pt-1">Alias: merchant@homzy.com / password123</div>
             </div>
           </div>
 
@@ -74,8 +75,8 @@ export default function AdminLoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#008060] focus:ring-1 focus:ring-[#008060] transition"
-                  placeholder="merchant@homzy.com"
+                  className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b] focus:ring-1 focus:ring-[#ff268b] transition"
+                  placeholder="admin@kidobox.com"
                 />
               </div>
             </div>
@@ -91,7 +92,7 @@ export default function AdminLoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#008060] focus:ring-1 focus:ring-[#008060] transition"
+                  className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b] focus:ring-1 focus:ring-[#ff268b] transition"
                 />
               </div>
             </div>
@@ -99,7 +100,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 py-2.5 px-4 bg-[#1a1a1a] hover:bg-[#303030] text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-[#ff268b] to-[#0284c7] hover:opacity-95 text-white text-xs font-semibold rounded-xl shadow transition flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isLoading ? (
                 <>
@@ -117,7 +118,7 @@ export default function AdminLoginPage() {
         </div>
 
         <div className="text-center mt-6 text-[11px] text-[#8c9196]">
-          Protected by HomZy Commerce Engine • Single Store Architecture
+          Protected by KIDOBOX Commerce Engine • Single Store Architecture
         </div>
       </div>
     </div>

@@ -22,7 +22,7 @@ export default function AdminCollectionsPage() {
   const [form, setForm] = useState({
     title: '',
     description: '',
-    image_url: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80',
+    image_url: '/assets/hd/clothing.webp',
     sort_order: 'best-selling',
   });
 

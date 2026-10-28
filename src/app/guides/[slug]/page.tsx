@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { articles } from '@/lib/kidobox-data';
+import { Heart } from 'lucide-react';
 
 export default function GuideArticlePage() {
   const params = useParams();
@@ -56,7 +57,9 @@ export default function GuideArticlePage() {
             ))}
 
             <div className="article-callout">
-              <span>💗</span>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+                <Heart size={36} fill="currentColor" style={{ color: 'var(--pink)' }} />
+              </div>
               <h3>Little Needs. Big Smiles.</h3>
               <p>Discover everyday essentials designed around real family life.</p>
               <Link className="button pink" href="/shop" style={{ marginTop: '18px' }}>

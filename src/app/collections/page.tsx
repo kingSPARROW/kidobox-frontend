@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { categories } from '@/lib/kidobox-data';
+import { Heart } from 'lucide-react';
 
 export default function CollectionsPage() {
   return (
@@ -20,7 +21,9 @@ export default function CollectionsPage() {
 
         <div className="page-intro">
           <span className="mini-eyebrow">LITTLE NEEDS. BIG SMILES.</span>
-          <h1>💕 Curated Collections for Your Little One</h1>
+          <h1>
+            <span className="section-icon-wrap"><Heart size={26} fill="currentColor" /></span> Curated Collections for Your Little One
+          </h1>
           <p>Find just what your baby or toddler needs, from sleepy mornings to playful afternoons.</p>
         </div>
 

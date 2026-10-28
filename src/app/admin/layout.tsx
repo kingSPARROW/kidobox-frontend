@@ -48,14 +48,15 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   ];
 
   const onlineStoreNav = [
-    { name: 'Banners', href: '/admin/banners' },
-    { name: 'Testimonials', href: '/admin/testimonials' },
+    { name: 'Theme & Customizer', href: '/admin/themes' },
+    { name: 'Banners & Hero Slides', href: '/admin/banners' },
+    { name: 'Parent Reviews', href: '/admin/testimonials' },
     { name: 'Navigation', href: '/admin/navigation' },
-    { name: 'Preferences (SEO)', href: '/admin/settings' },
+    { name: 'Preferences (SEO & Store)', href: '/admin/settings' },
   ];
 
   React.useEffect(() => {
-    document.title = 'HOMZY Admin • HomZy Commerce';
+    document.title = 'KIDOBOX Admin • Little Needs. Big Smiles.';
   }, []);
 
   return (
@@ -73,12 +74,12 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
           </button>
 
           <Link href="/admin" className="flex items-center gap-2.5 group">
-            <div className="w-7 h-7 rounded-lg bg-[#c55325] flex items-center justify-center text-white shadow-sm font-bold text-xs">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#ff268b] to-[#0284c7] flex items-center justify-center text-white shadow-sm font-bold text-xs">
               <ShoppingBag className="w-4 h-4 text-white" />
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-sm tracking-tight text-white group-hover:text-[#ffd6c4] transition">
-                {store?.name || 'HOMZY'}
+              <span className="font-semibold text-sm tracking-tight text-white group-hover:text-[#ffd6e4] transition">
+                {store?.name || 'KIDOBOX'}
               </span>
               <span className="w-2 h-2 rounded-full bg-[#008060]" title="Store Online & Active" />
             </div>
@@ -141,7 +142,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                 {user?.name?.[0] || 'A'}
               </div>
               <div className="text-left hidden lg:block leading-none">
-                <span className="text-xs font-medium text-white block">HOMZY</span>
+                <span className="text-xs font-medium text-white block">{store?.name || 'KIDOBOX'}</span>
                 <span className="text-[10px] text-[#8c9196]">Store Owner</span>
               </div>
             </button>
@@ -149,10 +150,10 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
             {userMenuOpen && (
               <div className="absolute right-0 mt-2 w-56 bg-white border border-[#e1e3e5] rounded-xl shadow-lg p-2 z-50 text-xs text-[#1a1a1a]">
                 <div className="px-3 py-2 border-b border-[#e1e3e5] mb-1">
-                  <div className="font-semibold">{user?.name || 'Store Administrator'}</div>
-                  <div className="text-[11px] text-[#616161] truncate">{user?.email || 'merchant@homzy.com'}</div>
-                  <div className="mt-1 text-[10px] font-semibold text-[#008060] bg-[#e3f1df] px-1.5 py-0.5 rounded inline-block">
-                    Single Store Admin
+                  <div className="font-semibold">{user?.name || 'KIDOBOX Manager'}</div>
+                  <div className="text-[11px] text-[#616161] truncate">{user?.email || 'admin@kidobox.com'}</div>
+                  <div className="mt-1 text-[10px] font-semibold text-[#ff268b] bg-[#fdf2f8] px-1.5 py-0.5 rounded inline-block">
+                    KIDOBOX Store Admin
                   </div>
                 </div>
 

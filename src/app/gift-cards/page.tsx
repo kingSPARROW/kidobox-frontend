@@ -6,6 +6,7 @@ import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { useCart } from '@/lib/cart-context';
 import { money } from '@/lib/kidobox-data';
+import { Sparkles } from 'lucide-react';
 
 export default function GiftCardsPage() {
   const { addItem, setIsOpen } = useCart();
@@ -41,7 +42,9 @@ export default function GiftCardsPage() {
 
         <div className="gift-layout">
           <div className="gift-visual">
-            <span className="gift-sparkle">✨</span>
+            <span className="gift-sparkle">
+              <Sparkles size={70} color="#ffd44d" />
+            </span>
             <img src="/logo.png" alt="KIDOBOX Gift Card" style={{ maxHeight: '45px', width: 'auto' }} />
             <h2>A Little Gift Card</h2>
             <p>For diapers, soft rompers, toys &amp; sweet nursery favorites.</p>

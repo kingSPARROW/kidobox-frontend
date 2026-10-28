@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
+import { Camera } from 'lucide-react';
 
 export default function CommunityPage() {
   const moments = [
@@ -28,7 +29,9 @@ export default function CommunityPage() {
 
         <div className="page-intro">
           <span className="mini-eyebrow">FAMILY MOMENTS</span>
-          <h1>💕 Our Little Community</h1>
+          <h1>
+            <span className="section-icon-wrap"><Camera size={26} /></span> Our Little Community
+          </h1>
           <p>Real memories from families enjoying life’s sweetest little moments with KIDOBOX.</p>
         </div>
 

@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
+import { Sparkles } from 'lucide-react';
 
 export default function NotFound() {
   return (
@@ -12,7 +13,9 @@ export default function NotFound() {
 
       <main id="main-content" className="container inner-main flex-1 flex items-center justify-center py-20">
         <div className="page-empty" style={{ maxWidth: '500px', margin: '0 auto' }}>
-          <span>🧸</span>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+            <Sparkles size={52} style={{ color: 'var(--pink)' }} />
+          </div>
           <h2>A Little Lost?</h2>
           <p>
             The little page you are looking for might have moved or taken an afternoon nap. Let’s get

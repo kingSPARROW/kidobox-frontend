@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
+import { Leaf, Heart, ShieldCheck } from 'lucide-react';
 
 export default function AboutPage() {
   return (
@@ -39,17 +40,23 @@ export default function AboutPage() {
 
         <section className="values-grid">
           <article>
-            <span>🌿</span>
+            <div className="benefit-svg" style={{ margin: '0 0 12px 0' }}>
+              <Leaf size={24} />
+            </div>
             <h2>Thoughtfully Chosen</h2>
             <p>Every single item is vetted for baby skin friendliness, safety, and durability.</p>
           </article>
           <article>
-            <span>💗</span>
+            <div className="benefit-svg" style={{ margin: '0 0 12px 0' }}>
+              <Heart size={24} fill="currentColor" />
+            </div>
             <h2>Comfort First</h2>
             <p>Ultra-soft fabrics, smooth snap buttons, and ergonomic shapes made for little wriggles.</p>
           </article>
           <article>
-            <span>🛡️</span>
+            <div className="benefit-svg" style={{ margin: '0 0 12px 0' }}>
+              <ShieldCheck size={24} />
+            </div>
             <h2>Parent Inspired</h2>
             <p>Designed around real family routines to make parenting a little calmer and simpler.</p>
           </article>

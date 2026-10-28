@@ -58,7 +58,7 @@ export default function AdminTestimonialsPage() {
     is_verified: true,
     status: 'active',
     order: 1,
-    product_title: 'HOMZY Scented Soy Candle',
+    product_title: 'Organic Cotton Kimono Romper',
   });
 
   const { data: testimonialsData, isLoading } = useQuery({
@@ -131,7 +131,7 @@ export default function AdminTestimonialsPage() {
       is_verified: true,
       status: 'active',
       order: testimonials.length + 1,
-      product_title: 'HOMZY Home Essentials',
+      product_title: 'KIDOBOX Baby Essentials',
     });
     setIsEditorOpen(true);
   };

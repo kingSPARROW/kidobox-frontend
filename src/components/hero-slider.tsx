@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { Leaf, Heart, ShieldCheck, Feather, CheckCircle2, Tag, Utensils, Sparkles, Award, Sun } from 'lucide-react';
 
 interface Slide {
   id: number;
@@ -17,17 +18,17 @@ interface Slide {
   alt: string;
   bgGradient: string;
   themeColor: string;
-  sunEmoji?: string;
-  promises: { icon: string; title: string; subtitle: string }[];
+  decorationIcon?: React.ReactNode;
+  promises: { icon: React.ReactNode; title: string; subtitle: string }[];
 }
 
 const slides: Slide[] = [
   {
     id: 1,
-    eyebrow: 'A LITTLE LOVE, EVERY DAY 💕',
+    eyebrow: 'A LITTLE LOVE, EVERY DAY',
     title: 'Little Needs.',
     highlight: 'Big Smiles.',
-    sunEmoji: '☀',
+    decorationIcon: <Sun size={38} color="#ffbc00" />,
     description: 'Everything your little one needs to grow, play, and shine with safe, gentle care.',
     ctaText: 'Shop Essentials',
     ctaLink: '/shop',
@@ -38,17 +39,17 @@ const slides: Slide[] = [
     bgGradient: 'linear-gradient(135deg, #fff2f6 0%, #ffe9f2 50%, #fff7fa 100%)',
     themeColor: 'var(--pink)',
     promises: [
-      { icon: '🌿', title: 'Safe & Gentle', subtitle: 'Tested for delicate skin' },
-      { icon: '💗', title: 'Parent-Approved', subtitle: 'Loved by 20,000+ parents' },
-      { icon: '🛡️', title: 'Certified Safe', subtitle: 'Zero toxins & BPA free' },
+      { icon: <Leaf size={18} style={{ color: '#16a34a' }} />, title: 'Safe & Gentle', subtitle: 'Tested for delicate skin' },
+      { icon: <Heart size={18} style={{ color: '#ff268b' }} fill="currentColor" />, title: 'Parent-Approved', subtitle: 'Loved by 20,000+ parents' },
+      { icon: <ShieldCheck size={18} style={{ color: '#0284c7' }} />, title: 'Certified Safe', subtitle: 'Zero toxins & BPA free' },
     ],
   },
   {
     id: 2,
-    eyebrow: '100% GOTS ORGANIC COTTON 🌱',
+    eyebrow: '100% GOTS ORGANIC COTTON',
     title: 'Pure Cloud Softness,',
     highlight: 'Happy Baby.',
-    sunEmoji: '✨',
+    decorationIcon: <Sparkles size={38} color="#20a886" />,
     description: 'Ultra-breathable onesies, rompers, and sleepsuits crafted for dreamy comfort and easy diaper changes.',
     ctaText: 'Shop Clothing',
     ctaLink: '/clothing',
@@ -59,17 +60,17 @@ const slides: Slide[] = [
     bgGradient: 'linear-gradient(135deg, #eef9f6 0%, #e1f5ef 50%, #f4fbf9 100%)',
     themeColor: '#20a886',
     promises: [
-      { icon: '☁️', title: 'Feather-Soft', subtitle: '100% combed cotton' },
-      { icon: '🧷', title: 'Nickel-Free Snaps', subtitle: 'Quick 2-way zippers' },
-      { icon: '🏷️', title: 'Tagless Design', subtitle: 'Zero scratchiness' },
+      { icon: <Feather size={18} style={{ color: '#20a886' }} />, title: 'Feather-Soft', subtitle: '100% combed cotton' },
+      { icon: <CheckCircle2 size={18} style={{ color: '#059669' }} />, title: 'Nickel-Free Snaps', subtitle: 'Quick 2-way zippers' },
+      { icon: <Tag size={18} style={{ color: '#0d9488' }} />, title: 'Tagless Design', subtitle: 'Zero scratchiness' },
     ],
   },
   {
     id: 3,
-    eyebrow: 'DEVELOPMENTAL & BPA-FREE 🎈',
+    eyebrow: 'DEVELOPMENTAL & BPA-FREE',
     title: 'Nourish & Play,',
     highlight: 'Every Single Day.',
-    sunEmoji: '🌈',
+    decorationIcon: <Sparkles size={38} color="#0284c7" />,
     description: 'Food-grade silicone tableware and Montessori toys engineered to stimulate learning and motor milestones.',
     ctaText: 'Shop Feeding & Toys',
     ctaLink: '/feeding',
@@ -80,9 +81,9 @@ const slides: Slide[] = [
     bgGradient: 'linear-gradient(135deg, #eff9ff 0%, #e2f4ff 50%, #f7fcff 100%)',
     themeColor: 'var(--blue)',
     promises: [
-      { icon: '🥣', title: 'Suction Base Tech', subtitle: 'Zero mealtime spills' },
-      { icon: '🧼', title: 'Dishwasher Safe', subtitle: 'Withstands -40°C to 220°C' },
-      { icon: '🍼', title: 'Baby-Led Weaning', subtitle: 'Pediatrician recommended' },
+      { icon: <Utensils size={18} style={{ color: '#0284c7' }} />, title: 'Suction Base Tech', subtitle: 'Zero mealtime spills' },
+      { icon: <Sparkles size={18} style={{ color: '#38bdf8' }} />, title: 'Dishwasher Safe', subtitle: 'Withstands -40°C to 220°C' },
+      { icon: <Award size={18} style={{ color: '#0369a1' }} />, title: 'Baby-Led Weaning', subtitle: 'Pediatrician recommended' },
     ],
   },
 ];
@@ -128,7 +129,11 @@ export function HeroSlider() {
             {activeSlide.title}
             <br />
             <strong style={{ color: activeSlide.themeColor }}>{activeSlide.highlight}</strong>
-            {activeSlide.sunEmoji && <span className="sun float-anim">{activeSlide.sunEmoji}</span>}
+            {activeSlide.decorationIcon && (
+              <span className="sun float-anim" style={{ display: 'inline-flex', verticalAlign: 'middle', marginLeft: 8 }}>
+                {activeSlide.decorationIcon}
+              </span>
+            )}
           </h1>
           <p>{activeSlide.description}</p>
 

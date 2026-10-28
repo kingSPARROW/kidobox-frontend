@@ -11,7 +11,9 @@ export async function fetchApi<T = any>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('homzy_merchant_token') : null;
+  const token = typeof window !== 'undefined'
+    ? (localStorage.getItem('kidobox_merchant_token') || localStorage.getItem('homzy_merchant_token'))
+    : null;
 
   const headers: Record<string, string> = {
     'Accept': 'application/json',

@@ -6,6 +6,7 @@ import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { useCart } from '@/lib/cart-context';
 import { money } from '@/lib/kidobox-data';
+import { ShoppingBag } from 'lucide-react';
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, subtotal, discountCode, setDiscountCode } = useCart();
@@ -53,13 +54,17 @@ export default function CartPage() {
 
         <div className="page-intro">
           <span className="mini-eyebrow">A LITTLE BAG OF JOY</span>
-          <h1>💕 Your Shopping Bag</h1>
+          <h1>
+            <span className="section-icon-wrap"><ShoppingBag size={26} /></span> Your Shopping Bag
+          </h1>
           <p>Thoughtful essentials ready for life’s sweetest little moments.</p>
         </div>
 
         {items.length === 0 ? (
           <div className="page-empty">
-            <span>🧸</span>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+              <ShoppingBag size={48} style={{ color: 'var(--pink)' }} />
+            </div>
             <h2>Your bag is waiting for a little love</h2>
             <p>Find a thoughtful little favorite for your favorite little person.</p>
             <Link className="button pink" href="/shop">

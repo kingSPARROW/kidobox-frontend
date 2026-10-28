@@ -9,11 +9,11 @@ export default function AdminDiscountsPage() {
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form, setForm] = useState({
-    code: 'FESTIVE20',
-    title: 'Festive Season 20% Off',
+    code: 'LITTLE15',
+    title: 'Little Welcome 15% Off',
     type: 'percentage',
-    value: 20,
-    min_cart_amount: 1499,
+    value: 15,
+    min_cart_amount: 999,
     usage_limit: 500,
   });
 

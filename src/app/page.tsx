@@ -26,6 +26,7 @@ import {
   Gift,
   Truck,
   Star,
+  Flame,
 } from 'lucide-react';
 
 export default function KidoboxHomePage() {
@@ -244,7 +245,7 @@ export default function KidoboxHomePage() {
           <ProductSlider
             title="Trending Nursery & Toddler Favorites"
             subtitle="Most added to parent wishlists this week"
-            emoji="🔥"
+            icon={<Flame size={20} />}
             viewAllLink="/bestsellers"
             viewAllText="Explore All Trending"
             products={products}
@@ -646,7 +647,7 @@ export default function KidoboxHomePage() {
             <div className="section-title">
               <div>
                 <h2>
-                  <span>🎁</span> Parenting Tips &amp; Guides
+                  <span className="section-icon-wrap"><BookOpen size={20} /></span> Parenting Tips &amp; Guides
                 </h2>
                 <p>Helpful advice and milestones for a happier parenting journey</p>
               </div>
@@ -703,7 +704,7 @@ export default function KidoboxHomePage() {
             <div className="section-title">
               <div>
                 <h2>
-                  <span>💕</span> Follow Us on Instagram
+                  <span className="section-icon-wrap"><Camera size={20} /></span> Follow Us on Instagram
                 </h2>
                 <p>Get inspired by real moments and happy giggles from our KIDOBOX family</p>
               </div>
@@ -728,7 +729,7 @@ export default function KidoboxHomePage() {
 
           {/* ── 14. App Download Banner ──────────────────────────────── */}
           <section className="app-banner">
-            <span className="app-star float-anim">⭐</span>
+            <span className="app-star float-anim"><Sparkles size={34} color="#ffbc00" /></span>
             <div className="phone-mockup mascot-float">
               <div className="phone-camera"></div>
               <img src="/logo.png" alt="KIDOBOX mobile app" style={{ maxHeight: '35px', width: 'auto', margin: '0 auto' }} />

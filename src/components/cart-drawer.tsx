@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useCart } from '@/lib/cart-context';
-import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight } from 'lucide-react';
+import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight, Sparkles } from 'lucide-react';
 import { money } from '@/lib/kidobox-data';
 
 export function CartDrawer() {
@@ -50,7 +50,10 @@ export function CartDrawer() {
           {/* Free delivery progress */}
           <div className="px-5 py-3 bg-[#fdf8fa] border-b border-[#edf0f4] text-xs font-bold text-[#637389]">
             {isFreeShipping ? (
-              <span className="text-[#28b08b]">🎉 Yay! Your order qualifies for Free Delivery!</span>
+              <span className="text-[#28b08b] inline-flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                Yay! Your order qualifies for Free Delivery!
+              </span>
             ) : (
               <span>Add {money(freeShippingThreshold - subtotal)} more for <b>Free Delivery</b>!</span>
             )}
@@ -66,8 +69,8 @@ export function CartDrawer() {
           <div className="flex-1 overflow-y-auto p-5 space-y-4">
             {items.length === 0 ? (
               <div className="text-center py-16">
-                <div className="w-16 h-16 bg-[#fff0f6] text-[#ff268b] rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-                  🧸
+                <div className="w-16 h-16 bg-[#fff0f6] text-[#ff268b] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <ShoppingBag className="w-7 h-7 text-[#ff268b]" />
                 </div>
                 <h3 className="font-['Fredoka',sans-serif] text-xl font-semibold text-[#122e50]">
                   Your bag is empty

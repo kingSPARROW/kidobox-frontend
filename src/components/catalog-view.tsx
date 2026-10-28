@@ -8,6 +8,7 @@ import { StoreFooter } from '@/components/store-footer';
 import { useCart } from '@/lib/cart-context';
 import { categories, products, ages, money, Product } from '@/lib/kidobox-data';
 import { LazyImage } from '@/components/lazy-image';
+import { Heart } from 'lucide-react';
 
 interface CatalogViewProps {
   initialCategory?: string;
@@ -200,7 +201,9 @@ export function CatalogView({
             ))}
 
             <div className="sidebar-note">
-              <span>💗</span>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
+                <Heart size={28} fill="currentColor" style={{ color: 'var(--pink)' }} />
+              </div>
               <h3>A little help?</h3>
               <p>We’re here for your little questions.</p>
               <Link href="/faq">Visit our help center →</Link>

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { money } from '@/lib/kidobox-data';
+import { User, Gift } from 'lucide-react';
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -31,7 +32,9 @@ export default function OrdersPage() {
 
         <div className="help-layout">
           <aside className="help-nav">
-            <div className="account-avatar">🧸</div>
+            <div className="account-avatar">
+              <User size={26} />
+            </div>
             <h3>Family Account</h3>
             <Link href="/account">Family Profile <span>→</span></Link>
             <Link href="/orders" className="current">Order History <span>→</span></Link>
@@ -49,7 +52,9 @@ export default function OrdersPage() {
 
             {orders.length === 0 ? (
               <div className="page-empty">
-                <span>🎁</span>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+                  <Gift size={44} style={{ color: 'var(--pink)' }} />
+                </div>
                 <h2>Your story is just beginning</h2>
                 <p>Your orders will appear here once you try our store.</p>
                 <Link className="button pink" href="/shop">

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
+import { Mail, PhoneCall } from 'lucide-react';
 
 export default function ContactPage() {
   const [name, setName] = useState('');
@@ -48,12 +49,16 @@ export default function ContactPage() {
 
             <div className="contact-options">
               <a href="mailto:hello@kidobox.com">
-                <span>✉️</span>
+                <div className="benefit-svg" style={{ margin: '0 0 12px 0' }}>
+                  <Mail size={24} />
+                </div>
                 <h3>Email Support</h3>
                 <p>hello@kidobox.com (Replies within 12 hours)</p>
               </a>
               <a href="tel:+919876543210">
-                <span>📞</span>
+                <div className="benefit-svg" style={{ margin: '0 0 12px 0' }}>
+                  <PhoneCall size={24} />
+                </div>
                 <h3>Parent Helpline</h3>
                 <p>+91 (022) 4890-KIDO (Mon–Sat, 10am–7pm)</p>
               </a>

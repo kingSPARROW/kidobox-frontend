@@ -40,16 +40,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshUser = async () => {
     try {
-      let storedToken = localStorage.getItem('homzy_merchant_token');
+      let storedToken = localStorage.getItem('kidobox_merchant_token') || localStorage.getItem('homzy_merchant_token');
       if (!storedToken) {
-        // Auto-authenticate as Store Owner for seamless single-store administration
+        // Auto-authenticate as KIDOBOX Store Admin
         try {
-          const loginRes = await fetchApi('/auth/login', {
+          let loginRes = await fetchApi('/auth/login', {
             method: 'POST',
-            body: JSON.stringify({ email: 'merchant@homzy.com', password: 'password123' }),
-          });
-          if (loginRes.success && loginRes.token) {
+            body: JSON.stringify({ email: 'admin@kidobox.com', password: 'admin123' }),
+          }).catch(() => null);
+
+          if (!loginRes?.success) {
+            loginRes = await fetchApi('/auth/login', {
+              method: 'POST',
+              body: JSON.stringify({ email: 'merchant@homzy.com', password: 'password123' }),
+            }).catch(() => null);
+          }
+
+          if (loginRes?.success && loginRes.token) {
             storedToken = String(loginRes.token);
+            localStorage.setItem('kidobox_merchant_token', storedToken);
             localStorage.setItem('homzy_merchant_token', storedToken);
           }
         } catch (err) {}
@@ -86,6 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (res.success && res.token) {
+      localStorage.setItem('kidobox_merchant_token', res.token);
       localStorage.setItem('homzy_merchant_token', res.token);
       if (res.store) {
         setStore(res.store);
@@ -99,6 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     fetchApi('/auth/logout', { method: 'POST' }).catch(() => {});
+    localStorage.removeItem('kidobox_merchant_token');
     localStorage.removeItem('homzy_merchant_token');
     setUser(null);
     setStore(null);

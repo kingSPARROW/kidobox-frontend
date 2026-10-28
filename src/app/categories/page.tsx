@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { categories } from '@/lib/kidobox-data';
+import { Sparkles } from 'lucide-react';
 
 export default function CategoriesDirectoryPage() {
   return (
@@ -20,7 +21,9 @@ export default function CategoriesDirectoryPage() {
 
         <div className="page-intro">
           <span className="mini-eyebrow">LITTLE NEEDS. BIG SMILES.</span>
-          <h1>💕 A Little Something for Every Moment</h1>
+          <h1>
+            <span className="section-icon-wrap"><Sparkles size={26} /></span> A Little Something for Every Moment
+          </h1>
           <p>Find just what your little one needs, from sleepy mornings to playful afternoons.</p>
         </div>
 

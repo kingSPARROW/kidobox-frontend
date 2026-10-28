@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
+import { User } from 'lucide-react';
 
 export default function AccountPage() {
   const [name, setName] = useState('');
@@ -62,7 +63,9 @@ export default function AccountPage() {
 
         <div className="help-layout">
           <aside className="help-nav">
-            <div className="account-avatar">🧸</div>
+            <div className="account-avatar">
+              <User size={26} />
+            </div>
             <h3>Family Account</h3>
             <Link href="/account" className="current">
               Family Profile <span>→</span>

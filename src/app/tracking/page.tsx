@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { money } from '@/lib/kidobox-data';
+import { Truck, Heart } from 'lucide-react';
 
 function TrackingInner() {
   const searchParams = useSearchParams();
@@ -42,8 +43,9 @@ function TrackingInner() {
 
   return (
     <div className="help-content">
-      <div className="track-illustration">
-        🚚<span>♡</span>
+      <div className="track-illustration" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+        <Truck size={68} style={{ color: 'var(--blue)' }} />
+        <Heart size={26} fill="currentColor" style={{ color: 'var(--pink)' }} />
       </div>
 
       <div className="page-intro" style={{ padding: '0 0 25px' }}>

@@ -8,6 +8,7 @@ import { StoreFooter } from '@/components/store-footer';
 import { useCart } from '@/lib/cart-context';
 import { products, categories, money, Product } from '@/lib/kidobox-data';
 import { ImageMagnifier } from '@/components/image-magnifier';
+import { Truck, RotateCcw, Heart, Sparkles, MessageSquareHeart } from 'lucide-react';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -314,15 +315,18 @@ export default function ProductDetailPage() {
 
             <div className="product-promises">
               <span>
-                🚚<b>Free delivery</b>
+                <Truck size={18} style={{ color: 'var(--pink)', marginBottom: 4 }} />
+                <b>Free delivery</b>
                 <small>On orders above ₹999</small>
               </span>
               <span>
-                ↻<b>Easy returns</b>
+                <RotateCcw size={18} style={{ color: 'var(--pink)', marginBottom: 4 }} />
+                <b>Easy returns</b>
                 <small>Within 7 days</small>
               </span>
               <span>
-                💗<b>Thoughtfully chosen</b>
+                <Heart size={18} style={{ color: 'var(--pink)', marginBottom: 4 }} />
+                <b>Thoughtfully chosen</b>
                 <small>For your little one</small>
               </span>
             </div>
@@ -401,7 +405,7 @@ export default function ProductDetailPage() {
           <div className="section-title">
             <div>
               <h2>
-                <span>💕</span> Little love notes
+                <span className="section-icon-wrap"><MessageSquareHeart size={20} /></span> Little love notes
               </h2>
               <p>Sample stories from verified parents</p>
             </div>
@@ -445,7 +449,7 @@ export default function ProductDetailPage() {
           <div className="section-title">
             <div>
               <h2>
-                <span>💕</span> You Might Also Love
+                <span className="section-icon-wrap"><Heart size={20} fill="currentColor" /></span> You Might Also Love
               </h2>
               <p>A few more little favorites</p>
             </div>

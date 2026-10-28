@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
+import { User } from 'lucide-react';
 
 export default function AddressesPage() {
   const [street, setStreet] = useState('');
@@ -61,7 +62,9 @@ export default function AddressesPage() {
 
         <div className="help-layout">
           <aside className="help-nav">
-            <div className="account-avatar">🧸</div>
+            <div className="account-avatar">
+              <User size={26} />
+            </div>
             <h3>Family Account</h3>
             <Link href="/account">Family Profile <span>→</span></Link>
             <Link href="/orders">Order History <span>→</span></Link>

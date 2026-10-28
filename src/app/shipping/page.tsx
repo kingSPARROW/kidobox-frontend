@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
+import { Truck } from 'lucide-react';
 
 export default function ShippingPage() {
   return (
@@ -35,7 +36,9 @@ export default function ShippingPage() {
             </div>
 
             <div className="info-highlight">
-              <span>🚚</span>
+              <div className="benefit-svg" style={{ margin: 0, flexShrink: 0 }}>
+                <Truck size={26} />
+              </div>
               <div>
                 <h3>Free Express Delivery above ₹999</h3>
                 <p>Orders are dispatched with verified contactless courier partners within 24 hours.</p>

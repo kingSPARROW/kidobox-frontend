@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { brands, products } from '@/lib/kidobox-data';
+import { TrendingUp } from 'lucide-react';
 
 export default function BrandsDirectoryPage() {
   return (
@@ -20,7 +21,9 @@ export default function BrandsDirectoryPage() {
 
         <div className="page-intro">
           <span className="mini-eyebrow">LITTLE NEEDS. BIG SMILES.</span>
-          <h1>🛍️ Big Names for Little Needs</h1>
+          <h1>
+            <span className="section-icon-wrap"><TrendingUp size={26} /></span> Big Names for Little Needs
+          </h1>
           <p>Explore the trusted baby care brands featured in our collection.</p>
         </div>
 

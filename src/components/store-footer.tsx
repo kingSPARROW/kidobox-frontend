@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { Heart } from 'lucide-react';
 
 export function StoreFooter() {
   return (
@@ -145,7 +146,8 @@ export function StoreFooter() {
       </div>
 
       <div className="footer-bottom">
-        © 2026 KIDOBOX. All rights reserved. | Little Needs. Big Smiles. 💗
+        © 2026 KIDOBOX. All rights reserved. | Little Needs. Big Smiles.{' '}
+        <Heart size={13} fill="currentColor" style={{ display: 'inline', color: 'var(--pink)', verticalAlign: 'middle', marginLeft: 2 }} />
       </div>
     </footer>
   );

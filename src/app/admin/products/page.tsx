@@ -155,7 +155,7 @@ export default function AdminProductsPage() {
 
   // CSV Export
   const handleExportCsv = () => {
-    const token = localStorage.getItem('homzy_token');
+    const token = localStorage.getItem('kidobox_merchant_token') || localStorage.getItem('homzy_merchant_token') || localStorage.getItem('homzy_token');
     window.open(`http://127.0.0.1:8000/api/v1/products/export/csv?token=${token}`, '_blank');
   };
 
@@ -165,7 +165,7 @@ export default function AdminProductsPage() {
     if (!file) return;
 
     setIsImporting(true);
-    const token = localStorage.getItem('homzy_token');
+    const token = localStorage.getItem('kidobox_merchant_token') || localStorage.getItem('homzy_merchant_token') || localStorage.getItem('homzy_token');
     const formData = new FormData();
     formData.append('file', file);
 
@@ -518,7 +518,7 @@ export default function AdminProductsPage() {
 
                       {/* Vendor */}
                       <td className="py-2.5 px-3 text-[#616161]">
-                        {p.vendor || 'HOMZY'}
+                        {p.vendor || 'KIDOBOX'}
                       </td>
 
                       {/* Price with Compare-at strike */}

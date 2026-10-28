@@ -6,6 +6,7 @@ import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { useCart } from '@/lib/cart-context';
 import { products, categories, money, Product } from '@/lib/kidobox-data';
+import { Heart } from 'lucide-react';
 
 export default function WishlistPage() {
   const { addItem, setIsOpen } = useCart();
@@ -59,7 +60,9 @@ export default function WishlistPage() {
 
         <div className="page-intro">
           <span className="mini-eyebrow">SAVED WITH LOVE</span>
-          <h1>💕 Your Little Wishlist</h1>
+          <h1>
+            <span className="section-icon-wrap"><Heart size={26} fill="currentColor" /></span> Your Little Wishlist
+          </h1>
           <p>The favorites you’ve gathered for your growing little family.</p>
         </div>
 

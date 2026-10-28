@@ -26,28 +26,28 @@ export default function AdminSettingsPage() {
   >('store_details');
 
   const [form, setForm] = useState({
-    name: 'HOMZY',
+    name: 'KIDOBOX',
     custom_domain: '',
     currency: 'INR',
     timezone: 'Asia/Kolkata',
     tax_mode: 'inclusive',
-    default_gst_rate: 18,
-    gstin: '27AABCA1234F1Z9',
+    default_gst_rate: 12,
+    gstin: '27AABCK1234F1Z9',
     allow_cod: true,
     cod_fee: 50,
     free_shipping_threshold: 999,
-    address: 'Plot 42, Homzy Commerce Hub, Andheri East',
+    address: '42 Little Cuddles Avenue, Bandra West',
     city: 'Mumbai',
     state: 'Maharashtra',
-    postal_code: '400069',
-    support_email: 'care@homzy.com',
+    postal_code: '400050',
+    support_email: 'care@kidobox.com',
     phone: '+91 98765 43210',
-    seo_title: 'HOMZY | Home Made Easy - A Cleaner, Calmer, Happier Home',
-    seo_description: 'Thoughtfully curated home essentials for a cleaner, calmer and happier home. Plant care, organizers, planters, daily aromatherapy and decor.',
-    seo_social_image: '/banners/homzy-cozy-banner.png',
-    seo_google_verification: 'google-site-verification=homzy_verified',
+    seo_title: 'KIDOBOX | Gentle & Safe Baby & Toddler Essentials',
+    seo_description: 'Pure organic cotton outfits, hypoallergenic baby care, food-grade feeding, and sensory toys crafted for little milestones.',
+    seo_social_image: '/assets/hd/hero.webp',
+    seo_google_verification: 'google-site-verification=kidobox_verified',
     seo_allow_indexing: true,
-    seo_canonical_url: 'https://homzy.in',
+    seo_canonical_url: 'https://kidobox.com',
   });
 
   const { data: storeData, isLoading } = useQuery({
@@ -75,12 +75,12 @@ export default function AdminSettingsPage() {
         postal_code: s.contact?.postal_code || '',
         support_email: s.contact?.support_email || '',
         phone: s.contact?.phone || '',
-        seo_title: s.seo?.title_tag || 'HOMZY | Home Made Easy - A Cleaner, Calmer, Happier Home',
-        seo_description: s.seo?.meta_description || 'Thoughtfully curated home essentials for a cleaner, calmer and happier home. Plant care, organizers, planters, daily aromatherapy and decor.',
-        seo_social_image: s.seo?.social_image_url || '/banners/homzy-cozy-banner.png',
-        seo_google_verification: s.seo?.google_verification || 'google-site-verification=homzy_verified',
+        seo_title: s.seo?.title_tag || 'KIDOBOX | Gentle & Safe Baby & Toddler Essentials',
+        seo_description: s.seo?.meta_description || 'Pure organic cotton outfits, hypoallergenic baby care, food-grade feeding, and sensory toys crafted for little milestones.',
+        seo_social_image: s.seo?.social_image_url || '/assets/hd/hero.webp',
+        seo_google_verification: s.seo?.google_verification || 'google-site-verification=kidobox_verified',
         seo_allow_indexing: s.seo?.allow_indexing ?? true,
-        seo_canonical_url: s.seo?.canonical_url || 'https://homzy.in',
+        seo_canonical_url: s.seo?.canonical_url || 'https://kidobox.com',
       });
     }
   }, [storeData]);
@@ -271,18 +271,18 @@ export default function AdminSettingsPage() {
 
                   <div className="p-4 bg-[#f8f9fa] border border-[#dadce0] rounded-xl font-sans">
                     <div className="text-[12px] text-[#202124] flex items-center gap-1.5 mb-1">
-                      <div className="w-4 h-4 rounded-full bg-slate-800 text-white flex items-center justify-center text-[9px] font-bold">
-                        A
+                      <div className="w-4 h-4 rounded-full bg-gradient-to-tr from-[#ff268b] to-[#0284c7] text-white flex items-center justify-center text-[9px] font-bold">
+                        K
                       </div>
-                      <span className="text-[#4d5156] font-medium">{form.seo_canonical_url || 'https://auraliving.in'}</span>
+                      <span className="text-[#4d5156] font-medium">{form.seo_canonical_url || 'https://kidobox.com'}</span>
                       <span className="text-[#70757a]">›</span>
                       <span className="text-[#70757a]">store</span>
                     </div>
                     <div className="text-[18px] text-[#1a0dab] hover:underline font-medium leading-tight cursor-pointer">
-                      {form.seo_title || 'Aura Living | Minimalist Artisanal Home & Living'}
+                      {form.seo_title || 'KIDOBOX | Gentle & Safe Baby Essentials'}
                     </div>
                     <div className="text-[13px] text-[#4d5156] leading-relaxed mt-1">
-                      {form.seo_description || 'Discover artisanal ceramics, ambient lighting, and bespoke minimalist furniture handcrafted for modern homes.'}
+                      {form.seo_description || 'Discover pure organic cotton outfits, toxin-free care, sensory toys, and baby essentials designed for everyday cuddles.'}
                     </div>
                   </div>
                 </div>
@@ -304,7 +304,7 @@ export default function AdminSettingsPage() {
                       type="text"
                       value={form.seo_title}
                       onChange={(e) => setForm({ ...form, seo_title: e.target.value })}
-                      placeholder="e.g. Aura Living | Minimalist Artisanal Home & Living"
+                      placeholder="e.g. KIDOBOX | Gentle & Safe Baby & Toddler Essentials"
                       className="w-full px-3 py-1.5 bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#008060]"
                     />
                     <p className="text-[11px] text-[#616161] mt-1">
@@ -390,7 +390,7 @@ export default function AdminSettingsPage() {
                       type="url"
                       value={form.seo_canonical_url}
                       onChange={(e) => setForm({ ...form, seo_canonical_url: e.target.value })}
-                      placeholder="https://auraliving.in"
+                      placeholder="https://kidobox.com"
                       className="w-full px-3 py-1.5 bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#008060]"
                     />
                   </div>
@@ -538,7 +538,7 @@ export default function AdminSettingsPage() {
                 </div>
 
                 <div className="p-3 bg-[#f6f6f7] rounded-lg text-[#616161] text-[11px] leading-relaxed">
-                  HomZy automatically divides intra-state Maharashtra transactions into CGST 50% + SGST 50%, and inter-state transactions into 100% IGST in compliance with Indian GST regulations.
+                  KIDOBOX automatically divides intra-state Maharashtra transactions into CGST 50% + SGST 50%, and inter-state transactions into 100% IGST in compliance with Indian GST regulations.
                 </div>
               </div>
             )}
@@ -601,7 +601,7 @@ export default function AdminSettingsPage() {
 
                 <div className="p-3 bg-[#f6f6f7] rounded-lg flex items-center justify-between">
                   <div>
-                    <div className="font-bold text-[#1a1a1a]">merchant@homzy.com</div>
+                    <div className="font-bold text-[#1a1a1a]">admin@kidobox.com</div>
                     <div className="text-[11px] text-[#616161]">Store Owner • Full Permissions</div>
                   </div>
                   <span className="text-[10px] font-bold text-[#008060] bg-[#e3f1df] px-2 py-0.5 rounded-full">

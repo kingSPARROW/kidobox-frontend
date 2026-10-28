@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { ages } from '@/lib/kidobox-data';
+import { Baby } from 'lucide-react';
 
 export default function AgesDirectoryPage() {
   return (
@@ -20,7 +21,9 @@ export default function AgesDirectoryPage() {
 
         <div className="page-intro">
           <span className="mini-eyebrow">EVERY LITTLE STAGE</span>
-          <h1>💕 Thoughtful Favorites for Every Chapter</h1>
+          <h1>
+            <span className="section-icon-wrap"><Baby size={26} /></span> Thoughtful Favorites for Every Chapter
+          </h1>
           <p>Find the right essentials for your little one’s age and development.</p>
         </div>
 

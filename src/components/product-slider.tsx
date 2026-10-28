@@ -8,6 +8,7 @@ import { LazyImage } from '@/components/lazy-image';
 interface ProductSliderProps {
   title: string;
   subtitle?: string;
+  icon?: React.ReactNode;
   emoji?: string;
   viewAllLink?: string;
   viewAllText?: string;
@@ -20,7 +21,8 @@ interface ProductSliderProps {
 export function ProductSlider({
   title,
   subtitle,
-  emoji = '✨',
+  icon,
+  emoji,
   viewAllLink = '/shop',
   viewAllText = 'View All',
   products,
@@ -44,7 +46,12 @@ export function ProductSlider({
       <div className="section-title">
         <div>
           <h2>
-            <span>{emoji}</span> {title}
+            {icon ? (
+              <span className="section-icon-wrap">{icon}</span>
+            ) : emoji ? (
+              <span className="section-icon-wrap">{emoji}</span>
+            ) : null}
+            {title}
           </h2>
           {subtitle && <p>{subtitle}</p>}
         </div>

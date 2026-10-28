@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { money } from '@/lib/kidobox-data';
+import { Gift, Sparkles } from 'lucide-react';
 
 function ConfirmationContent() {
   const searchParams = useSearchParams();
@@ -26,7 +27,9 @@ function ConfirmationContent() {
   if (!order) {
     return (
       <div className="page-empty">
-        <span>🎁</span>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+          <Gift size={48} style={{ color: 'var(--pink)' }} />
+        </div>
         <h2>Your next little adventure is waiting</h2>
         <p>Place a demo order to see your confirmation details here.</p>
         <Link className="button pink" href="/shop">
@@ -40,7 +43,9 @@ function ConfirmationContent() {
 
   return (
     <div className="confirmation-card">
-      <div className="confirmation-icon">🎉</div>
+      <div className="confirmation-icon">
+        <Sparkles size={40} style={{ color: 'var(--pink)' }} />
+      </div>
       <span className="badge-demo">DEMONSTRATION ORDER</span>
       <h2>Thank you{order.firstName ? `, ${order.firstName}` : ''}!</h2>
       <p>

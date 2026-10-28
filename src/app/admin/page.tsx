@@ -65,7 +65,7 @@ export default function AdminDashboardPage() {
         <div>
           <h1 className="text-xl font-bold text-[#1a1a1a] tracking-tight">Home</h1>
           <p className="text-xs text-[#616161] mt-0.5">
-            Real-time sales, order fulfillment, and inventory metrics for <span className="font-semibold text-[#1a1a1a]">{store?.name || 'HOMZY'}</span>
+            Real-time sales, order fulfillment, and inventory metrics for <span className="font-semibold text-[#1a1a1a]">{store?.name || 'KIDOBOX'}</span>
           </p>
         </div>
 

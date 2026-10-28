@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { MessageSquareHeart } from 'lucide-react';
 
 interface ReviewItem {
   id: number;
@@ -81,7 +82,7 @@ export function ReviewsSlider() {
       <div className="section-title">
         <div>
           <h2>
-            <span>💬</span> Loved by Parents Everywhere
+            <span className="section-icon-wrap"><MessageSquareHeart size={20} /></span> Loved by Parents Everywhere
           </h2>
           <p>Real stories and smiles from over 20,000+ happy families across India.</p>
         </div>

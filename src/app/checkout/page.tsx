@@ -8,6 +8,8 @@ import { StoreFooter } from '@/components/store-footer';
 import { useCart } from '@/lib/cart-context';
 import { money } from '@/lib/kidobox-data';
 import confetti from 'canvas-confetti';
+import { ShieldCheck, ShoppingBag, Loader2 } from 'lucide-react';
+import { fetchApi } from '@/lib/api';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -22,6 +24,7 @@ export default function CheckoutPage() {
   const [pin, setPin] = useState('');
   const [state, setState] = useState('Maharashtra');
   const [paymentMethod, setPaymentMethod] = useState('upi');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const discount = discountCode === 'LITTLE10' ? Math.round(subtotal * 0.1) : 0;
   const delivery = subtotal - discount >= 999 || discountCode === 'FREESHIP' ? 0 : 79;
@@ -50,11 +53,55 @@ export default function CheckoutPage() {
     } catch (e) {}
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!items.length) return;
+    if (!items.length || isSubmitting) return;
 
-    const orderId = 'KDB-' + Math.floor(100000000 + Math.random() * 900000000);
+    setIsSubmitting(true);
+    let orderId = 'KDB-' + Math.floor(100000000 + Math.random() * 900000000);
+
+    // 1. Attempt to sync with Laravel / MongoDB Backend
+    try {
+      const apiPayload = {
+        customer: {
+          first_name: firstName || 'Parent',
+          last_name: lastName || 'Customer',
+          email: email || 'parent@example.com',
+          phone: phone || '9876543210',
+        },
+        shipping_address: {
+          address1: street || '123 Little Lane',
+          city: city || 'Mumbai',
+          state: state || 'Maharashtra',
+          postal_code: pin || '400001',
+        },
+        payment_method: paymentMethod === 'cod' ? 'cod' : paymentMethod === 'upi' ? 'upi' : 'demo',
+        items: items.map((item) => ({
+          variant_id: item.variant_id,
+          product_id: item.product_id,
+          title: item.title,
+          variant_title: item.variant_title || 'Standard',
+          sku: item.sku || 'KDB-ITEM',
+          price: item.price,
+          quantity: item.quantity,
+          image_url: item.image_url,
+        })),
+        discount_code: discountCode || null,
+        notes: 'Placed via KIDOBOX Storefront Demo Checkout',
+      };
+
+      const res = await fetchApi('/checkout/order', {
+        method: 'POST',
+        body: JSON.stringify(apiPayload),
+      });
+
+      if (res && res.order && (res.order.order_number || res.order._id)) {
+        orderId = String(res.order.order_number || res.order._id);
+      }
+    } catch (apiErr) {
+      console.warn('Backend order sync notice (using local storage fallback):', apiErr);
+    }
+
     const orderData = {
       id: orderId,
       date: new Date().toISOString(),
@@ -94,7 +141,8 @@ export default function CheckoutPage() {
     });
 
     clearCart();
-    router.push(`/order-confirmation?order=${orderId}`);
+    setIsSubmitting(false);
+    router.push(`/order-confirmation?order=${encodeURIComponent(orderId)}`);
   };
 
   return (
@@ -112,13 +160,17 @@ export default function CheckoutPage() {
 
         <div className="page-intro">
           <span className="mini-eyebrow">SAFE &amp; GENTLE</span>
-          <h1>💕 Demo Checkout</h1>
+          <h1>
+            <span className="section-icon-wrap"><ShieldCheck size={26} /></span> Demo Checkout
+          </h1>
           <p>Complete your demonstration order with zero real payments required.</p>
         </div>
 
         {items.length === 0 ? (
           <div className="page-empty">
-            <span>🧸</span>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+              <ShoppingBag size={48} style={{ color: 'var(--pink)' }} />
+            </div>
             <h2>Your little bag is empty</h2>
             <p>Add a little favorite before exploring the checkout.</p>
             <Link className="button pink" href="/shop">
@@ -293,9 +345,17 @@ export default function CheckoutPage() {
               <button
                 type="submit"
                 className="button pink full-width"
-                style={{ marginTop: '28px', fontSize: '14px', height: '48px' }}
+                disabled={isSubmitting}
+                style={{ marginTop: '28px', fontSize: '14px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: isSubmitting ? 0.7 : 1 }}
               >
-                Place Demo Order ({money(total)}) →
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    <span>Processing Order...</span>
+                  </>
+                ) : (
+                  <span>Place Demo Order ({money(total)}) →</span>
+                )}
               </button>
 
               <p className="demo-disclaimer" style={{ marginTop: '15px' }}>

@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
+import { MessageSquareHeart } from 'lucide-react';
 
 export default function ReviewsPage() {
   const reviews = [
@@ -28,7 +29,9 @@ export default function ReviewsPage() {
 
         <div className="page-intro">
           <span className="mini-eyebrow">PARENT APPROVED</span>
-          <h1>💕 Little Love Notes</h1>
+          <h1>
+            <span className="section-icon-wrap"><MessageSquareHeart size={26} /></span> Little Love Notes
+          </h1>
           <p>Read what parents across India say about KIDOBOX baby essentials.</p>
         </div>
 
