@@ -48,7 +48,7 @@ export default function KidoboxHomePage() {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) setWishlist(parsed);
       }
-    } catch (e) {}
+    } catch (e) { }
   }, []);
 
   const triggerToast = (msg: string, hasLink = true) => {
@@ -65,7 +65,7 @@ export default function KidoboxHomePage() {
       try {
         localStorage.setItem('kidobox-wishlist', JSON.stringify(next));
         window.dispatchEvent(new Event('wishlist-updated'));
-      } catch (e) {}
+      } catch (e) { }
       triggerToast(
         prev.includes(id) ? `${name} removed from wishlist` : `${name} added to wishlist ♡`,
         false
