@@ -271,7 +271,7 @@ export default function AdminSettingsPage() {
 
                   <div className="p-4 bg-[#f8f9fa] border border-[#dadce0] rounded-xl font-sans">
                     <div className="text-[12px] text-[#202124] flex items-center gap-1.5 mb-1">
-                      <div className="w-4 h-4 rounded-full bg-gradient-to-tr from-[#BC0202] to-[#0284c7] text-white flex items-center justify-center text-[9px] font-bold">
+                      <div className="w-4 h-4 rounded-full bg-gradient-to-tr from-[#ff268b] to-[#0284c7] text-white flex items-center justify-center text-[9px] font-bold">
                         K
                       </div>
                       <span className="text-[#4d5156] font-medium">{form.seo_canonical_url || 'https://kidobox.com'}</span>

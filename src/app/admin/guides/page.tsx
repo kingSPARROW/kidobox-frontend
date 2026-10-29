@@ -230,7 +230,7 @@ export default function AdminGuidesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#e1e3e5] shadow-sm">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-pink-50 border border-pink-200 flex items-center justify-center text-[#BC0202]">
+            <div className="w-10 h-10 rounded-xl bg-pink-50 border border-pink-200 flex items-center justify-center text-[#ff268b]">
               <BookOpen className="w-5 h-5" />
             </div>
             <div>
@@ -246,7 +246,7 @@ export default function AdminGuidesPage() {
           <button
             type="button"
             onClick={handleAddNew}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#BC0202] hover:bg-[#e01977] text-white text-xs font-bold rounded-xl shadow-sm transition active:scale-95"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#ff268b] hover:bg-[#e01977] text-white text-xs font-bold rounded-xl shadow-sm transition active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span>Create New Guide</span>
@@ -268,7 +268,7 @@ export default function AdminGuidesPage() {
         </div>
         <div className="bg-white p-4 rounded-xl border border-[#e1e3e5] shadow-sm">
           <span className="text-[11px] font-bold text-[#6d7175] uppercase tracking-wider">Categories</span>
-          <div className="text-2xl font-black text-[#BC0202] mt-1">
+          <div className="text-2xl font-black text-[#ff268b] mt-1">
             {new Set(articles.map((a) => a.category)).size}
           </div>
           <span className="text-[11px] text-[#6d7175]">Milestones, Sleep, Care</span>
@@ -294,7 +294,7 @@ export default function AdminGuidesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search guides by title or category..."
-            className="w-full pl-9 pr-3 py-2 text-xs bg-[#fafbfb] border border-[#d2d5d8] rounded-lg focus:outline-none focus:border-[#BC0202] focus:bg-white transition"
+            className="w-full pl-9 pr-3 py-2 text-xs bg-[#fafbfb] border border-[#d2d5d8] rounded-lg focus:outline-none focus:border-[#ff268b] focus:bg-white transition"
           />
         </div>
 
@@ -315,7 +315,7 @@ export default function AdminGuidesPage() {
               onClick={() => setCategoryFilter(cat)}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition whitespace-nowrap ${
                 categoryFilter === cat
-                  ? 'bg-[#BC0202] text-white'
+                  ? 'bg-[#ff268b] text-white'
                   : 'bg-[#f1f2f3] text-[#5c5f62] hover:bg-[#e4e5e7]'
               }`}
             >
@@ -328,7 +328,7 @@ export default function AdminGuidesPage() {
       {/* ── LIST OF ARTICLES ───────────────────────────────────────────── */}
       {isLoading ? (
         <div className="bg-white p-12 rounded-2xl border border-[#e1e3e5] text-center">
-          <Loader2 className="w-6 h-6 animate-spin text-[#BC0202] mx-auto mb-2" />
+          <Loader2 className="w-6 h-6 animate-spin text-[#ff268b] mx-auto mb-2" />
           <p className="text-xs text-[#6d7175]">Loading parenting guides…</p>
         </div>
       ) : isError ? (
@@ -351,7 +351,7 @@ export default function AdminGuidesPage() {
           {!search && (
             <button
               onClick={handleAddNew}
-              className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-[#BC0202] text-white text-xs font-bold rounded-lg"
+              className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-[#ff268b] text-white text-xs font-bold rounded-lg"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Create Guide</span>
@@ -414,7 +414,7 @@ export default function AdminGuidesPage() {
 
                     {/* Title & Excerpt */}
                     <td className="py-3 px-4 max-w-md">
-                      <div className="font-bold text-[#1a1a1a] text-sm hover:text-[#BC0202] transition line-clamp-1">
+                      <div className="font-bold text-[#1a1a1a] text-sm hover:text-[#ff268b] transition line-clamp-1">
                         {article.title}
                       </div>
                       <p className="text-[11px] text-[#6d7175] line-clamp-1 mt-0.5">
@@ -427,7 +427,7 @@ export default function AdminGuidesPage() {
 
                     {/* Category */}
                     <td className="py-3 px-4">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-pink-50 text-[#BC0202] border border-pink-100">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-pink-50 text-[#ff268b] border border-pink-100">
                         {article.category}
                       </span>
                     </td>
@@ -530,7 +530,7 @@ export default function AdminGuidesPage() {
                     }));
                   }}
                   placeholder="e.g. 5 Simple Steps to Calm a Fussy Newborn"
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-[#BC0202] focus:ring-1 focus:ring-[#BC0202]"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff268b] focus:ring-1 focus:ring-[#ff268b]"
                 />
               </div>
 
@@ -546,7 +546,7 @@ export default function AdminGuidesPage() {
                     value={form.slug}
                     onChange={(e) => setForm((prev) => ({ ...prev, slug: e.target.value }))}
                     placeholder="e.g. newborn-sleep-tips"
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-[#BC0202]"
+                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff268b]"
                   />
                   <small className="text-[10px] text-gray-500">Accessible at /guides/{form.slug}</small>
                 </div>
@@ -562,7 +562,7 @@ export default function AdminGuidesPage() {
                     required
                     value={form.minutes}
                     onChange={(e) => setForm((prev) => ({ ...prev, minutes: Number(e.target.value) }))}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-[#BC0202]"
+                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff268b]"
                   />
                 </div>
               </div>
@@ -580,7 +580,7 @@ export default function AdminGuidesPage() {
                       onClick={() => setForm((prev) => ({ ...prev, category: cat }))}
                       className={`px-2.5 py-1 text-[11px] font-semibold rounded-md border transition ${
                         form.category === cat
-                          ? 'bg-pink-50 border-pink-400 text-[#BC0202]'
+                          ? 'bg-pink-50 border-pink-400 text-[#ff268b]'
                           : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'
                       }`}
                     >
@@ -593,7 +593,7 @@ export default function AdminGuidesPage() {
                   value={form.category}
                   onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
                   placeholder="Or enter custom category..."
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-[#BC0202]"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff268b]"
                 />
               </div>
 
@@ -607,7 +607,7 @@ export default function AdminGuidesPage() {
                   value={form.excerpt}
                   onChange={(e) => setForm((prev) => ({ ...prev, excerpt: e.target.value }))}
                   placeholder="Brief preview text displayed on the slider card..."
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-[#BC0202]"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff268b]"
                 />
               </div>
 
@@ -624,7 +624,7 @@ export default function AdminGuidesPage() {
                       onClick={() => setForm((prev) => ({ ...prev, image: preset.value }))}
                       className={`relative aspect-4/3 rounded-lg overflow-hidden border-2 transition ${
                         form.image === preset.value
-                          ? 'border-[#BC0202] shadow-xs'
+                          ? 'border-[#ff268b] shadow-xs'
                           : 'border-transparent hover:opacity-80'
                       }`}
                       title={preset.label}
@@ -640,7 +640,7 @@ export default function AdminGuidesPage() {
                     value={form.image}
                     onChange={(e) => setForm((prev) => ({ ...prev, image: e.target.value }))}
                     placeholder="Enter image URL or select from presets above"
-                    className="flex-1 px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-[#BC0202]"
+                    className="flex-1 px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff268b]"
                   />
                   <input
                     type="file"
@@ -675,7 +675,7 @@ export default function AdminGuidesPage() {
                         sections: [...prev.sections, [`Step ${prev.sections.length + 1}`, 'Description']],
                       }))
                     }
-                    className="text-xs font-bold text-[#BC0202] hover:underline inline-flex items-center gap-1"
+                    className="text-xs font-bold text-[#ff268b] hover:underline inline-flex items-center gap-1"
                   >
                     <Plus className="w-3 h-3" /> Add Section
                   </button>
@@ -742,7 +742,7 @@ export default function AdminGuidesPage() {
                 <button
                   type="submit"
                   disabled={saveMutation.isPending}
-                  className="px-5 py-2 bg-[#BC0202] hover:bg-[#e01977] text-white text-xs font-bold rounded-xl shadow-sm inline-flex items-center gap-1.5"
+                  className="px-5 py-2 bg-[#ff268b] hover:bg-[#e01977] text-white text-xs font-bold rounded-xl shadow-sm inline-flex items-center gap-1.5"
                 >
                   {saveMutation.isPending ? (
                     <>
@@ -787,7 +787,7 @@ export default function AdminGuidesPage() {
                   alt={previewArticle.title}
                   className="w-full h-full object-cover"
                 />
-                <span className="absolute top-3 left-3 bg-white/90 text-[#BC0202] text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
+                <span className="absolute top-3 left-3 bg-white/90 text-[#ff268b] text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
                   {previewArticle.category}
                 </span>
               </div>
@@ -802,7 +802,7 @@ export default function AdminGuidesPage() {
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" /> {previewArticle.minutes} min read
                   </span>
-                  <span className="text-[#BC0202] font-bold flex items-center gap-0.5">
+                  <span className="text-[#ff268b] font-bold flex items-center gap-0.5">
                     Read Guide →
                   </span>
                 </div>

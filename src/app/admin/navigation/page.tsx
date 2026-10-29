@@ -1002,7 +1002,7 @@ export default function AdminNavigationPage() {
             {/* Header Simulation Bar */}
             <div className="bg-white border border-gray-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
               <div className="flex items-center gap-8">
-                <span className="font-extrabold text-base tracking-tight bg-gradient-to-r from-[#BC0202] to-[#0284c7] bg-clip-text text-transparent">KIDOBOX</span>
+                <span className="font-extrabold text-base tracking-tight bg-gradient-to-r from-[#ff268b] to-[#0284c7] bg-clip-text text-transparent">KIDOBOX</span>
                 <nav className="flex items-center gap-6 text-xs font-medium text-gray-600">
                   {currentMenu?.items.map((item) => (
                     <div key={item.id} className="relative group">
@@ -1049,7 +1049,7 @@ export default function AdminNavigationPage() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-xs">
               {/* Col 1 */}
               <div className="space-y-3">
-                <span className="text-base font-bold bg-gradient-to-r from-[#BC0202] to-[#0284c7] bg-clip-text text-transparent">KIDOBOX</span>
+                <span className="text-base font-bold bg-gradient-to-r from-[#ff268b] to-[#0284c7] bg-clip-text text-transparent">KIDOBOX</span>
                 <p className="text-xs leading-relaxed text-slate-400">{footer.about_text}</p>
                 <div className="flex items-center gap-3 pt-2 text-white">
                   <InstagramIcon className="w-4 h-4 cursor-pointer hover:text-pink-400" />

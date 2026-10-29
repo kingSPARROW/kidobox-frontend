@@ -501,7 +501,7 @@ export function StoreNav() {
             )}
           </div>
 
-          <div className="header-actions">
+          <div className="header-actions" style={{ marginLeft: 'auto' }}>
             <Link href="/account" aria-label="Your account">
               <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="7" r="3.5" />

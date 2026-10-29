@@ -641,7 +641,7 @@ export default function KidoboxHomePage() {
               <span className="why-star float-anim"><Star size={28} fill="#ffbc00" color="#ffbc00" /></span>
             </div>
             <div className="benefit-grid" id="benefit-grid">
-              {(content.benefits || []).map((benefit, i) => <div className="benefit" key={i}><span className="benefit-icon-badge">{[<Leaf key="leaf" size={22} color="#10b981" />, <Heart key="heart" size={22} color="#BC0202" />, <Compass key="compass" size={22} color="#00adeb" />, <Gift key="gift" size={22} color="#f59e0b" />, <ShieldCheck key="shield" size={22} color="#0284c7" />, <Truck key="truck" size={22} color="#8b5cf6" />][i % 6]}</span><p>{benefit.title}<small>{benefit.subtitle}</small></p></div>)}
+              {(content.benefits || []).map((benefit, i) => <div className="benefit" key={i}><span className="benefit-icon-badge">{[<Leaf key="leaf" size={22} color="#10b981" />, <Heart key="heart" size={22} color="#ff268b" />, <Compass key="compass" size={22} color="#00adeb" />, <Gift key="gift" size={22} color="#f59e0b" />, <ShieldCheck key="shield" size={22} color="#0284c7" />, <Truck key="truck" size={22} color="#8b5cf6" />][i % 6]}</span><p>{benefit.title}<small>{benefit.subtitle}</small></p></div>)}
             </div>
           </section>
 
@@ -798,7 +798,7 @@ export default function KidoboxHomePage() {
               <div className="family-club-perks">
                 <span><ShieldCheck size={16} color="#10b981" /> 100% Certified Baby-Safe</span>
                 <span><Truck size={16} color="#00adeb" /> Free Express Delivery</span>
-                <span><Gift size={16} color="#BC0202" /> Secret Birthday Perks</span>
+                <span><Gift size={16} color="#ff268b" /> Secret Birthday Perks</span>
               </div>
             </div>
 

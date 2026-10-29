@@ -37,7 +37,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-sm">
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="w-12 h-12 bg-gradient-to-tr from-[#BC0202] via-[#f43f5e] to-[#0284c7] rounded-2xl flex items-center justify-center text-white mx-auto mb-3 shadow-md">
+          <div className="w-12 h-12 bg-gradient-to-tr from-[#ff268b] via-[#f43f5e] to-[#0284c7] rounded-2xl flex items-center justify-center text-white mx-auto mb-3 shadow-md">
             <ShoppingBag className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-xl font-bold text-[#1a1a1a] tracking-tight">KIDOBOX Admin</h1>
@@ -55,7 +55,7 @@ export default function AdminLoginPage() {
           {/* Demo Hint */}
           <div className="mb-5 p-3 bg-[#fdf2f8] rounded-xl text-xs text-[#303030] border border-[#fbcfe8]">
             <div className="flex items-center gap-1.5 font-semibold text-[#9d174d] mb-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#BC0202]" />
+              <ShieldCheck className="w-3.5 h-3.5 text-[#ff268b]" />
               Store Admin Credentials:
             </div>
             <div className="font-mono text-[11px] text-[#4b5563] space-y-0.5">
@@ -75,7 +75,7 @@ export default function AdminLoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#BC0202] focus:ring-1 focus:ring-[#BC0202] transition"
+                  className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b] focus:ring-1 focus:ring-[#ff268b] transition"
                   placeholder="admin@kidobox.com"
                 />
               </div>
@@ -92,7 +92,7 @@ export default function AdminLoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#BC0202] focus:ring-1 focus:ring-[#BC0202] transition"
+                  className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b] focus:ring-1 focus:ring-[#ff268b] transition"
                 />
               </div>
             </div>
@@ -100,7 +100,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-[#BC0202] to-[#0284c7] hover:opacity-95 text-white text-xs font-semibold rounded-xl shadow transition flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-[#ff268b] to-[#0284c7] hover:opacity-95 text-white text-xs font-semibold rounded-xl shadow transition flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isLoading ? (
                 <>
