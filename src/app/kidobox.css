@@ -185,136 +185,63 @@
   opacity: 1 !important;
 }
 
-/* Hero Slider - Full Height Banner */
+/* Hero Slider - Clean Full-Graphic Banner */
 .hero-slider {
   position: relative;
   overflow: hidden;
-  min-height: calc(100vh - 186px);
-  min-height: calc(100dvh - 186px);
-  display: flex;
-  align-items: center;
-}
-
-.hero-slider-inner,
-.hero-slider .hero-inner {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  height: 100% !important;
-  min-height: calc(100vh - 186px) !important;
-  min-height: calc(100dvh - 186px) !important;
-  padding: 60px 0 120px 0 !important;
-}
-
-.hero-slider .hero-copy {
-  position: relative;
-  z-index: 2;
-  width: 52%;
-  max-width: 680px;
-  padding: 0 !important;
-}
-
-.hero-slide-copy {
-  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.hero-slider .hero-copy h1 {
-  font-size: clamp(48px, 4.4vw, 76px) !important;
-  line-height: 1.05 !important;
-  max-width: 580px !important;
-  margin-top: 10px;
-}
-
-.hero-slider .hero-copy > p {
-  font-size: clamp(17px, 1.3vw, 23px) !important;
-  font-weight: 700 !important;
-  line-height: 1.5 !important;
-  margin: 22px 0 30px !important;
-  max-width: 520px;
-  color: #334e68;
-}
-
-.hero-slider .hero-cta-group {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  margin-top: 26px;
-}
-
-.hero-slider .hero-cta-group .button {
-  padding: 14px 34px !important;
-  font-size: 15px !important;
-  border-radius: 9999px !important;
-  font-weight: 800 !important;
-}
-
-.secondary-btn {
-  background: #ffffffdd;
-  color: var(--navy) !important;
-  border: 1px solid #e1e7ee;
-}
-
-.secondary-btn:hover {
-  background: #ffffff;
-  border-color: var(--pink);
-  color: var(--pink) !important;
-}
-
-.hero-slider .hero-image-stage {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 58%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.hero-slider .hero-slide-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 35%;
-  mask-image: linear-gradient(to right, transparent, #000 22%);
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 22%);
-  animation: fadeInUp 0.7s ease-out;
-}
-
-.hero-slider .hero-promise {
-  position: absolute;
-  z-index: 3;
-  bottom: 32px !important;
-  left: 0 !important;
-  display: flex;
-  gap: 16px;
-}
-
-.hero-slider .hero-promise > div {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(8px);
-  padding: 12px 18px;
-  border-radius: 16px;
-  box-shadow: 0 4px 18px rgba(18, 46, 80, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-}
-
-.hero-slider .hero-promise > div > span {
-  font-size: 28px;
-}
-
-.hero-slider .hero-promise b {
-  font-size: 12px;
+  background: transparent !important;
+  padding: 16px 0 8px 0;
   display: block;
 }
 
-.hero-slider .hero-promise small {
-  font-size: 10px;
-  color: #627d98;
+.hero-slider-container {
+  position: relative;
+  width: 100%;
+}
+
+.hero-slide-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px -8px rgba(18, 46, 80, 0.1);
+  background: #fdf2f6;
+  line-height: 0;
+}
+
+.hero-banner-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.hero-banner-image {
+  width: 100%;
+  height: auto;
+  max-height: 560px;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-slide-wrapper:hover .hero-banner-image {
+  transform: scale(1.008);
+}
+
+@media (max-width: 768px) {
+  .hero-slider {
+    padding: 10px 0 4px 0;
+  }
+  .hero-slide-wrapper {
+    border-radius: 14px;
+  }
+  .hero-banner-image {
+    max-height: 380px;
+  }
 }
 
 .slider-arrow {
@@ -363,25 +290,6 @@
   z-index: 10;
 }
 
-@media (max-width: 900px) {
-  .hero-slider,
-  .hero-slider-inner,
-  .hero-slider .hero-inner {
-    min-height: calc(100vh - 165px) !important;
-    min-height: calc(100dvh - 165px) !important;
-    padding-bottom: 95px !important;
-  }
-  .hero-slider .hero-copy {
-    width: 80%;
-  }
-  .hero-slider .hero-image-stage {
-    width: 75%;
-    opacity: 0.6;
-  }
-  .hero-slider .hero-promise {
-    display: none;
-  }
-}
 
 
 .slider-dot {
