@@ -4,9 +4,10 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
-import { articles } from '@/lib/kidobox-data';
+import { useStorefront, mediaUrl } from '@/lib/storefront';
 
 export default function GuidesPage() {
+  const { articles, content } = useStorefront();
   const [selectedFilter, setSelectedFilter] = useState('all');
 
   const filteredArticles = articles.filter(
@@ -29,7 +30,7 @@ export default function GuidesPage() {
         {/* Featured Journal Article */}
         {featured && (
           <section className="journal-feature">
-            <img src={`/assets/hd/${featured.image}.webp`} alt={featured.title} />
+            <img src={mediaUrl(featured.image)} alt={featured.title} />
             <div>
               <span className="mini-eyebrow">{featured.category}</span>
               <h2>{featured.title}</h2>
@@ -68,7 +69,7 @@ export default function GuidesPage() {
             <Link className="blog-card" href={`/guides/${a.slug}`} key={a.slug}>
               <div className="blog-photo">
                 <img
-                  src={`/assets/hd/${a.image}.webp`}
+                  src={mediaUrl(a.image)}
                   alt={a.title}
                   width={1000}
                   height={650}

@@ -6,14 +6,15 @@ import { useSearchParams } from 'next/navigation';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { useCart } from '@/lib/cart-context';
-import { categories, products, ages, money, Product } from '@/lib/kidobox-data';
+import { money, Product } from '@/lib/kidobox-data';
+import { useStorefront, mediaUrl, cartItem } from '@/lib/storefront';
 import { LazyImage } from '@/components/lazy-image';
 import { Heart } from 'lucide-react';
 
 interface CatalogViewProps {
   initialCategory?: string;
   initialAge?: string;
-  initialMode?: 'all' | 'new' | 'bestsellers';
+  initialMode?: 'all' | 'new' | 'bestsellers' | 'offers';
   title?: string;
   description?: string;
   heroImage?: string;
@@ -31,8 +32,12 @@ export function CatalogView({
   heroColor = 'pink-bg',
   breadcrumbTitle,
 }: CatalogViewProps) {
+  const { categories, products, ages, isLoading, isError, refetch, content, offers } = useStorefront();
   const searchParams = useSearchParams();
   const searchQ = (searchParams.get('q') || '').trim();
+  initialAge = initialAge || searchParams.get('age') || undefined;
+  const category = categories.find(c => c.slug === initialCategory);
+  if (category) { title = category.name; description = category.description; heroImage = category.image; }
   const searchBrand = searchParams.get('brand') || '';
 
   const { addItem, setIsOpen } = useCart();
@@ -41,7 +46,7 @@ export function CatalogView({
   const [saleOnly, setSaleOnly] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const [wishlist, setWishlist] = useState<number[]>([]);
+  const [wishlist, setWishlist] = useState<string[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -56,7 +61,7 @@ export function CatalogView({
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  const toggleWishlist = (id: number, name: string) => {
+  const toggleWishlist = (id: string, name: string) => {
     setWishlist((prev) => {
       const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
       try {
@@ -69,21 +74,18 @@ export function CatalogView({
   };
 
   const handleAddToCart = (p: Product) => {
-    addItem({
-      product_id: String(p.id),
-      variant_id: `${p.id}-${p.sizes[0] || 'default'}`,
-      title: p.name,
-      variant_title: p.sizes[0] || undefined,
-      price: p.price,
-      image_url: `/assets/hd/${p.image}.webp`,
-    });
+    if (!p.inStock || !p.variantId) return;
+    const item = cartItem(p);
+    if (!item) return;
+    addItem(item);
     triggerToast(`${p.name} added with love ♡`);
   };
 
   const filteredList = useMemo(() => {
     let list = products.filter((p) => {
-      if (initialCategory !== 'all' && p.category !== initialCategory) return false;
+      if (initialCategory !== 'all' && !p.categorySlugs?.includes(initialCategory)) return false;
       if (initialAge && p.age !== initialAge && p.age !== 'all') return false;
+      if (initialMode === 'offers' && p.old <= p.price) return false;
       if (initialMode === 'new' && !p.isNew) return false;
       if (initialMode === 'bestsellers' && p.tag !== 'Bestseller') return false;
       if (searchBrand && p.brand.toLowerCase() !== searchBrand.toLowerCase()) return false;
@@ -115,7 +117,9 @@ export function CatalogView({
     else if (selectedSort === 'new') list.sort((a, b) => Number(b.isNew) - Number(a.isNew));
 
     return list;
-  }, [initialCategory, initialAge, initialMode, searchBrand, searchQ, priceFilter, saleOnly, selectedSort]);
+  }, [products, categories, initialCategory, initialAge, initialMode, searchBrand, searchQ, priceFilter, saleOnly, selectedSort]);
+
+  useEffect(() => { setCurrentPage(1); }, [initialCategory, initialAge, initialMode, searchBrand, searchQ, priceFilter, saleOnly, selectedSort]);
 
   const pageSize = 9;
   const totalPages = Math.ceil(filteredList.length / pageSize);
@@ -151,6 +155,9 @@ export function CatalogView({
           )}
         </nav>
 
+        {isLoading && <p role="status">Loading products…</p>}
+        {isError && <p role="alert">Unable to load products. <button onClick={() => refetch()}>Retry</button></p>}
+        {initialMode === 'offers' && <section className="offer-slider-track">{offers.map(offer => <article className="offer offer-slider-card pink-bg" key={offer.code}><h3>{offer.code}</h3><p>{offer.title}</p><p>{offer.type === 'percentage' ? `${offer.value}% off` : offer.type === 'free_shipping' ? 'Free shipping' : `${money(offer.value)} off`}{offer.min_cart_amount ? ` on orders over ${money(offer.min_cart_amount)}` : ''}</p></article>)}</section>}
         {/* Collection Hero */}
         <section className={`collection-hero ${heroColor}`}>
           <div>
@@ -160,7 +167,7 @@ export function CatalogView({
             <span className="tiny-note">Thoughtfully chosen · Made for everyday moments</span>
           </div>
           <img
-            src={`/assets/hd/${heroImage}.webp`}
+            src={mediaUrl(heroImage)}
             alt={displayTitle}
             width={1000}
             height={750}
@@ -181,7 +188,7 @@ export function CatalogView({
               return (
                 <Link
                   key={c.slug}
-                  href={`/${c.slug}`}
+                  href={`/collections/${c.slug}`}
                   className={initialCategory === c.slug ? 'current' : ''}
                 >
                   {c.name}
@@ -312,7 +319,7 @@ export function CatalogView({
                         <Link href={`/products/${p.slug}`} aria-label={`View ${p.name}`}>
                           <LazyImage
                             className="product-photo"
-                            src={`/assets/hd/${p.image}.webp`}
+                            src={mediaUrl(p.image)}
                             width={800}
                             height={800}
                             alt={p.name}
@@ -338,7 +345,7 @@ export function CatalogView({
                       </div>
 
                       <div className="product-card-info">
-                        <Link href={`/${p.category}`} className="product-category">
+                        <Link href={`/collections/${p.category}`} className="product-category">
                           {catObj?.short || p.category}
                         </Link>
                         <h3>
@@ -356,7 +363,7 @@ export function CatalogView({
                           </div>
                           <button
                             className="add-cart glow-btn"
-                            onClick={() => handleAddToCart(p)}
+                            disabled={!p.inStock} onClick={() => handleAddToCart(p)}
                             aria-label={`Add ${p.name} to cart`}
                           >
                             <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -364,7 +371,7 @@ export function CatalogView({
                               <circle cx="9" cy="21" r="1" />
                               <circle cx="19" cy="21" r="1" />
                             </svg>
-                            <span>Add to Cart</span>
+                            <span>{p.inStock ? 'Add to Cart' : 'Sold out'}</span>
                           </button>
                         </div>
                       </div>

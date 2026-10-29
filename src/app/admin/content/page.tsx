@@ -1,121 +1,51 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FileText, Plus, Search, ExternalLink, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { fetchApi } from '@/lib/api';
+import type { HomepageContent } from '@/lib/storefront';
+
+const sections = {
+  ages: ['slug', 'title', 'subtitle', 'image', 'age', 'color', 'description'],
+  articles: ['slug', 'title', 'category', 'image', 'minutes', 'excerpt', 'sections'],
+  instagram: ['image', 'title', 'link'],
+  benefits: ['title', 'subtitle'],
+  hero_promises: ['title', 'subtitle'],
+} as const;
+const panels = { newborn: ['title', 'description', 'image', 'link', 'cta'], app: ['title', 'description', 'ios_link', 'android_link'], copy: ['announcement', 'instagram_handle', 'instagram_link'] };
+const inputClass = 'w-full border border-[#c9cccf] rounded-lg p-2 text-sm';
 
 export default function AdminContentPage() {
-  const [activeTab, setActiveTab] = useState<'pages' | 'policies'>('pages');
-
-  const pages = [
-    { title: 'About Our Artisanal Studio', slug: 'about-us', updated: '2 days ago', status: 'Published' },
-    { title: 'Contact & Support', slug: 'contact', updated: 'Yesterday', status: 'Published' },
-    { title: 'Frequently Asked Questions (FAQ)', slug: 'faq', updated: '3 weeks ago', status: 'Published' },
-  ];
-
-  const policies = [
-    { title: 'Refund & Returns Policy', key: 'refund', desc: '30-day return window, reverse pickup terms.' },
-    { title: 'Privacy Policy', key: 'privacy', desc: 'Customer data collection and cookie policy.' },
-    { title: 'Terms of Service', key: 'terms', desc: 'Governing laws and merchant trade terms.' },
-    { title: 'Shipping Policy', key: 'shipping', desc: 'Shiprocket domestic surface delivery SLAs.' },
-  ];
-
-  return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-[#1a1a1a] tracking-tight">Content</h1>
-          <p className="text-xs text-[#616161] mt-0.5">
-            Manage static storefront pages, blog articles, and legal store policies.
-          </p>
-        </div>
-
-        <button
-          onClick={() => alert('New page editor launched.')}
-          className="px-3.5 py-1.5 bg-[#1a1a1a] hover:bg-[#303030] text-white text-xs font-semibold rounded-lg shadow-sm transition inline-flex items-center gap-1.5 self-start"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          Add page
-        </button>
-      </div>
-
-      {/* Main Card */}
-      <div className="bg-white rounded-xl border border-[#e1e3e5] shadow-[0_1px_0_rgba(0,0,0,0.05)] overflow-hidden">
-        {/* Tabs */}
-        <div className="border-b border-[#e1e3e5] px-4 flex items-center gap-6 text-xs font-semibold">
-          <button
-            onClick={() => setActiveTab('pages')}
-            className={`py-3 border-b-2 transition ${
-              activeTab === 'pages'
-                ? 'border-[#1a1a1a] text-[#1a1a1a]'
-                : 'border-transparent text-[#616161] hover:text-[#1a1a1a]'
-            }`}
-          >
-            Pages
-          </button>
-          <button
-            onClick={() => setActiveTab('policies')}
-            className={`py-3 border-b-2 transition ${
-              activeTab === 'policies'
-                ? 'border-[#1a1a1a] text-[#1a1a1a]'
-                : 'border-transparent text-[#616161] hover:text-[#1a1a1a]'
-            }`}
-          >
-            Store Policies
-          </button>
-        </div>
-
-        {/* Content Table */}
-        {activeTab === 'pages' ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-[#f7f7f8] border-b border-[#e1e3e5] text-[#616161] font-medium">
-                <tr>
-                  <th className="py-2.5 px-4">Title</th>
-                  <th className="py-2.5 px-4">Handle</th>
-                  <th className="py-2.5 px-4">Last modified</th>
-                  <th className="py-2.5 px-4">Visibility</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#e1e3e5]">
-                {pages.map((p, idx) => (
-                  <tr key={idx} className="hover:bg-[#f9fafb] transition">
-                    <td className="py-3 px-4 font-bold text-[#1a1a1a]">
-                      <span className="hover:underline cursor-pointer">{p.title}</span>
-                    </td>
-                    <td className="py-3 px-4 text-[#616161] font-mono">
-                      /pages/{p.slug}
-                    </td>
-                    <td className="py-3 px-4 text-[#616161]">{p.updated}</td>
-                    <td className="py-3 px-4">
-                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold border bg-[#e3f1df] text-[#0d5921] border-[#aee9d1]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#008060]" />
-                        {p.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="p-6 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {policies.map((pol) => (
-                <div key={pol.key} className="p-4 bg-[#f9fafb] rounded-xl border border-[#e1e3e5] space-y-1">
-                  <div className="font-bold text-xs text-[#1a1a1a] flex items-center justify-between">
-                    <span>{pol.title}</span>
-                    <span className="text-[10px] text-[#008060] font-semibold bg-[#e3f1df] px-1.5 py-0.5 rounded">
-                      Configured
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-[#616161]">{pol.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  const [draft, setDraft] = useState<HomepageContent | null>(null);
+  const query = useQuery({ queryKey: ['adminContent'], queryFn: () => fetchApi('/content') });
+  const content: HomepageContent = draft || query.data?.data || {};
+  const save = useMutation({ mutationFn: () => fetchApi('/content', { method: 'PUT', body: JSON.stringify({ content }) }), onSuccess: () => { query.refetch(); } });
+  const set = (key: string, value: unknown) => setDraft({ ...content, [key]: value });
+  if (query.isLoading) return <p role="status">Loading content…</p>;
+  if (query.isError) return <p role="alert">Unable to load content. <button onClick={() => query.refetch()}>Retry</button></p>;
+  return <div className="space-y-5">
+    <h1 className="text-xl font-bold">Storefront content</h1>
+    <p className="text-sm text-gray-600">Edit the existing homepage sections below. Products and brands come from Products; categories from Collections; promotions from Banners; offers from Discounts; reviews from Testimonials; menus and footer from Navigation. Empty sections display no content.</p>
+    <form onSubmit={e => { e.preventDefault(); save.mutate(); }} className="space-y-5">
+      {Object.entries(sections).map(([key, fields]) => {
+        const rows = (content[key as keyof HomepageContent] || []) as unknown as Record<string, unknown>[];
+        return <section className="bg-white border rounded-xl p-5 space-y-4" key={key}>
+          <h2 className="font-bold capitalize">{key.replaceAll('_', ' ')}</h2>
+          {rows.map((row, index) => <fieldset className="border rounded-lg p-4 space-y-3" key={index}>
+            <legend>Item {index + 1}</legend>
+            <div className="grid sm:grid-cols-2 gap-3">{fields.map(field => <label className="text-xs capitalize space-y-1" key={field}>{field.replaceAll('_', ' ')}
+              {field === 'sections' ? <textarea className={inputClass} rows={6} value={(row.sections as string[][] || []).map(pair => pair.join(' | ')).join('\n')} onChange={e => set(key, rows.map((r, i) => i === index ? { ...r, sections: e.target.value.split('\n').filter(Boolean).map(line => { const [heading, ...body] = line.split(' | '); return [heading, body.join(' | ')]; }) } : r))} placeholder="Heading | Paragraph (one section per line)" /> :
+                <input className={inputClass} type={field === 'minutes' ? 'number' : 'text'} min={1} value={String(row[field] ?? '')} onChange={e => set(key, rows.map((r, i) => i === index ? { ...r, [field]: field === 'minutes' ? Number(e.target.value) : e.target.value } : r))} />}
+            </label>)}</div>
+            <div className="flex gap-4"><button type="button" disabled={index === 0} onClick={() => { const next = [...rows]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; set(key, next); }}>Move up</button><button type="button" className="text-red-700" onClick={() => set(key, rows.filter((_, i) => i !== index))}>Remove</button></div>
+          </fieldset>)}
+          <button type="button" className="border rounded-lg px-3 py-2" onClick={() => set(key, [...rows, Object.fromEntries(fields.map(f => [f, f === 'sections' ? [] : f === 'minutes' ? 1 : '']))])}>Add item</button>
+        </section>;
+      })}
+      {Object.entries(panels).map(([key, fields]) => <section key={key} className="bg-white border rounded-xl p-5 space-y-3"><h2 className="font-bold capitalize">{key}</h2><div className="grid sm:grid-cols-2 gap-3">{fields.map(field => <label key={field} className="text-xs capitalize">{field.replaceAll('_', ' ')}<input className={inputClass} value={(content[key as 'newborn' | 'app' | 'copy'] || {})[field] || ''} onChange={e => set(key, { ...content[key as 'newborn' | 'app' | 'copy'], [field]: e.target.value })} /></label>)}</div></section>)}
+      {save.isError && <p role="alert" className="text-red-700">{save.error.message}</p>}
+      {save.isSuccess && <p role="status">Content saved.</p>}
+      <button disabled={save.isPending} className="bg-[#1a1a1a] text-white rounded-lg px-5 py-2">{save.isPending ? 'Saving…' : 'Save content'}</button>
+    </form>
+  </div>;
 }

@@ -29,6 +29,8 @@ export function LazyImage({
   const [hasError, setHasError] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
+  useEffect(() => { setHasError(false); setIsLoaded(false); }, [src]);
+
   const displaySrc = hasError ? fallbackSrc : src;
 
   useEffect(() => {

@@ -4,10 +4,11 @@ import React from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
-import { categories } from '@/lib/kidobox-data';
+import { useStorefront, mediaUrl } from '@/lib/storefront';
 import { Sparkles } from 'lucide-react';
 
 export default function CategoriesDirectoryPage() {
+  const { categories, content } = useStorefront();
   return (
     <div className="min-h-screen flex flex-col bg-white" data-page="categories">
       <StoreNav />
@@ -29,9 +30,9 @@ export default function CategoriesDirectoryPage() {
 
         <div className="category-directory">
           {categories.map((c) => (
-            <Link className={`directory-card ${c.color}`} href={`/${c.slug}`} key={c.slug}>
+            <Link className={`directory-card ${c.color}`} href={`/collections/${c.slug}`} key={c.slug}>
               <img
-                src={`/assets/hd/${c.image}.webp`}
+                src={mediaUrl(c.image)}
                 alt={c.name}
                 width={800}
                 height={800}

@@ -4,10 +4,11 @@ import React from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
-import { ages } from '@/lib/kidobox-data';
+import { useStorefront, mediaUrl } from '@/lib/storefront';
 import { Baby } from 'lucide-react';
 
 export default function AgesDirectoryPage() {
+  const { ages, content } = useStorefront();
   return (
     <div className="min-h-screen flex flex-col bg-white" data-page="ages">
       <StoreNav />
@@ -29,9 +30,9 @@ export default function AgesDirectoryPage() {
 
         <div className="category-directory age-directory">
           {ages.map((a) => (
-            <Link className={`directory-card ${a.color}`} href={`/age-${a.slug}`} key={a.slug}>
+            <Link className={`directory-card ${a.color}`} href={`/shop?age=${encodeURIComponent(a.age)}`} key={a.slug}>
               <img
-                src={`/assets/hd/${a.image}.webp`}
+                src={mediaUrl(a.image)}
                 alt={a.title}
                 width={800}
                 height={800}

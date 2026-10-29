@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { useCart } from '@/lib/cart-context';
-import { categories, products, ages, articles, brands, money, Product } from '@/lib/kidobox-data';
+import { money, Product } from '@/lib/kidobox-data';
+import { useStorefront, mediaUrl, cartItem, safeLink } from '@/lib/storefront';
 import { HeroSlider } from '@/components/hero-slider';
 import { ProductSlider } from '@/components/product-slider';
 import { ReviewsSlider } from '@/components/reviews-slider';
@@ -30,9 +31,10 @@ import {
 } from 'lucide-react';
 
 export default function KidoboxHomePage() {
+  const { categories, products, ages, articles, brands, isLoading, isError, refetch, content, banners, offers } = useStorefront();
   const { addItem, setIsOpen } = useCart();
   const [activeTab, setActiveTab] = useState('all');
-  const [wishlist, setWishlist] = useState<number[]>([]);
+  const [wishlist, setWishlist] = useState<string[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [showToastLink, setShowToastLink] = useState(false);
   const categoryStripRef = useRef<HTMLDivElement>(null);
@@ -59,7 +61,7 @@ export default function KidoboxHomePage() {
     }, 3800);
   };
 
-  const toggleWishlist = (id: number, name: string) => {
+  const toggleWishlist = (id: string, name: string) => {
     setWishlist((prev) => {
       const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
       try {
@@ -75,14 +77,10 @@ export default function KidoboxHomePage() {
   };
 
   const handleAddToCart = (p: Product) => {
-    addItem({
-      product_id: String(p.id),
-      variant_id: `${p.id}-${p.sizes[0] || 'default'}`,
-      title: p.name,
-      variant_title: p.sizes[0] || undefined,
-      price: p.price,
-      image_url: `/assets/hd/${p.image}.webp`,
-    });
+    if (!p.inStock || !p.variantId) return;
+    const item = cartItem(p);
+    if (!item) return;
+    addItem(item);
     triggerToast(`${p.name} added with love ♡`, true);
   };
 
@@ -99,8 +97,11 @@ export default function KidoboxHomePage() {
     });
   };
 
+  const newbornBanner = banners.find(b => b.position === 'footer_banner');
+  const newborn = newbornBanner ? { title: newbornBanner.title, description: newbornBanner.subtitle, image: newbornBanner.desktop_image_url, link: newbornBanner.cta_link, cta: newbornBanner.cta_text } : content.newborn;
+
   const filteredProducts = products.filter(
-    (p) => activeTab === 'all' || p.category === activeTab
+    (p) => p.tag === 'Bestseller' && (activeTab === 'all' || p.categorySlugs?.includes(activeTab))
   );
 
   return (
@@ -110,6 +111,9 @@ export default function KidoboxHomePage() {
       <main id="main-content" className="flex-1">
         {/* ── 1. Interactive Hero Slider with Autoplay & Badges ──────── */}
         <HeroSlider />
+        {isLoading && <p className="container" role="status">Loading store…</p>}
+        {isError && <p className="container" role="alert">Unable to load the store. <button onClick={() => refetch()}>Retry</button></p>}
+        {!isLoading && !isError && products.length === 0 && <p className="container">No products are available yet.</p>}
 
         <div className="container main-content">
           {/* ── 2. Shop by Category with Quick-Glide Arrows ────────────── */}
@@ -148,9 +152,9 @@ export default function KidoboxHomePage() {
 
             <div className="category-slider-track" id="category-grid" ref={categoryStripRef}>
               {categories.map((c) => (
-                <Link className="category category-card-compact" href={`/${c.slug}`} key={c.slug}>
+                <Link className="category category-card-compact" href={`/collections/${c.slug}`} key={c.slug}>
                   <LazyImage
-                    src={`/assets/hd/${c.image}.webp`}
+                    src={mediaUrl(c.image)}
                     alt={c.name}
                     width={115}
                     height={106}
@@ -166,79 +170,12 @@ export default function KidoboxHomePage() {
 
           {/* ── 3. Featured Promo Banners (Full-Width Responsive) ────────── */}
           <section className="promos" aria-label="Featured collections">
-            <article className="promo pink-bg">
-              <div>
-                <h3>
-                  Soft &amp; Stylish
-                  <br />
-                  Baby Clothing
-                </h3>
-                <p>
-                  100% GOTS Organic Cotton
-                  <br />
-                  gentle on tender baby skin
-                </p>
-                <Link className="button pink glow-on-hover" href="/clothing">
-                  Shop Clothing →
-                </Link>
-              </div>
-              <LazyImage
-                src="/assets/hd/clothing2.webp"
-                alt="Soft floral baby clothing"
-                className="promo-bg-img"
-                style={{ position: 'absolute', right: 0, bottom: 0, width: '59%', height: '100%', objectFit: 'cover' }}
-              />
-            </article>
-
-            <article className="promo blue-bg">
-              <div>
-                <h3>
-                  Dry Days,
-                  <br />
-                  Happier Days
-                </h3>
-                <p>
-                  Feather-touch diapers
-                  <br />
-                  &amp; 99% pure water wipes
-                </p>
-                <Link className="button blue glow-on-hover" href="/diapering">
-                  Shop Diapering →
-                </Link>
-              </div>
-              <LazyImage
-                src="/assets/hd/wipes.webp"
-                alt="Baby diapers and gentle wipes"
-                className="promo-bg-img"
-                style={{ position: 'absolute', right: 0, bottom: 0, width: '59%', height: '100%', objectFit: 'cover' }}
-              />
-            </article>
-
-            <article className="promo yellow-bg">
-              <div>
-                <h3>
-                  Nourishment
-                  <br />
-                  for a Brighter
-                  <br />
-                  Tomorrow
-                </h3>
-                <p>
-                  BPA-free silicone suction
-                  <br />
-                  tableware &amp; easy cups
-                </p>
-                <Link className="button yellow glow-on-hover" href="/feeding">
-                  Shop Feeding →
-                </Link>
-              </div>
-              <LazyImage
-                src="/assets/hd/feeding.webp"
-                alt="Baby bottles and feeding bowls"
-                className="promo-bg-img"
-                style={{ position: 'absolute', right: 0, bottom: 0, width: '59%', height: '100%', objectFit: 'cover' }}
-              />
-            </article>
+            {banners.filter(b => b.position === 'promotional_strip').map((b, i) => (
+              <article className={`promo ${['pink-bg', 'blue-bg', 'yellow-bg'][i % 3]}`} key={b.id}>
+                <div><h3>{b.title}</h3><p>{b.subtitle}</p><Link className="button pink glow-on-hover" href={safeLink(b.cta_link)}>{b.cta_text} →</Link></div>
+                <picture><source media="(max-width: 640px)" srcSet={mediaUrl(b.mobile_image_url || b.desktop_image_url)} /><img src={mediaUrl(b.desktop_image_url)} alt={b.title} className="promo-bg-img" style={{ position: 'absolute', right: 0, bottom: 0, width: '59%', height: '100%', objectFit: 'cover' }} /></picture>
+              </article>
+            ))}
           </section>
 
           {/* ── 4. Interactive Horizontal Product Slider: Trending Now ──── */}
@@ -248,7 +185,7 @@ export default function KidoboxHomePage() {
             icon={<Flame size={20} />}
             viewAllLink="/bestsellers"
             viewAllText="Explore All Trending"
-            products={products}
+            products={products.filter(p => p.featured)}
             wishlist={wishlist}
             onToggleWishlist={toggleWishlist}
             onAddToCart={handleAddToCart}
@@ -265,14 +202,7 @@ export default function KidoboxHomePage() {
               </div>
               <div className="bestsellers-toolbar">
                 <div className="filter-tabs" aria-label="Product categories">
-                  {[
-                    ['all', 'All Favorites'],
-                    ['clothing', 'Soft Clothing'],
-                    ['diapering', 'Diapering'],
-                    ['feeding', 'Safe Feeding'],
-                    ['toys', 'Montessori Toys'],
-                    ['bath-care', 'Bath & Skin'],
-                  ].map(([tabKey, label]) => (
+                  {[['all', 'All Favorites'], ...categories.map(c => [c.slug, c.name])].map(([tabKey, label]) => (
                     <button
                       key={tabKey}
                       onClick={() => setActiveTab(tabKey)}
@@ -329,7 +259,7 @@ export default function KidoboxHomePage() {
                       <Link href={`/products/${p.slug}`} aria-label={`View ${p.name}`}>
                         <LazyImage
                           className="product-photo"
-                          src={`/assets/hd/${p.image}.webp`}
+                          src={mediaUrl(p.image)}
                           width={600}
                           height={600}
                           alt={p.name}
@@ -359,7 +289,7 @@ export default function KidoboxHomePage() {
                     </div>
 
                     <div className="product-card-info">
-                      <Link href={`/${p.category}`} className="product-category">
+                      <Link href={`/collections/${p.category}`} className="product-category">
                         {categoryObj?.short || p.category}
                       </Link>
                       <h3>
@@ -368,7 +298,7 @@ export default function KidoboxHomePage() {
                       <p className="detail">{p.detail}</p>
                       <div className="rating">
                         <span className="stars" aria-label={`${p.rating} stars`}>
-                          ★★★★★
+                          {"★".repeat(Math.round(p.rating))}
                         </span>{' '}
                         &nbsp;{p.rating} <span>({p.reviews})</span>
                       </div>
@@ -379,7 +309,7 @@ export default function KidoboxHomePage() {
                         </div>
                         <button
                           className="add-cart glow-btn"
-                          onClick={() => handleAddToCart(p)}
+                          disabled={!p.inStock} onClick={() => handleAddToCart(p)}
                           aria-label={`Add ${p.name} to cart`}
                         >
                           <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -387,7 +317,7 @@ export default function KidoboxHomePage() {
                             <circle cx="9" cy="21" r="1" />
                             <circle cx="19" cy="21" r="1" />
                           </svg>
-                          <span>Add to Cart</span>
+                          <span>{p.inStock ? 'Add to Cart' : 'Sold out'}</span>
                         </button>
                       </div>
                     </div>
@@ -398,19 +328,19 @@ export default function KidoboxHomePage() {
           </section>
 
           {/* ── 6. Newborn Essentials Full-Width Banner ───────────────── */}
-          <section className="newborn-banner">
+          {newborn?.title && <section className="newborn-banner">
             <div className="newborn-banner-media">
               <LazyImage
-                src="/assets/hd/newborn.webp"
+                src={mediaUrl(newborn?.image)}
                 alt="A peacefully sleeping newborn"
                 priority
               />
             </div>
             <div className="newborn-banner-content">
-              <h2>Newborn Essentials</h2>
-              <p>Everything designed for your baby&apos;s precious first moments &amp; gentle care.</p>
-              <Link className="button pink glow-on-hover" href="/age-newborn">
-                Shop Newborn Bundle →
+              <h2>{newborn?.title}</h2>
+              <p>{newborn?.description}</p>
+              <Link className="button pink glow-on-hover" href={safeLink(newborn?.link)}>
+                {newborn?.cta} →
               </Link>
             </div>
             <div className="newborn-benefits">
@@ -431,7 +361,7 @@ export default function KidoboxHomePage() {
                 <small>Certified Safe</small>
               </span>
             </div>
-          </section>
+          </section>}
 
           {/* ── 7. Shop by Age Slider ───────────────────────────────── */}
           <section id="ages">
@@ -472,7 +402,7 @@ export default function KidoboxHomePage() {
                   <h3>{a.title}</h3>
                   <p>{a.subtitle}</p>
                   <LazyImage
-                    src={`/assets/hd/${a.image}.webp`}
+                    src={mediaUrl(a.image)}
                     alt={a.subtitle}
                     width={800}
                     height={800}
@@ -480,7 +410,7 @@ export default function KidoboxHomePage() {
                   />
                   <Link
                     className={`button ${a.color.includes('mint') ? 'mint' : a.color.includes('blue') ? 'blue' : 'pink'} glow-on-hover`}
-                    href={`/age-${a.slug}`}
+                    href={`/shop?age=${encodeURIComponent(a.age)}`}
                   >
                     Shop Now <span>→</span>
                   </Link>
@@ -523,30 +453,13 @@ export default function KidoboxHomePage() {
               </div>
             </div>
             <div className="offer-slider-track" ref={offersSliderRef}>
-              <article className="offer offer-slider-card pink-bg">
-                <h3>LITTLE10: 10% OFF</h3>
-                <p>On Organic Cotton Clothing</p>
-                <Link className="button pink glow-on-hover" href="/clothing">
-                  Shop Now →
-                </Link>
-                <img src="/assets/hd/clothing.webp" alt="Baby clothing offer" />
-              </article>
-              <article className="offer offer-slider-card blue-bg">
-                <h3>Daily Care Deals</h3>
-                <p>On Soft Wipes &amp; Diapers</p>
-                <Link className="button blue glow-on-hover" href="/diapering">
-                  Shop Now →
-                </Link>
-                <img src="/assets/hd/diapers.webp" alt="Diapers offer" />
-              </article>
-              <article className="offer offer-slider-card yellow-bg">
-                <h3>PLAYTIME SAVINGS</h3>
-                <p>On Teethers &amp; Wooden Toys</p>
-                <Link className="button pink glow-on-hover" href="/toys">
-                  Shop Now →
-                </Link>
-                <img src="/assets/hd/toys.webp" alt="Teddy bear and stacking toys" />
-              </article>
+              {offers.map((offer, i) => (
+                <article className={`offer offer-slider-card ${['pink-bg', 'blue-bg', 'yellow-bg'][i % 3]}`} key={offer.code}>
+                  <h3>{offer.code}: {offer.type === 'percentage' ? `${offer.value}% OFF` : offer.type === 'free_shipping' ? 'Free shipping' : `${money(offer.value)} OFF`}</h3>
+                  <p>{offer.title}{offer.min_cart_amount > 0 ? ` · Orders over ${money(offer.min_cart_amount)}` : ''}{offer.max_discount_amount ? ` · Up to ${money(offer.max_discount_amount)}` : ''}</p>
+                  <Link className="button pink glow-on-hover" href="/offers">Shop Now →</Link>
+                </article>
+              ))}
             </div>
           </section>
 
@@ -562,42 +475,7 @@ export default function KidoboxHomePage() {
               <span className="why-star float-anim"><Star size={28} fill="#ffbc00" color="#ffbc00" /></span>
             </div>
             <div className="benefit-grid" id="benefit-grid">
-              <div className="benefit">
-                <span className="benefit-icon-badge"><Leaf size={22} color="#10b981" /></span>
-                <p>
-                  Thoughtfully Chosen<small>Everyday Essentials</small>
-                </p>
-              </div>
-              <div className="benefit">
-                <span className="benefit-icon-badge"><Heart size={22} color="#ff268b" fill="#ff268b" /></span>
-                <p>
-                  Soft &amp; Gentle<small>Comfort Comes First</small>
-                </p>
-              </div>
-              <div className="benefit">
-                <span className="benefit-icon-badge"><Compass size={22} color="#00adeb" /></span>
-                <p>
-                  Little Adventures<small>Ready for Every Day</small>
-                </p>
-              </div>
-              <div className="benefit">
-                <span className="benefit-icon-badge"><Gift size={22} color="#f59e0b" /></span>
-                <p>
-                  Gift-Ready Favorites<small>Made for Big Smiles</small>
-                </p>
-              </div>
-              <div className="benefit">
-                <span className="benefit-icon-badge"><ShieldCheck size={22} color="#0284c7" /></span>
-                <p>
-                  Zero Toxins<small>100% Tested Safe</small>
-                </p>
-              </div>
-              <div className="benefit">
-                <span className="benefit-icon-badge"><Truck size={22} color="#8b5cf6" /></span>
-                <p>
-                  Fast &amp; Free Shipping<small>Orders Over ₹999</small>
-                </p>
-              </div>
+              {(content.benefits || []).map((benefit, i) => <div className="benefit" key={i}><span className="benefit-icon-badge">{[<Leaf key="leaf" size={22} color="#10b981" />, <Heart key="heart" size={22} color="#ff268b" />, <Compass key="compass" size={22} color="#00adeb" />, <Gift key="gift" size={22} color="#f59e0b" />, <ShieldCheck key="shield" size={22} color="#0284c7" />, <Truck key="truck" size={22} color="#8b5cf6" />][i % 6]}</span><p>{benefit.title}<small>{benefit.subtitle}</small></p></div>)}
             </div>
           </section>
 
@@ -615,30 +493,7 @@ export default function KidoboxHomePage() {
               </Link>
             </div>
             <div className="brands" id="brands-list">
-              <Link className="pampers" href="/shop?brand=Pampers">
-                Pampers
-              </Link>
-              <Link className="huggies" href="/shop?brand=Huggies">
-                HUGGIES
-              </Link>
-              <Link className="johnsons" href="/shop?brand=Johnson%27s+Baby">
-                Johnson&apos;s
-              </Link>
-              <Link className="meemee" href="/shop?brand=Mee+Mee">
-                Mee Mee
-              </Link>
-              <Link className="avent" href="/shop?brand=Philips+Avent">
-                PHILIPS <b>AVENT</b>
-              </Link>
-              <Link className="chicco" href="/shop?brand=Chicco">
-                chicco
-              </Link>
-              <Link className="babyhug" href="/shop?brand=Babyhug">
-                babyhug
-              </Link>
-              <Link className="fisher" href="/shop?brand=Fisher-Price">
-                Fisher-Price
-              </Link>
+              {brands.map((brand, i) => <Link className={['pampers', 'huggies', 'johnsons', 'meemee', 'avent', 'chicco', 'babyhug', 'fisher'][i % 8]} href={`/shop?brand=${encodeURIComponent(brand)}`} key={brand}>{brand}</Link>)}
             </div>
           </section>
 
@@ -680,7 +535,7 @@ export default function KidoboxHomePage() {
                 <Link className="blog-card blog-slider-card" href={`/guides/${a.slug}`} key={a.slug}>
                   <div className="blog-photo">
                     <LazyImage
-                      src={`/assets/hd/${a.image}.webp`}
+                      src={mediaUrl(a.image)}
                       alt={a.title}
                       width={1000}
                       height={650}
@@ -708,18 +563,18 @@ export default function KidoboxHomePage() {
                 </h2>
                 <p>Get inspired by real moments and happy giggles from our KIDOBOX family</p>
               </div>
-              <Link className="instagram-handle glow-on-hover" href="/community">
-                ◎ &nbsp;@kidobox
+              <Link className="instagram-handle glow-on-hover" href={safeLink(content.copy?.instagram_link)}>
+                ◎ &nbsp;{content.copy?.instagram_handle}
               </Link>
             </div>
             <div className="instagram-grid" id="instagram-grid">
-              {['insta1', 'insta2', 'insta3', 'insta4', 'insta5', 'insta6'].map((imgKey) => (
-                <Link href="/community" aria-label="See our KIDOBOX family moments" key={imgKey}>
+              {(content.instagram || []).map((post, i) => (
+                <Link href={safeLink(post.link)} aria-label={post.title} key={i}>
                   <LazyImage
-                    src={`/assets/hd/${imgKey}.webp`}
+                    src={mediaUrl(post.image)}
                     width={600}
                     height={600}
-                    alt="Little moments of baby joy"
+                    alt={post.title}
                     aspectRatio="1.14"
                   />
                 </Link>
@@ -728,7 +583,7 @@ export default function KidoboxHomePage() {
           </section>
 
           {/* ── 14. App Download Banner ──────────────────────────────── */}
-          <section className="app-banner">
+          {content.app?.title && <section className="app-banner">
             <span className="app-star float-anim"><Sparkles size={34} color="#ffbc00" /></span>
             <div className="phone-mockup mascot-float">
               <div className="phone-camera"></div>
@@ -741,21 +596,21 @@ export default function KidoboxHomePage() {
               <span className="phone-heart">♡</span>
             </div>
             <div>
-              <h2>Shop Anytime, Anywhere</h2>
-              <p>Download the KIDOBOX app for exclusive perks &amp; speedy delivery.</p>
+              <h2>{content.app?.title}</h2>
+              <p>{content.app?.description}</p>
               <div className="app-buttons">
-                <Link className="glow-on-hover" href="/app" aria-label="Download for iOS">
+                <Link className="glow-on-hover" href={safeLink(content.app?.ios_link)} aria-label="Download for iOS">
                   <small>Download on the</small>
                   Apple Store
                 </Link>
-                <Link className="glow-on-hover" href="/app" aria-label="Download for Android">
+                <Link className="glow-on-hover" href={safeLink(content.app?.android_link)} aria-label="Download for Android">
                   <small>GET IT ON</small>
                   Google Play
                 </Link>
               </div>
             </div>
             <span className="app-rainbow float-anim">🌈</span>
-          </section>
+          </section>}
         </div>
       </main>
 

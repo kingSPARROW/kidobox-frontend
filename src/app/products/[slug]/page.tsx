@@ -6,35 +6,30 @@ import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { useCart } from '@/lib/cart-context';
-import { products, categories, money, Product } from '@/lib/kidobox-data';
+import { money, Product } from '@/lib/kidobox-data';
+import { useStorefront, mediaUrl, cartItem } from '@/lib/storefront';
 import { ImageMagnifier } from '@/components/image-magnifier';
 import { Truck, RotateCcw, Heart, Sparkles, MessageSquareHeart } from 'lucide-react';
 
 export default function ProductDetailPage() {
+  const { products, categories, isLoading, isError, refetch, content, testimonials, store } = useStorefront();
   const params = useParams();
   const router = useRouter();
   const slug = (params?.slug as string) || '';
 
   const { addItem, setIsOpen } = useCart();
-  const [product, setProduct] = useState<Product | null>(null);
+  const baseProduct = products.find(p => p.slug === slug);
+  const [selectedVariantId, setSelectedVariantId] = useState('');
+  const selectedVariant = baseProduct?.variants?.find(v => v.id === selectedVariantId) || baseProduct?.variants?.find(v => v.id === baseProduct.variantId);
+  const product = baseProduct && selectedVariant ? { ...baseProduct, price: selectedVariant.price, old: selectedVariant.compare_at_price || 0, inStock: selectedVariant.inventory_quantity > 0 } : baseProduct;
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
-  const [viewMode, setViewMode] = useState<'full' | 'detail'>('full');
+  const [activeImage, setActiveImage] = useState(0);
   const [zoomOpen, setZoomOpen] = useState(false);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
-  const [wishlist, setWishlist] = useState<number[]>([]);
+  const [wishlist, setWishlist] = useState<string[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    const found = products.find((p) => p.slug === slug) || products[0];
-    setProduct(found);
-    if (found) {
-      setSelectedSize(found.sizes[0] || 'Standard');
-      setSelectedColor(found.colors[0] || '');
-      document.title = `${found.name} | KIDOBOX`;
-    }
-  }, [slug]);
 
   useEffect(() => {
     try {
@@ -47,7 +42,7 @@ export default function ProductDetailPage() {
     return (
       <div className="min-h-screen flex flex-col bg-white">
         <StoreNav />
-        <div className="container py-24 text-center">Loading product...</div>
+        <div className="container py-24 text-center">{isLoading ? "Loading product…" : isError ? "Unable to load product." : "Product not found."}{isError && <button onClick={() => refetch()}>Retry</button>}</div>
         <StoreFooter />
       </div>
     );
@@ -80,33 +75,16 @@ export default function ProductDetailPage() {
   };
 
   const handleAddToCart = () => {
-    addItem(
-      {
-        product_id: String(product.id),
-        variant_id: `${product.id}-${selectedSize}-${selectedColor}`,
-        title: product.name,
-        variant_title: [selectedSize, selectedColor].filter(Boolean).join(' · '),
-        price: product.price,
-        image_url: `/assets/hd/${product.image}.webp`,
-      },
-      quantity
-    );
+    const item = cartItem(product, selectedVariant?.id);
+    if (!item || quantity > (selectedVariant?.inventory_quantity || 0)) return;
+    addItem(item, quantity);
     setToastMessage(`${product.name} added with love ♡`);
     setTimeout(() => setToastMessage(null), 3500);
   };
-
   const handleBuyNow = () => {
-    addItem(
-      {
-        product_id: String(product.id),
-        variant_id: `${product.id}-${selectedSize}-${selectedColor}`,
-        title: product.name,
-        variant_title: [selectedSize, selectedColor].filter(Boolean).join(' · '),
-        price: product.price,
-        image_url: `/assets/hd/${product.image}.webp`,
-      },
-      quantity
-    );
+    const item = cartItem(product, selectedVariant?.id);
+    if (!item || quantity > (selectedVariant?.inventory_quantity || 0)) return;
+    addItem(item, quantity);
     router.push('/checkout');
   };
 
@@ -127,7 +105,7 @@ export default function ProductDetailPage() {
           {categoryObj && (
             <>
               <span aria-hidden="true">›</span>
-              <Link href={`/${categoryObj.slug}`}>{categoryObj.name}</Link>
+              <Link href={`/collections/${categoryObj.slug}`}>{categoryObj.name}</Link>
             </>
           )}
           <span aria-hidden="true">›</span>
@@ -139,7 +117,7 @@ export default function ProductDetailPage() {
           {/* Gallery with Amazon-style Magnifier */}
           <div className="product-gallery">
             <ImageMagnifier
-              src={`/assets/hd/${product.image}.webp`}
+              src={mediaUrl(product.images?.[activeImage] || product.image)}
               alt={product.name}
               tag={product.tag}
               isNew={product.isNew}
@@ -150,30 +128,7 @@ export default function ProductDetailPage() {
               <span>🔍 Hover over image to zoom</span> · <span>Click ⊕ to expand</span>
             </div>
             <div className="gallery-thumbs">
-              <button
-                className={viewMode === 'full' ? 'active' : ''}
-                onClick={() => setViewMode('full')}
-                aria-label="Full product view"
-              >
-                <img
-                  src={`/assets/hd/${product.image}.webp`}
-                  alt="Full view"
-                  width={100}
-                  height={100}
-                />
-              </button>
-              <button
-                className={viewMode === 'detail' ? 'active' : ''}
-                onClick={() => setViewMode('detail')}
-                aria-label="Product detail view"
-              >
-                <img
-                  src={`/assets/hd/${product.image}.webp`}
-                  alt="Detail view"
-                  width={100}
-                  height={100}
-                />
-              </button>
+              {(product.images?.length ? product.images : [product.image]).map((src, i) => <button className={activeImage === i ? 'active' : ''} onClick={() => setActiveImage(i)} aria-label={`Product image ${i + 1}`} key={src}><img src={mediaUrl(src)} alt={`${product.name} view ${i + 1}`} width={100} height={100} /></button>)}
               <span>
                 ♡<small>Chosen with love</small>
               </span>
@@ -189,8 +144,8 @@ export default function ProductDetailPage() {
             <p className="product-subtitle">{product.detail}</p>
 
             <a className="detail-rating" href="#product-reviews">
-              <span className="stars">★★★★★</span> {product.rating}{' '}
-              <span>({product.reviews} sample reviews)</span>
+              <span className="stars">{product.rating > 0 ? "★★★★★" : ""}</span> {product.rating > 0 ? product.rating : "Not yet rated"}{' '}
+              <span>({product.reviews} reviews)</span>
             </a>
 
             <div className="detail-price">
@@ -201,64 +156,15 @@ export default function ProductDetailPage() {
             <small className="tax-note">Inclusive of all taxes · Little Needs. Big Smiles.</small>
 
             <div>
-              {/* Size Selector */}
-              {product.sizes && product.sizes.length > 0 && (
-                <fieldset>
-                  <legend>
-                    Choose your size{' '}
-                    <button
-                      type="button"
-                      className="text-link"
-                      onClick={() => setSizeGuideOpen(true)}
-                    >
-                      Size &amp; details guide
-                    </button>
-                  </legend>
-                  <div className="choice-row">
-                    {product.sizes.map((s) => (
-                      <label key={s}>
-                        <input
-                          type="radio"
-                          name="size"
-                          value={s}
-                          checked={selectedSize === s}
-                          onChange={() => setSelectedSize(s)}
-                        />
-                        <span>{s}</span>
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
-              )}
-
-              {/* Color Selector */}
-              {product.colors && product.colors.length > 0 && (
-                <fieldset>
-                  <legend>
-                    Color <span>{selectedColor}</span>
-                  </legend>
-                  <div className="choice-row color-choices">
-                    {product.colors.map((c, idx) => {
-                      const colors = ['#edbfc6', '#e9dfcb', '#c0dbe9', '#dff7ee'];
-                      return (
-                        <label key={c}>
-                          <input
-                            type="radio"
-                            name="color"
-                            value={c}
-                            checked={selectedColor === c}
-                            onChange={() => setSelectedColor(c)}
-                          />
-                          <span>
-                            <i style={{ '--swatch': colors[idx % colors.length] } as any} />
-                            {c}
-                          </span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </fieldset>
-              )}
+              {Array.from(new Set((product.variants || []).flatMap(v => Object.keys(v.options_map || {})))).map(option => (
+                <fieldset key={option}><legend>{option}</legend><div className="choice-row">
+                  {Array.from(new Set((product.variants || []).map(v => v.options_map?.[option]).filter(Boolean))).map(value => {
+                    const match = product.variants?.find(v => v.options_map?.[option] === value && Object.entries(selectedVariant?.options_map || {}).every(([key, selected]) => key === option || v.options_map?.[key] === selected)) || product.variants?.find(v => v.options_map?.[option] === value);
+                    return <label key={value}><input type="radio" name={option} checked={selectedVariant?.options_map?.[option] === value} disabled={!match} onChange={() => { if (match) { setSelectedVariantId(match.id); setQuantity(1); } }} /><span>{value}</span></label>;
+                  })}
+                </div></fieldset>
+              ))}
+              {!(product.variants || []).some(v => Object.keys(v.options_map || {}).length) && <fieldset><legend>Choose your variant <button type="button" className="text-link" onClick={() => setSizeGuideOpen(true)}>Size &amp; details guide</button></legend><div className="choice-row">{product.variants?.map(v => <label key={v.id}><input type="radio" name="variant" checked={selectedVariant?.id === v.id} onChange={() => { setSelectedVariantId(v.id); setQuantity(1); }} /><span>{v.title}</span></label>)}</div></fieldset>}
 
               {/* Stepper + Add to Cart + Wishlist */}
               <div className="purchase-row">
@@ -274,25 +180,25 @@ export default function ProductDetailPage() {
                     name="quantity"
                     type="number"
                     min="1"
-                    max="20"
+                    max={selectedVariant?.inventory_quantity || 1}
                     value={quantity}
                     readOnly
                     aria-label="Quantity"
                   />
                   <button
                     type="button"
-                    onClick={() => setQuantity((q) => Math.min(20, q + 1))}
+                    onClick={() => setQuantity((q) => Math.min(selectedVariant?.inventory_quantity || 1, q + 1))}
                     aria-label="Increase quantity"
                   >
                     +
                   </button>
                 </div>
 
-                <button className="button pink" type="button" onClick={handleAddToCart}>
+                <button className="button pink" type="button" disabled={!product.inStock || quantity > (selectedVariant?.inventory_quantity || 0)} onClick={handleAddToCart}>
                   <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M5 7h14l2 14H3ZM8 8V6a4 4 0 0 1 8 0v2" />
                   </svg>{' '}
-                  Add to Cart
+                  {product.inStock ? 'Add to Cart' : 'Sold out'}
                 </button>
 
                 <button
@@ -308,7 +214,7 @@ export default function ProductDetailPage() {
                 </button>
               </div>
 
-              <button className="buy-now" type="button" onClick={handleBuyNow}>
+              <button className="buy-now" type="button" disabled={!product.inStock || quantity > (selectedVariant?.inventory_quantity || 0)} onClick={handleBuyNow}>
                 Buy Now →
               </button>
             </div>
@@ -317,7 +223,7 @@ export default function ProductDetailPage() {
               <span>
                 <Truck size={18} style={{ color: 'var(--pink)', marginBottom: 4 }} />
                 <b>Free delivery</b>
-                <small>On orders above ₹999</small>
+                <small>On orders above ₹{store?.settings?.free_shipping_threshold ?? 0}</small>
               </span>
               <span>
                 <RotateCcw size={18} style={{ color: 'var(--pink)', marginBottom: 4 }} />
@@ -375,7 +281,7 @@ export default function ProductDetailPage() {
                 </div>
                 <div>
                   <dt>Product code</dt>
-                  <dd>KDB-00{product.id}</dd>
+                  <dd>{product.id}</dd>
                 </div>
               </dl>
             </details>
@@ -407,40 +313,14 @@ export default function ProductDetailPage() {
               <h2>
                 <span className="section-icon-wrap"><MessageSquareHeart size={20} /></span> Little love notes
               </h2>
-              <p>Sample stories from verified parents</p>
+              <p>Stories from our customers</p>
             </div>
             <Link className="view-link" href="/reviews">
               All Reviews →
             </Link>
           </div>
           <div className="review-grid">
-            <article className="review">
-              <img src="/assets/hd/avatar1.webp" width={96} height={96} alt="Ayesha Khan" />
-              <div>
-                <h3>Ayesha Khan</h3>
-                <div className="stars">★★★★★</div>
-                <p>Amazing quality products and such lovely details. My little one loves it!</p>
-              </div>
-              <span>♥</span>
-            </article>
-            <article className="review">
-              <img src="/assets/hd/avatar2.webp" width={96} height={96} alt="Rahul Mehta" />
-              <div>
-                <h3>Rahul Mehta</h3>
-                <div className="stars">★★★★★</div>
-                <p>A thoughtful collection of everyday essentials. Highly recommended to new parents.</p>
-              </div>
-              <span>♥</span>
-            </article>
-            <article className="review">
-              <img src="/assets/hd/avatar3.webp" width={96} height={96} alt="Neha Sharma" />
-              <div>
-                <h3>Neha Sharma</h3>
-                <div className="stars">★★★★★</div>
-                <p>Beautiful little things for our family. I love the gentle fabrics and fast delivery.</p>
-              </div>
-              <span>♥</span>
-            </article>
+            {testimonials.map(t => <article className="review" key={t.id}><img src={mediaUrl(t.avatar_url)} width={96} height={96} alt={t.author_name} /><div><h3>{t.author_name}</h3><div className="stars">{'★'.repeat(t.rating)}</div><p>{t.content}</p></div><span>♥</span></article>)}
           </div>
         </section>
 
@@ -466,7 +346,7 @@ export default function ProductDetailPage() {
                     <Link href={`/products/${rel.slug}`}>
                       <img
                         className="product-photo"
-                        src={`/assets/hd/${rel.image}.webp`}
+                        src={mediaUrl(rel.image)}
                         width={800}
                         height={800}
                         alt={rel.name}
@@ -501,7 +381,7 @@ export default function ProductDetailPage() {
                     </h3>
                     <p className="detail">{rel.detail}</p>
                     <div className="rating">
-                      <span className="stars">★★★★★</span> &nbsp;{rel.rating} ({rel.reviews})
+                      <span className="stars">{"★".repeat(Math.round(rel.rating))}</span> &nbsp;{rel.rating} ({rel.reviews})
                     </div>
                     <div className="product-bottom">
                       <div>
@@ -509,14 +389,14 @@ export default function ProductDetailPage() {
                         <span className="old-price">{money(rel.old)}</span>
                       </div>
                       <button
-                        className="add-cart"
+                        className="add-cart" disabled={!rel.inStock}
                         onClick={() => {
                           addItem({
                             product_id: String(rel.id),
-                            variant_id: `${rel.id}-${rel.sizes[0] || 'default'}`,
+                            variant_id: rel.variantId || '',
                             title: rel.name,
                             price: rel.price,
-                            image_url: `/assets/hd/${rel.image}.webp`,
+                            image_url: mediaUrl(rel.image),
                           });
                           setToastMessage(`${rel.name} added with love ♡`);
                           setTimeout(() => setToastMessage(null), 3500);
@@ -527,7 +407,7 @@ export default function ProductDetailPage() {
                           <circle cx="9" cy="21" r="1" />
                           <circle cx="19" cy="21" r="1" />
                         </svg>
-                        <span>Add to Cart</span>
+                        <span>{rel.inStock ? 'Add to Cart' : 'Sold out'}</span>
                       </button>
                     </div>
                   </div>
@@ -558,7 +438,7 @@ export default function ProductDetailPage() {
               ×
             </button>
             <img
-              src={`/assets/hd/${product.image}.webp`}
+              src={mediaUrl(product.images?.[activeImage] || product.image)}
               alt={product.name}
               className="w-full h-auto rounded-lg"
             />

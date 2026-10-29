@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchApi } from '@/lib/api';
 import {
   ArrowLeft,
@@ -103,52 +103,31 @@ export default function ShopifyProductForm({
   const [form, setForm] = useState<ProductFormData>({
     title: initialData?.title || '',
     description: initialData?.description || '',
-    vendor: initialData?.vendor || 'HOMZY Botanicals',
-    product_type: initialData?.product_type || 'Furniture',
+    vendor: initialData?.vendor || '',
+    product_type: initialData?.product_type || '',
     status: initialData?.status || 'active',
     images: initialData?.images && initialData.images.length > 0
       ? initialData.images
-      : ['https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1200&q=80'],
-    price: initialData?.price ?? (initialData?.variants?.[0]?.price ?? 3499),
-    compare_at_price: initialData?.compare_at_price ?? (initialData?.variants?.[0]?.compare_at_price ?? 4999),
-    cost_per_item: initialData?.cost_per_item ?? (initialData?.variants?.[0]?.cost_per_item ?? 1800),
+      : [],
+    price: initialData?.price ?? (initialData?.variants?.[0]?.price ?? 0),
+    compare_at_price: initialData?.compare_at_price ?? (initialData?.variants?.[0]?.compare_at_price ?? null),
+    cost_per_item: initialData?.cost_per_item ?? (initialData?.variants?.[0]?.cost_per_item ?? null),
     charge_tax: true,
     tax_rate: initialData?.tax_rate ?? 18,
     track_quantity: true,
     continue_selling_out_of_stock: false,
-    sku: initialData?.sku ?? (initialData?.variants?.[0]?.sku ?? 'HOM-SKU-101'),
+    sku: initialData?.sku ?? (initialData?.variants?.[0]?.sku ?? ''),
     barcode: initialData?.barcode ?? (initialData?.variants?.[0]?.barcode ?? ''),
-    inventory_quantity: initialData?.inventory_quantity ?? (initialData?.variants?.[0]?.inventory_quantity ?? 15),
+    inventory_quantity: initialData?.inventory_quantity ?? (initialData?.variants?.[0]?.inventory_quantity ?? 0),
     is_physical_product: true,
     weight: 1.5,
     weight_unit: 'kg',
     hsn_code: initialData?.hsn_code || '9403',
     has_variants: initialData?.has_variants ?? ((initialData?.variants?.length ?? 0) > 1),
-    options: initialData?.options && initialData.options.length > 0
-      ? initialData.options
-      : [
-          { name: 'Size', values: ['Standard', 'Large'] },
-        ],
-    variants: initialData?.variants && initialData.variants.length > 0
-      ? initialData.variants
-      : [
-          {
-            title: 'Standard',
-            sku: 'HOM-SKU-101-STD',
-            price: 3499,
-            compare_at_price: 4999,
-            inventory_quantity: 10,
-          },
-          {
-            title: 'Large',
-            sku: 'HOM-SKU-101-LRG',
-            price: 4499,
-            compare_at_price: 5999,
-            inventory_quantity: 5,
-          },
-        ],
-    tags: initialData?.tags || ['furniture', 'modern', 'handcrafted'],
-    collection_ids: initialData?.collection_ids || ['living-room'],
+    options: initialData?.options || [],
+    variants: initialData?.variants || [],
+    tags: initialData?.tags || [],
+    collection_ids: initialData?.collection_ids || [],
     seo_title: initialData?.seo_title || initialData?.title || '',
     seo_description: initialData?.seo_description || '',
     slug: initialData?.slug || '',
@@ -161,14 +140,8 @@ export default function ShopifyProductForm({
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   // Available collections for single store
-  const availableCollections = [
-    { id: 'living-room', name: 'Living Room' },
-    { id: 'bedroom', name: 'Bedroom' },
-    { id: 'dining', name: 'Dining & Kitchen' },
-    { id: 'ceramics', name: 'Artisanal Ceramics' },
-    { id: 'lighting', name: 'Ambient Lighting' },
-    { id: 'new-arrivals', name: 'New Arrivals' },
-  ];
+  const { data: collectionData } = useQuery({ queryKey: ['adminCollections'], queryFn: () => fetchApi('/collections') });
+  const availableCollections = (collectionData?.data || []).map((c: { id?: string; _id?: string; title: string }) => ({ id: c.id || c._id || '', name: c.title }));
 
   // Live Profit & Margin Calculations
   const profit = Math.max(0, form.price - (form.cost_per_item || 0));
@@ -299,10 +272,12 @@ export default function ShopifyProductForm({
         sku: `${form.sku || 'HOM'}-${skuSuffix}`,
         price: form.price,
         compare_at_price: form.compare_at_price,
-        inventory_quantity: 10,
+        inventory_quantity: 0,
         cost_per_item: form.cost_per_item,
         weight: form.weight,
         weight_unit: form.weight_unit,
+        ...(form.variants.find(v => v.title === title) || {}),
+        options_map: Object.fromEntries(form.options.map((option, index) => [option.name, comb[index]])),
       };
     });
 
@@ -331,6 +306,7 @@ export default function ShopifyProductForm({
         options: form.has_variants ? form.options : [],
         variants: form.has_variants ? form.variants : [
           {
+            id: initialData?.variants?.[0]?.id || initialData?.variants?.[0]?._id,
             title: 'Default Title',
             sku: form.sku,
             barcode: form.barcode,
@@ -1179,7 +1155,7 @@ export default function ShopifyProductForm({
             <div>
               <label className="block text-xs font-semibold text-[#1a1a1a] mb-1.5">Collections</label>
               <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
-                {availableCollections.map((col) => (
+                {availableCollections.map((col: { id: string; name: string }) => (
                   <label
                     key={col.id}
                     className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-[#f6f6f7] cursor-pointer text-xs text-[#1a1a1a]"
@@ -1200,6 +1176,7 @@ export default function ShopifyProductForm({
             <div>
               <label className="block text-xs font-semibold text-[#1a1a1a] mb-1">Tags</label>
               <div className="flex flex-wrap gap-1 mb-2">
+<p className="text-xs text-gray-500">Homepage tags: featured, bestseller, new-arrival. Use age:0-6 for age filtering and feature:Your text for product highlights.</p>
                 {form.tags.map((t) => (
                   <span
                     key={t}

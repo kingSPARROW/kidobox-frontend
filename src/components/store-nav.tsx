@@ -1,5 +1,6 @@
 'use client';
 
+import { useStorefront, useNavigation, mediaUrl, safeLink } from '@/lib/storefront';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -8,6 +9,8 @@ import { useGenderTheme } from '@/lib/theme-context';
 import { Truck, RotateCcw, ShieldCheck, Heart, Baby, ArrowLeftRight } from 'lucide-react';
 
 export function StoreNav() {
+  const { categories, content, store } = useStorefront();
+  const { data: navigation } = useNavigation();
   const router = useRouter();
   const pathname = usePathname();
   const { itemCount, setIsOpen } = useCart();
@@ -54,10 +57,10 @@ export function StoreNav() {
       <div className="topbar">
         <div className="container topbar-flex">
           <div className="topbar-items">
-            <span><Truck size={14} style={{ verticalAlign: 'middle', marginRight: 5 }} />Free shipping over ₹999</span>
+            <span><Truck size={14} style={{ verticalAlign: 'middle', marginRight: 5 }} />Free shipping over ₹{store?.settings?.free_shipping_threshold ?? 0}</span>
             <span><RotateCcw size={14} style={{ verticalAlign: 'middle', marginRight: 5 }} />7-day easy returns</span>
             <span><ShieldCheck size={14} style={{ verticalAlign: 'middle', marginRight: 5 }} />100% Original Products</span>
-            <span><Heart size={14} style={{ verticalAlign: 'middle', marginRight: 5 }} />Little Needs. Big Smiles.</span>
+            <span><Heart size={14} style={{ verticalAlign: 'middle', marginRight: 5 }} />{content.copy?.announcement || ''}</span>
           </div>
 
           <div className="topbar-theme-selector">
@@ -90,7 +93,7 @@ export function StoreNav() {
         <div className="container header-main">
           <Link className="logo" href="/" aria-label="KIDOBOX home">
             <img
-              src="/logo.png"
+              src={store?.branding?.logo_url ? mediaUrl(store.branding.logo_url) : "/logo.png"}
               width="158"
               height="68"
               className="mascot-float"
@@ -149,82 +152,50 @@ export function StoreNav() {
         {/* Navigation Categories Strip */}
         <div className="nav-bar-wrapper">
           <nav className="container nav" aria-label="Shop navigation">
-            <Link href="/" className={pathname === '/' ? 'selected' : ''}>
-              <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            {(navigation?.main_menu?.length ? navigation.main_menu : [{ label: 'Home', url: '/' }, ...categories.map(c => ({ label: c.name, url: `/collections/${c.slug}` })), { label: 'Offers', url: '/offers' }]).map((item, i) => <Link key={`${item.url}-${i}`} href={safeLink(item.url)} className={pathname === item.url ? 'selected' : ''}>
+              {[<svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                 <polyline points="9 22 9 12 15 12 15 22" />
-              </svg>
-              <span>Home</span>
-            </Link>
-
-            <Link href="/clothing" className={pathname === '/clothing' ? 'selected' : ''}>
-              <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              </svg>,
+<svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z" />
-              </svg>
-              <span>Clothing</span>
-            </Link>
-
-            <Link href="/diapering" className={pathname === '/diapering' ? 'selected' : ''}>
-              <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              </svg>,
+<svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z" />
                 <path d="M12 12v9" />
                 <path d="M3 12c2.5-4 6.5-6 9-6s6.5 2 9 6" />
-              </svg>
-              <span>Diapering</span>
-            </Link>
-
-            <Link href="/feeding" className={pathname === '/feeding' ? 'selected' : ''}>
-              <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              </svg>,
+<svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M10 2h4v3h-4z" />
                 <path d="M8 5h8v4l2 3v9a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-9l2-3z" />
                 <line x1="10" y1="14" x2="14" y2="14" />
-              </svg>
-              <span>Feeding</span>
-            </Link>
-
-            <Link href="/bath-care" className={pathname === '/bath-care' ? 'selected' : ''}>
-              <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              </svg>,
+<svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1Z" />
                 <path d="M6 12V7a3 3 0 0 1 6 0v1" />
                 <path d="m5 20-1 2m15-2 1 2" />
-              </svg>
-              <span>Bath &amp; Care</span>
-            </Link>
-
-            <Link href="/toys" className={pathname === '/toys' ? 'selected' : ''}>
-              <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              </svg>,
+<svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="7" cy="5" r="2.5" />
                 <circle cx="17" cy="5" r="2.5" />
                 <circle cx="12" cy="13" r="7" />
                 <circle cx="9.5" cy="11.5" r=".7" fill="currentColor" />
                 <circle cx="14.5" cy="11.5" r=".7" fill="currentColor" />
                 <path d="M10 15a2 2 0 0 0 4 0" />
-              </svg>
-              <span>Toys</span>
-            </Link>
-
-            <Link href="/mom-baby" className={pathname === '/mom-baby' ? 'selected' : ''}>
-              <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              </svg>,
+<svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
                 <path d="M12 13a2.5 2.5 0 0 0 2.5-2.5c0-1.5-1.5-2-2.5-1-1-1-2.5-.5-2.5 1A2.5 2.5 0 0 0 12 13Z" />
-              </svg>
-              <span>Mom &amp; Baby</span>
-            </Link>
-
-            <Link href="/nursery" className={pathname === '/nursery' ? 'selected' : ''}>
-              <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              </svg>,
+<svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1Z" />
-              </svg>
-              <span>Nursery</span>
-            </Link>
-
-            <Link href="/offers" className={`nav-offers ${pathname === '/offers' ? 'selected' : ''}`}>
-              <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              </svg>,
+<svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
                 <line x1="7" y1="7" x2="7.01" y2="7" />
-              </svg>
-              <span>Offers</span>
-            </Link>
+              </svg>][i % 9]}
+              <span>{item.label}</span>
+            </Link>)}
           </nav>
         </div>
       </header>

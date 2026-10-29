@@ -3,6 +3,7 @@
 import React, { useRef } from 'react';
 import Link from 'next/link';
 import { Product, money } from '@/lib/kidobox-data';
+import { mediaUrl } from '@/lib/storefront';
 import { LazyImage } from '@/components/lazy-image';
 
 interface ProductSliderProps {
@@ -13,8 +14,8 @@ interface ProductSliderProps {
   viewAllLink?: string;
   viewAllText?: string;
   products: Product[];
-  wishlist: number[];
-  onToggleWishlist: (id: number, name: string) => void;
+  wishlist: string[];
+  onToggleWishlist: (id: string, name: string) => void;
   onAddToCart: (p: Product) => void;
 }
 
@@ -116,7 +117,7 @@ export function ProductSlider({
 
                 <Link href={`/products/${p.slug}`} tabIndex={-1}>
                   <LazyImage
-                    src={`/assets/hd/${p.image}.webp`}
+                    src={mediaUrl(p.image)}
                     alt={p.name}
                     aspectRatio="1"
                     className="product-photo"
@@ -142,7 +143,7 @@ export function ProductSlider({
                   <button
                     type="button"
                     className="add-cart glow-btn"
-                    onClick={() => onAddToCart(p)}
+                    disabled={!p.inStock} onClick={() => onAddToCart(p)}
                     aria-label={`Add ${p.name} to bag`}
                   >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -150,7 +151,7 @@ export function ProductSlider({
                       <line x1="3" y1="6" x2="21" y2="6" />
                       <path d="M16 10a4 4 0 0 1-8 0" />
                     </svg>
-                    <span>Add</span>
+                    <span>{p.inStock ? 'Add' : 'Sold out'}</span>
                   </button>
                 </div>
               </div>

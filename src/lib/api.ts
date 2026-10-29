@@ -39,6 +39,10 @@ export async function fetchApi<T = any>(
       throw new Error(data.message || `Request failed with status ${res.status}`);
     }
 
+    if (typeof window !== 'undefined' && options.method && !['GET', 'HEAD'].includes(options.method.toUpperCase())) {
+      window.dispatchEvent(new Event('storefront-updated'));
+      try { localStorage.setItem('storefront-updated', String(Date.now())); } catch { /* Refresh polling covers browsers without storage access. */ }
+    }
     return data;
   } catch (error: any) {
     console.error(`API Error [${endpoint}]:`, error);

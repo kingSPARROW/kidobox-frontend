@@ -5,12 +5,14 @@ import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { useCart } from '@/lib/cart-context';
-import { products, categories, money, Product } from '@/lib/kidobox-data';
+import { money, Product } from '@/lib/kidobox-data';
+import { useStorefront, mediaUrl, cartItem } from '@/lib/storefront';
 import { Heart } from 'lucide-react';
 
 export default function WishlistPage() {
+  const { products, categories, content } = useStorefront();
   const { addItem, setIsOpen } = useCart();
-  const [wishlist, setWishlist] = useState<number[]>([]);
+  const [wishlist, setWishlist] = useState<string[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -25,7 +27,7 @@ export default function WishlistPage() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const removeFromWishlist = (id: number, name: string) => {
+  const removeFromWishlist = (id: string, name: string) => {
     const next = wishlist.filter((x) => x !== id);
     setWishlist(next);
     localStorage.setItem('kidobox-wishlist', JSON.stringify(next));
@@ -34,14 +36,10 @@ export default function WishlistPage() {
   };
 
   const handleAddToCart = (p: Product) => {
-    addItem({
-      product_id: String(p.id),
-      variant_id: `${p.id}-${p.sizes[0] || 'default'}`,
-      title: p.name,
-      variant_title: p.sizes[0] || undefined,
-      price: p.price,
-      image_url: `/assets/hd/${p.image}.webp`,
-    });
+    if (!p.inStock || !p.variantId) return;
+    const item = cartItem(p);
+    if (!item) return;
+    addItem(item);
     triggerToast(`${p.name} added with love ♡`);
   };
 
@@ -85,7 +83,7 @@ export default function WishlistPage() {
                     <Link href={`/products/${p.slug}`}>
                       <img
                         className="product-photo"
-                        src={`/assets/hd/${p.image}.webp`}
+                        src={mediaUrl(p.image)}
                         width={800}
                         height={800}
                         alt={p.name}
@@ -103,7 +101,7 @@ export default function WishlistPage() {
                     </button>
                   </div>
                   <div className="product-card-info">
-                    <Link href={`/${p.category}`} className="product-category">
+                    <Link href={`/collections/${p.category}`} className="product-category">
                       {catObj?.short || p.category}
                     </Link>
                     <h3>
@@ -118,13 +116,13 @@ export default function WishlistPage() {
                         <span className="price">{money(p.price)}</span>
                         <span className="old-price">{money(p.old)}</span>
                       </div>
-                      <button className="add-cart" onClick={() => handleAddToCart(p)}>
+                      <button className="add-cart" disabled={!p.inStock} onClick={() => handleAddToCart(p)}>
                         <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
                           <path d="M2 3h3l3 13h11l3-9H6" />
                           <circle cx="9" cy="21" r="1" />
                           <circle cx="19" cy="21" r="1" />
                         </svg>
-                        <span>Add to Cart</span>
+                        <span>{p.inStock ? 'Add to Cart' : 'Sold out'}</span>
                       </button>
                     </div>
                   </div>

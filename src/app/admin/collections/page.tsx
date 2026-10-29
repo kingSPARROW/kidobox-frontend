@@ -17,13 +17,16 @@ import {
 
 export default function AdminCollectionsPage() {
   const queryClient = useQueryClient();
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form, setForm] = useState({
     title: '',
     description: '',
-    image_url: '/assets/hd/clothing.webp',
+    image_url: '',
     sort_order: 'best-selling',
+    type: 'manual',
+    is_published: true,
   });
 
   const { data: collectionsData, isLoading } = useQuery({
@@ -33,8 +36,8 @@ export default function AdminCollectionsPage() {
 
   const createMutation = useMutation({
     mutationFn: async (payload: any) => {
-      return fetchApi('/collections', {
-        method: 'POST',
+      return fetchApi(editingId ? `/collections/${editingId}` : '/collections', {
+        method: editingId ? 'PUT' : 'POST',
         body: JSON.stringify(payload),
       });
     },
@@ -46,6 +49,8 @@ export default function AdminCollectionsPage() {
         description: '',
         image_url: '',
         sort_order: 'best-selling',
+    type: 'manual',
+    is_published: true,
       });
     },
   });
@@ -67,7 +72,7 @@ export default function AdminCollectionsPage() {
         </div>
 
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => { setEditingId(null); setForm({ title: '', description: '', image_url: '', sort_order: 'best-selling', type: 'manual', is_published: true }); setIsModalOpen(true); }}
           className="px-3.5 py-1.5 bg-[#1a1a1a] hover:bg-[#303030] text-white text-xs font-semibold rounded-lg shadow-sm transition inline-flex items-center gap-1.5 self-start"
         >
           <Plus className="w-3.5 h-3.5" />
@@ -133,11 +138,11 @@ export default function AdminCollectionsPage() {
                       </div>
                     </td>
                     <td className="py-2.5 px-4 font-bold text-[#1a1a1a]">
-                      <div className="hover:underline cursor-pointer">{c.title}</div>
+                      <button className="hover:underline cursor-pointer" onClick={() => { setEditingId(c.id || c._id); setForm({ title: c.title, description: c.description || "", image_url: c.image_url || "", sort_order: c.sort_order || "best-selling", type: c.type || "manual", is_published: !!c.is_published }); setIsModalOpen(true); }}>{c.title}</button>
                       <div className="text-[11px] text-[#8c9196] font-mono">/{c.slug}</div>
                     </td>
                     <td className="py-2.5 px-4 text-[#616161]">
-                      {c.product_count ?? 3} products
+                      {c.product_count ?? 0} products
                     </td>
                     <td className="py-2.5 px-4 text-[#616161]">
                       Manual collection
@@ -168,12 +173,13 @@ export default function AdminCollectionsPage() {
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl border border-[#e1e3e5] shadow-xl max-w-md w-full p-6 animate-in fade-in space-y-4">
             <div className="flex items-center justify-between border-b border-[#e1e3e5] pb-3">
-              <h3 className="text-sm font-bold text-[#1a1a1a]">Create Collection</h3>
+              <h3 className="text-sm font-bold text-[#1a1a1a]">{editingId ? "Edit Collection" : "Create Collection"}</h3>
               <button onClick={() => setIsModalOpen(false)} className="text-[#616161] hover:text-[#1a1a1a]">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
+            {createMutation.isError && <p role="alert">{createMutation.error.message}</p>}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -206,7 +212,7 @@ export default function AdminCollectionsPage() {
               <div>
                 <label className="block font-semibold text-[#1a1a1a] mb-1">Image URL</label>
                 <input
-                  type="url"
+                  type="text"
                   value={form.image_url}
                   onChange={(e) => setForm({ ...form, image_url: e.target.value })}
                   className="w-full px-3 py-1.5 bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#008060]"
@@ -230,6 +236,7 @@ export default function AdminCollectionsPage() {
                   Save collection
                 </button>
               </div>
+              <label className="flex gap-2 text-xs"><input type="checkbox" checked={form.is_published} onChange={e => setForm({ ...form, is_published: e.target.checked })} />Published on storefront</label>
             </form>
           </div>
         </div>

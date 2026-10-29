@@ -1,5 +1,6 @@
 'use client';
 
+import { useStorefront, mediaUrl } from '@/lib/storefront';
 import React from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
@@ -7,14 +8,8 @@ import { StoreFooter } from '@/components/store-footer';
 import { Camera } from 'lucide-react';
 
 export default function CommunityPage() {
-  const moments = [
-    { img: 'insta1', caption: 'Little smiles and sweet morning cuddles with @kidobox rompers.' },
-    { img: 'insta2', caption: 'First mealtime adventure with the pastel silicone bowl & spoon!' },
-    { img: 'insta3', caption: 'Dreamy nursery corner set up and ready for baby arrival.' },
-    { img: 'insta4', caption: 'Soft towels and giggles after splashing in the evening bath.' },
-    { img: 'insta5', caption: 'Curious little explorer with the floppy-eared cuddle bunny.' },
-    { img: 'insta6', caption: 'Newborn days: slow mornings, tiny socks, and endless love.' },
-  ];
+  const { content } = useStorefront();
+  const moments = (content.instagram || []).map(p => ({ img: p.image, caption: p.title }));
 
   return (
     <div className="min-h-screen flex flex-col bg-white" data-page="community">
@@ -38,7 +33,7 @@ export default function CommunityPage() {
         <div className="community-mosaic">
           {moments.map((m, i) => (
             <figure key={i}>
-              <img src={`/assets/hd/${m.img}.webp`} alt={m.caption} />
+              <img src={mediaUrl(m.img)} alt={m.caption} />
               <figcaption>{m.caption}</figcaption>
             </figure>
           ))}

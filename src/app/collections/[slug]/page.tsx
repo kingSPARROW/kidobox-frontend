@@ -3,9 +3,10 @@
 import React, { Suspense } from 'react';
 import { useParams } from 'next/navigation';
 import { CatalogView } from '@/components/catalog-view';
-import { categories } from '@/lib/kidobox-data';
+import { useStorefront } from '@/lib/storefront';
 
 export default function DynamicCollectionPage() {
+  const { categories } = useStorefront();
   const params = useParams();
   const slug = (params?.slug as string) || 'all';
 
@@ -16,10 +17,10 @@ export default function DynamicCollectionPage() {
   return (
     <Suspense fallback={<div className="container py-20 text-center font-bold">Loading collection...</div>}>
       <CatalogView
-        initialCategory={catObj ? catObj.slug : 'all'}
+        initialCategory={slug}
         title={title}
         description={desc}
-        heroImage={catObj?.image || 'clothing'}
+        heroImage={catObj?.image || '/file.svg'}
         heroColor={catObj?.color || 'pink-bg'}
         breadcrumbTitle={title}
       />

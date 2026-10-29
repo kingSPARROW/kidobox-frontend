@@ -7,10 +7,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let productUrls: MetadataRoute.Sitemap = [];
 
   try {
-    const res = await fetch(`${apiUrl}/storefront/products`, { next: { revalidate: 3600 } });
+    const res = await fetch(`${apiUrl}/storefront/data`, { next: { revalidate: 3600 } });
     if (res.ok) {
       const data = await res.json();
-      const products = data.data || [];
+      const products = data.products || [];
       productUrls = products.map((product: any) => ({
         url: `${baseUrl}/products/${product.slug}`,
         lastModified: product.updated_at ? new Date(product.updated_at) : new Date(),

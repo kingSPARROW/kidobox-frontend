@@ -1,33 +1,31 @@
 'use client';
 
+import { useNavigation, useStorefront, mediaUrl, safeLink } from '@/lib/storefront';
 import React from 'react';
 import Link from 'next/link';
 import { Heart } from 'lucide-react';
 
 export function StoreFooter() {
+  const { data: navigation } = useNavigation();
+  const { store } = useStorefront();
+  const footer = navigation?.footer;
   return (
     <footer className="container">
       <div className="footer-grid">
         <div className="footer-about">
           <Link href="/">
             <img
-              src="/logo.png"
+              src={store?.branding?.logo_url ? mediaUrl(store.branding.logo_url) : "/logo.png"}
               width="140"
               height="auto"
               style={{ maxHeight: '60px', width: 'auto', margin: '0 auto', objectFit: 'contain' }}
               alt="KIDOBOX"
             />
           </Link>
-          <p>
-            Your one-stop destination for baby products.
-            <br />
-            Thoughtfully chosen little essentials
-            <br />
-            for your family’s everyday happiness.
-          </p>
+          <p>{footer?.about_text}</p>
           <div className="socials">
             <Link
-              href="/community"
+              href={safeLink(footer?.social_links?.find(s => s.platform.toLowerCase() === 'facebook')?.url)}
               className="social-fb"
               aria-label="Follow KIDOBOX on Facebook"
               title="Facebook"
@@ -37,7 +35,7 @@ export function StoreFooter() {
               </svg>
             </Link>
             <Link
-              href="/community"
+              href={safeLink(footer?.social_links?.find(s => s.platform.toLowerCase() === 'instagram')?.url)}
               className="social-ig"
               aria-label="Follow KIDOBOX on Instagram"
               title="Instagram"
@@ -47,7 +45,7 @@ export function StoreFooter() {
               </svg>
             </Link>
             <Link
-              href="/guides"
+              href={safeLink(footer?.social_links?.find(s => s.platform.toLowerCase() === 'youtube')?.url)}
               className="social-yt"
               aria-label="Subscribe to KIDOBOX on YouTube"
               title="YouTube"
@@ -69,33 +67,7 @@ export function StoreFooter() {
           </div>
         </div>
 
-        <div>
-          <h4>Shop</h4>
-          <Link href="/shop">All Products</Link>
-          <Link href="/new-arrivals">New Arrivals</Link>
-          <Link href="/bestsellers">Bestsellers</Link>
-          <Link href="/offers">Offers</Link>
-          <Link href="/gift-cards">Gift Cards</Link>
-        </div>
-
-        <div>
-          <h4>Customer Care</h4>
-          <Link href="/tracking">Track Order</Link>
-          <Link href="/returns">Returns & Refunds</Link>
-          <Link href="/shipping">Shipping Policy</Link>
-          <Link href="/faq">FAQs</Link>
-          <Link href="/privacy">Privacy Policy</Link>
-          <Link href="/terms">Terms & Conditions</Link>
-        </div>
-
-        <div>
-          <h4>About</h4>
-          <Link href="/about">About Us</Link>
-          <Link href="/our-story">Our Story</Link>
-          <Link href="/guides">Blogs & Guides</Link>
-          <Link href="/careers">Careers</Link>
-          <Link href="/contact">Contact Us</Link>
-        </div>
+        {(footer?.columns || []).map((column, i) => <div key={i}><h4>{column.title}</h4>{column.links.map((link, j) => <Link href={safeLink(link.url)} key={j}>{link.label}</Link>)}</div>)}
 
         <div className="payments">
           <h4>Secure Payments</h4>
@@ -146,7 +118,7 @@ export function StoreFooter() {
       </div>
 
       <div className="footer-bottom">
-        © 2026 KIDOBOX. All rights reserved. | Little Needs. Big Smiles.{' '}
+        {footer?.copyright_text}{' '}
         <Heart size={13} fill="currentColor" style={{ display: 'inline', color: 'var(--pink)', verticalAlign: 'middle', marginLeft: 2 }} />
       </div>
     </footer>

@@ -4,10 +4,11 @@ import React from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
-import { brands, products } from '@/lib/kidobox-data';
+import { useStorefront } from '@/lib/storefront';
 import { TrendingUp } from 'lucide-react';
 
 export default function BrandsDirectoryPage() {
+  const { brands, products, content } = useStorefront();
   return (
     <div className="min-h-screen flex flex-col bg-white" data-page="brands">
       <StoreNav />

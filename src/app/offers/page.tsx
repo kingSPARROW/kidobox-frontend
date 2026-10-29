@@ -10,6 +10,7 @@ export default function OffersPage() {
   return (
     <Suspense fallback={<div className="container py-20 text-center font-bold">Loading...</div>}>
       <CatalogView
+        initialMode="offers"
         title="Little Prices. Big Smiles."
         description="A little more joy, for a little less. Explore our special baby and toddler offers."
         heroImage="toys"

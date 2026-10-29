@@ -5,14 +5,17 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
-import { articles } from '@/lib/kidobox-data';
+import { useStorefront, mediaUrl } from '@/lib/storefront';
 import { Heart } from 'lucide-react';
 
 export default function GuideArticlePage() {
+  const { articles, isLoading, isError, content } = useStorefront();
   const params = useParams();
   const slug = (params?.slug as string) || '';
 
-  const article = articles.find((a) => a.slug === slug) || articles[0];
+  const article = articles.find((a) => a.slug === slug);
+
+  if (!article) return <><StoreNav /><main className="container inner-main">{isLoading ? "Loading article…" : isError ? "Unable to load article." : "Article not found."}</main><StoreFooter /></>;
 
   return (
     <div className="min-h-screen flex flex-col bg-white" data-page="article">
@@ -41,7 +44,7 @@ export default function GuideArticlePage() {
 
           <img
             className="article-cover"
-            src={`/assets/hd/${article.image}.webp`}
+            src={mediaUrl(article.image)}
             alt={article.title}
             width={1200}
             height={600}
