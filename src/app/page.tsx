@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
@@ -28,6 +28,11 @@ import {
   Truck,
   Star,
   Flame,
+  Clock,
+  ArrowRight,
+  Mail,
+  CheckCircle2,
+  Copy,
 } from 'lucide-react';
 
 export default function KidoboxHomePage() {
@@ -37,6 +42,8 @@ export default function KidoboxHomePage() {
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [showToastLink, setShowToastLink] = useState(false);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
   const categoryStripRef = useRef<HTMLDivElement>(null);
   const bestsellersSliderRef = useRef<HTMLDivElement>(null);
   const ageSliderRef = useRef<HTMLDivElement>(null);
@@ -84,6 +91,16 @@ export default function KidoboxHomePage() {
     triggerToast(`${p.name} added with love ♡`, true);
   };
 
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newsletterEmail.trim()) return;
+    setNewsletterSubmitted(true);
+    triggerToast('Welcome to the KIDOBOX family! Code KIDO500 copied ♡', false);
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText('KIDO500').catch(() => {});
+    }
+  };
+
   const scrollTrack = (
     ref: React.RefObject<HTMLDivElement | null>,
     direction: 'left' | 'right',
@@ -103,6 +120,164 @@ export default function KidoboxHomePage() {
   const filteredProducts = products.filter(
     (p) => p.tag === 'Bestseller' && (activeTab === 'all' || p.categorySlugs?.includes(activeTab))
   );
+
+  // Trending Nursery & Toddler Favorites
+  const nurseryToddlerFavorites = useMemo(() => {
+    const catalogMatches = products.filter((p) => {
+      const slugs = p.categorySlugs || [];
+      return (
+        slugs.includes('nursery') ||
+        slugs.includes('age-toddler') ||
+        slugs.includes('toys') ||
+        slugs.includes('feeding') ||
+        p.category === 'nursery' ||
+        p.category === 'toys' ||
+        p.category === 'feeding' ||
+        p.age === '1-2Y' ||
+        p.age === 'toddler'
+      );
+    });
+
+    const curatedNurseryToddler: Product[] = [
+      {
+        id: 'nursery-crib-convertible',
+        slug: 'convertible-wooden-crib-toddler-bed',
+        name: 'Solid Beechwood Convertible Crib & Toddler Bed',
+        detail: 'Sustainable solid wood crib with 3 adjustable heights that effortlessly transitions into a safe toddler daybed.',
+        price: 8999,
+        old: 11999,
+        category: 'nursery',
+        categorySlugs: ['nursery', 'age-toddler'],
+        image: '/assets/hd/nursery.webp',
+        images: ['/assets/hd/nursery.webp'],
+        rating: 4.9,
+        reviews: 42,
+        brand: 'KIDOBOX Home',
+        age: '0-4Y',
+        sizes: ['Standard'],
+        colors: ['Natural Oak', 'Warm White'],
+        tag: 'Bestseller',
+        isNew: true,
+        features: ['Solid Beechwood', 'Non-Toxic Finish', 'Convertible 3-in-1'],
+        inStock: true,
+        variantId: 'nursery-crib-v1',
+        variants: [
+          {
+            id: 'nursery-crib-v1',
+            title: 'Natural Oak',
+            price: 8999,
+            compare_at_price: 11999,
+            inventory_quantity: 25,
+          },
+        ],
+      },
+      {
+        id: 'nursery-rocker-bouncer',
+        slug: 'ergonomic-infant-toddler-bouncer',
+        name: 'Ergonomic Natural Bouncer & Toddler Rocker',
+        detail: 'Self-rocking soothing bouncer with 3 ergonomic recline levels and breathable organic cotton mesh cover.',
+        price: 3499,
+        old: 4499,
+        category: 'nursery',
+        categorySlugs: ['nursery', 'age-toddler'],
+        image: '/assets/hd/nursery2.webp',
+        images: ['/assets/hd/nursery2.webp'],
+        rating: 4.8,
+        reviews: 58,
+        brand: 'Chicco',
+        age: '0-2Y',
+        sizes: ['Standard'],
+        colors: ['Cloud Grey', 'Soft Pink'],
+        tag: 'Parent Favorite',
+        isNew: false,
+        features: ['Natural Motion', 'OEKO-TEX Certified', 'Flat Fold'],
+        inStock: true,
+        variantId: 'nursery-rocker-v1',
+        variants: [
+          {
+            id: 'nursery-rocker-v1',
+            title: 'Cloud Grey',
+            price: 3499,
+            compare_at_price: 4499,
+            inventory_quantity: 30,
+          },
+        ],
+      },
+      {
+        id: 'toddler-sensory-activity-cube',
+        slug: 'montessori-wooden-activity-learning-cube',
+        name: 'Montessori 5-in-1 Wooden Activity Learning Cube',
+        detail: 'Interactive multi-sided sensory play center featuring bead maze, shape sorter, gear spinners, and sliding animal track.',
+        price: 1299,
+        old: 1799,
+        category: 'toys',
+        categorySlugs: ['toys', 'age-toddler'],
+        image: '/assets/hd/toddler.webp',
+        images: ['/assets/hd/toddler.webp'],
+        rating: 4.9,
+        reviews: 76,
+        brand: 'Fisher-Price',
+        age: '1-3Y',
+        sizes: ['One Size'],
+        colors: ['Pastel Multi'],
+        tag: 'Trending',
+        isNew: true,
+        features: ['Montessori Play', 'Smooth Rounded Edges', 'Non-Toxic Colors'],
+        inStock: true,
+        variantId: 'toddler-cube-v1',
+        variants: [
+          {
+            id: 'toddler-cube-v1',
+            title: 'Pastel Multi',
+            price: 1299,
+            compare_at_price: 1799,
+            inventory_quantity: 40,
+          },
+        ],
+      },
+      {
+        id: 'toddler-anti-slip-training-cup',
+        slug: 'silicone-weighted-straw-sippy-cup',
+        name: 'Anti-Spill Weighted Straw Toddler Training Cup',
+        detail: 'Durable 360-degree weighted silicone straw that lets toddlers sip from any angle without spills or leaks.',
+        price: 499,
+        old: 699,
+        category: 'feeding',
+        categorySlugs: ['feeding', 'age-toddler'],
+        image: '/assets/hd/feeding2.webp',
+        images: ['/assets/hd/feeding2.webp'],
+        rating: 4.7,
+        reviews: 31,
+        brand: 'KIDOBOX',
+        age: '6M-3Y',
+        sizes: ['250ml'],
+        colors: ['Mint Green', 'Powder Pink'],
+        tag: 'Bestseller',
+        isNew: false,
+        features: ['Leak-Proof Valve', 'BPA & Phthalate Free', 'Easy Grip Handles'],
+        inStock: true,
+        variantId: 'toddler-cup-v1',
+        variants: [
+          {
+            id: 'toddler-cup-v1',
+            title: 'Mint Green',
+            price: 499,
+            compare_at_price: 699,
+            inventory_quantity: 60,
+          },
+        ],
+      },
+    ];
+
+    const catalogSlugs = new Set(catalogMatches.map((p) => p.slug));
+    const uniqueCurated = curatedNurseryToddler.filter((c) => !catalogSlugs.has(c.slug));
+
+    // Combine: specific nursery/toddler products first, then curated, then other catalog products
+    const allMatches = [...catalogMatches, ...uniqueCurated];
+    const otherCatalog = products.filter((p) => !catalogSlugs.has(p.slug));
+
+    return [...allMatches, ...otherCatalog];
+  }, [products]);
 
   return (
     <div data-page="home" className="min-h-screen flex flex-col bg-white">
@@ -185,7 +360,7 @@ export default function KidoboxHomePage() {
             icon={<Flame size={20} />}
             viewAllLink="/bestsellers"
             viewAllText="Explore All Trending"
-            products={products.filter(p => p.featured)}
+            products={nurseryToddlerFavorites}
             wishlist={wishlist}
             onToggleWishlist={toggleWishlist}
             onAddToCart={handleAddToCart}
@@ -337,29 +512,62 @@ export default function KidoboxHomePage() {
               />
             </div>
             <div className="newborn-banner-content">
+              <span className="newborn-eyebrow">
+                <Sparkles size={13} color="#ffbc00" />
+                <span>0 – 6 MONTHS ESSENTIALS</span>
+              </span>
               <h2>{newborn?.title}</h2>
               <p>{newborn?.description}</p>
-              <Link className="button pink glow-on-hover" href={safeLink(newborn?.link)}>
-                {newborn?.cta} →
+              <Link className="button pink glow-on-hover newborn-cta" href={safeLink(newborn?.link)}>
+                <span>{newborn?.cta}</span>
+                <ArrowRight size={14} />
               </Link>
             </div>
-            <div className="newborn-benefits">
-              <span className="benefit-item">
-                <Feather size={20} className="benefit-svg" />
-                <small>Ultra Soft</small>
-              </span>
-              <span className="benefit-item">
-                <Sparkles size={20} className="benefit-svg" />
-                <small>Hypoallergenic</small>
-              </span>
-              <span className="benefit-item">
-                <Leaf size={20} className="benefit-svg" />
-                <small>100% Organic</small>
-              </span>
-              <span className="benefit-item">
-                <ShieldCheck size={20} className="benefit-svg" />
-                <small>Certified Safe</small>
-              </span>
+            <div className="newborn-benefits-card">
+              <div className="newborn-benefits-top">
+                <span className="benefits-seal">★ CERTIFIED CARE ★</span>
+              </div>
+              <div className="newborn-benefits-grid">
+                <div className="newborn-benefit-item benefit-soft">
+                  <div className="benefit-icon-box">
+                    <Feather size={20} strokeWidth={2.2} />
+                  </div>
+                  <div className="benefit-text">
+                    <strong>Ultra Soft</strong>
+                    <small>Cloud-touch</small>
+                  </div>
+                </div>
+
+                <div className="newborn-benefit-item benefit-hypo">
+                  <div className="benefit-icon-box">
+                    <Sparkles size={20} strokeWidth={2.2} />
+                  </div>
+                  <div className="benefit-text">
+                    <strong>Hypoallergenic</strong>
+                    <small>Derm tested</small>
+                  </div>
+                </div>
+
+                <div className="newborn-benefit-item benefit-organic">
+                  <div className="benefit-icon-box">
+                    <Leaf size={20} strokeWidth={2.2} />
+                  </div>
+                  <div className="benefit-text">
+                    <strong>100% Organic</strong>
+                    <small>Zero toxins</small>
+                  </div>
+                </div>
+
+                <div className="newborn-benefit-item benefit-safe">
+                  <div className="benefit-icon-box">
+                    <ShieldCheck size={20} strokeWidth={2.2} />
+                  </div>
+                  <div className="benefit-text">
+                    <strong>Certified Safe</strong>
+                    <small>Pediatrician OK</small>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>}
 
@@ -419,49 +627,7 @@ export default function KidoboxHomePage() {
             </div>
           </section>
 
-          {/* ── 8. Special Offers Slider ────────────────────────────── */}
-          <section id="offers">
-            <div className="section-title">
-              <div>
-                <h2>
-                  <span className="section-icon-wrap"><Tag size={20} /></span> Special Offers
-                </h2>
-                <p>Limited-time baby bundles and smart parenting savings</p>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Link className="view-link" href="/offers">
-                  View All Offers →
-                </Link>
-                <div className="slider-nav-arrows">
-                  <button
-                    type="button"
-                    className="slider-nav-btn"
-                    onClick={() => scrollTrack(offersSliderRef, 'left')}
-                    aria-label="Scroll offers left"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    type="button"
-                    className="slider-nav-btn"
-                    onClick={() => scrollTrack(offersSliderRef, 'right')}
-                    aria-label="Scroll offers right"
-                  >
-                    ›
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="offer-slider-track" ref={offersSliderRef}>
-              {offers.map((offer, i) => (
-                <article className={`offer offer-slider-card ${['pink-bg', 'blue-bg', 'yellow-bg'][i % 3]}`} key={offer.code}>
-                  <h3>{offer.code}: {offer.type === 'percentage' ? `${offer.value}% OFF` : offer.type === 'free_shipping' ? 'Free shipping' : `${money(offer.value)} OFF`}</h3>
-                  <p>{offer.title}{offer.min_cart_amount > 0 ? ` · Orders over ${money(offer.min_cart_amount)}` : ''}{offer.max_discount_amount ? ` · Up to ${money(offer.max_discount_amount)}` : ''}</p>
-                  <Link className="button pink glow-on-hover" href="/offers">Shop Now →</Link>
-                </article>
-              ))}
-            </div>
-          </section>
+
 
           {/* ── 9. Why Choose KIDOBOX (Full-Width Pill Grid) ─────────── */}
           <section className="why">
@@ -475,30 +641,13 @@ export default function KidoboxHomePage() {
               <span className="why-star float-anim"><Star size={28} fill="#ffbc00" color="#ffbc00" /></span>
             </div>
             <div className="benefit-grid" id="benefit-grid">
-              {(content.benefits || []).map((benefit, i) => <div className="benefit" key={i}><span className="benefit-icon-badge">{[<Leaf key="leaf" size={22} color="#10b981" />, <Heart key="heart" size={22} color="#ff268b" />, <Compass key="compass" size={22} color="#00adeb" />, <Gift key="gift" size={22} color="#f59e0b" />, <ShieldCheck key="shield" size={22} color="#0284c7" />, <Truck key="truck" size={22} color="#8b5cf6" />][i % 6]}</span><p>{benefit.title}<small>{benefit.subtitle}</small></p></div>)}
+              {(content.benefits || []).map((benefit, i) => <div className="benefit" key={i}><span className="benefit-icon-badge">{[<Leaf key="leaf" size={22} color="#10b981" />, <Heart key="heart" size={22} color="#BC0202" />, <Compass key="compass" size={22} color="#00adeb" />, <Gift key="gift" size={22} color="#f59e0b" />, <ShieldCheck key="shield" size={22} color="#0284c7" />, <Truck key="truck" size={22} color="#8b5cf6" />][i % 6]}</span><p>{benefit.title}<small>{benefit.subtitle}</small></p></div>)}
             </div>
           </section>
 
-          {/* ── 10. Trending Baby Brands ──────────────────────────────── */}
-          <section id="brands">
-            <div className="section-title">
-              <div>
-                <h2>
-                  <span className="section-icon-wrap"><TrendingUp size={20} /></span> Trending Brands
-                </h2>
-                <p>World-class labels trusted by pediatricians &amp; mothers</p>
-              </div>
-              <Link className="view-link" href="/brands">
-                All Brands →
-              </Link>
-            </div>
-            <div className="brands" id="brands-list">
-              {brands.map((brand, i) => <Link className={['pampers', 'huggies', 'johnsons', 'meemee', 'avent', 'chicco', 'babyhug', 'fisher'][i % 8]} href={`/shop?brand=${encodeURIComponent(brand)}`} key={brand}>{brand}</Link>)}
-            </div>
-          </section>
 
-          {/* ── 11. Parenting Tips & Guides Slider ────────────────────── */}
-          <section id="guides">
+          {/* ── 11. Parenting Tips & Guides Slider (Single Row) ───────── */}
+          <section id="guides" className="guides-section">
             <div className="section-title">
               <div>
                 <h2>
@@ -515,7 +664,7 @@ export default function KidoboxHomePage() {
                     type="button"
                     className="slider-nav-btn"
                     onClick={() => scrollTrack(guidesSliderRef, 'left')}
-                    aria-label="Scroll guides left"
+                    aria-label="Previous guides"
                   >
                     ‹
                   </button>
@@ -523,28 +672,37 @@ export default function KidoboxHomePage() {
                     type="button"
                     className="slider-nav-btn"
                     onClick={() => scrollTrack(guidesSliderRef, 'right')}
-                    aria-label="Scroll guides right"
+                    aria-label="Next guides"
                   >
                     ›
                   </button>
                 </div>
               </div>
             </div>
-            <div className="blog-slider-track" id="blog-grid" ref={guidesSliderRef}>
+
+            <div className="guides-slider-track" ref={guidesSliderRef} id="blog-grid">
               {articles.map((a) => (
-                <Link className="blog-card blog-slider-card" href={`/guides/${a.slug}`} key={a.slug}>
-                  <div className="blog-photo">
+                <Link className="guide-card" href={`/guides/${a.slug}`} key={a.slug}>
+                  <div className="guide-card-photo">
                     <LazyImage
                       src={mediaUrl(a.image)}
                       alt={a.title}
-                      width={1000}
-                      height={650}
+                      width={800}
+                      height={500}
                     />
-                    <span>{a.category}</span>
+                    <span className="guide-category-chip">{a.category}</span>
                   </div>
-                  <div className="blog-body">
+                  <div className="guide-card-body">
                     <h3>{a.title}</h3>
-                    <p>◷ {a.minutes} min read &nbsp; · &nbsp; KIDOBOX Journal</p>
+                    {a.excerpt && <p className="guide-excerpt">{a.excerpt}</p>}
+                    <div className="guide-card-footer">
+                      <span className="guide-read-time">
+                        <Clock size={13} /> {a.minutes} min read
+                      </span>
+                      <span className="guide-read-cta">
+                        Read Guide <ArrowRight size={13} className="guide-arrow" />
+                      </span>
+                    </div>
                   </div>
                 </Link>
               ))}
@@ -582,35 +740,105 @@ export default function KidoboxHomePage() {
             </div>
           </section>
 
-          {/* ── 14. App Download Banner ──────────────────────────────── */}
-          {content.app?.title && <section className="app-banner">
-            <span className="app-star float-anim"><Sparkles size={34} color="#ffbc00" /></span>
-            <div className="phone-mockup mascot-float">
-              <div className="phone-camera"></div>
-              <img src="/logo.png" alt="KIDOBOX mobile app" style={{ maxHeight: '35px', width: 'auto', margin: '0 auto' }} />
-              <span>
-                Little needs.
-                <br />
-                <b>Big smiles.</b>
+          {/* ── 14. VIP Family Club & Welcome Voucher ───────────────── */}
+          <section className="family-club-banner" aria-label="Kidobox Family Club">
+            <span className="family-club-decor-star float-anim">✨</span>
+            <div className="family-club-content">
+              <span className="family-club-badge">
+                <Sparkles size={14} color="#ffbc00" />
+                <span>KIDOBOX LITTLE FAMILY CLUB</span>
               </span>
-              <span className="phone-heart">♡</span>
-            </div>
-            <div>
-              <h2>{content.app?.title}</h2>
-              <p>{content.app?.description}</p>
-              <div className="app-buttons">
-                <Link className="glow-on-hover" href={safeLink(content.app?.ios_link)} aria-label="Download for iOS">
-                  <small>Download on the</small>
-                  Apple Store
-                </Link>
-                <Link className="glow-on-hover" href={safeLink(content.app?.android_link)} aria-label="Download for Android">
-                  <small>GET IT ON</small>
-                  Google Play
-                </Link>
+              <h2>Join Our Family &amp; Get ₹500 Off</h2>
+              <p>
+                Subscribe for gentle milestone tips, early access to organic drops,
+                and an instant ₹500 welcome voucher for your next order.
+              </p>
+
+              {!newsletterSubmitted ? (
+                <form onSubmit={handleNewsletterSubmit} className="family-club-form">
+                  <div className="family-input-wrap">
+                    <Mail size={18} className="family-input-icon" />
+                    <input
+                      type="email"
+                      value={newsletterEmail}
+                      onChange={(e) => setNewsletterEmail(e.target.value)}
+                      placeholder="Enter your email address..."
+                      required
+                      aria-label="Email address for family club"
+                    />
+                  </div>
+                  <button type="submit" className="family-club-btn glow-btn">
+                    <span>Claim ₹500 Off</span>
+                    <ArrowRight size={16} />
+                  </button>
+                </form>
+              ) : (
+                <div className="family-club-success">
+                  <CheckCircle2 size={22} color="#059669" />
+                  <div className="family-success-text">
+                    <strong>You&apos;re in the club! Use code at checkout:</strong>
+                    <button
+                      type="button"
+                      className="voucher-pill"
+                      onClick={() => {
+                        if (typeof navigator !== 'undefined' && navigator.clipboard) {
+                          navigator.clipboard.writeText('KIDO500').catch(() => {});
+                        }
+                        triggerToast('Voucher code KIDO500 copied! ♡', false);
+                      }}
+                      title="Click to copy code"
+                    >
+                      <code>KIDO500</code>
+                      <Copy size={13} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="family-club-perks">
+                <span><ShieldCheck size={16} color="#10b981" /> 100% Certified Baby-Safe</span>
+                <span><Truck size={16} color="#00adeb" /> Free Express Delivery</span>
+                <span><Gift size={16} color="#BC0202" /> Secret Birthday Perks</span>
               </div>
             </div>
-            <span className="app-rainbow float-anim">🌈</span>
-          </section>}
+
+            <div className="family-club-ticket-wrap">
+              <div className="family-ticket-card">
+                <div className="ticket-top">
+                  <span className="ticket-tag">WELCOME VOUCHER</span>
+                  <span className="ticket-stars">★ ★ ★ ★ ★</span>
+                </div>
+                <div className="ticket-body">
+                  <span className="ticket-amount">₹500</span>
+                  <span className="ticket-off">FLAT OFF</span>
+                </div>
+                <p className="ticket-sub">Valid on all baby clothes, nursery &amp; care</p>
+                <div className="ticket-cut">
+                  <span className="cut-circle cut-left"></span>
+                  <div className="cut-line"></div>
+                  <span className="cut-circle cut-right"></span>
+                </div>
+                <div className="ticket-footer">
+                  <div className="ticket-code-box">
+                    <small>COUPON CODE</small>
+                    <b>KIDO500</b>
+                  </div>
+                  <button
+                    type="button"
+                    className="ticket-copy-btn"
+                    onClick={() => {
+                      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+                        navigator.clipboard.writeText('KIDO500').catch(() => {});
+                      }
+                      triggerToast('Code KIDO500 copied! Apply at checkout ♡', false);
+                    }}
+                  >
+                    Copy Code
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
       </main>
 

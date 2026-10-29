@@ -26,6 +26,7 @@ import {
   Menu,
   X,
   Store as StoreIcon,
+  BookOpen,
 } from 'lucide-react';
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
@@ -51,6 +52,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     { name: 'Theme & Customizer', href: '/admin/themes' },
     { name: 'Banners & Hero Slides', href: '/admin/banners' },
     { name: 'Parent Reviews', href: '/admin/testimonials' },
+    { name: 'Parenting Guides', href: '/admin/guides' },
     { name: 'Navigation', href: '/admin/navigation' },
     { name: 'Preferences (SEO & Store)', href: '/admin/settings' },
   ];
@@ -74,7 +76,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
           </button>
 
           <Link href="/admin" className="flex items-center gap-2.5 group">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#ff268b] to-[#0284c7] flex items-center justify-center text-white shadow-sm font-bold text-xs">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#BC0202] to-[#0284c7] flex items-center justify-center text-white shadow-sm font-bold text-xs">
               <ShoppingBag className="w-4 h-4 text-white" />
             </div>
             <div className="flex items-center gap-2">
@@ -152,7 +154,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                 <div className="px-3 py-2 border-b border-[#e1e3e5] mb-1">
                   <div className="font-semibold">{user?.name || 'KIDOBOX Manager'}</div>
                   <div className="text-[11px] text-[#616161] truncate">{user?.email || 'admin@kidobox.com'}</div>
-                  <div className="mt-1 text-[10px] font-semibold text-[#ff268b] bg-[#fdf2f8] px-1.5 py-0.5 rounded inline-block">
+                  <div className="mt-1 text-[10px] font-semibold text-[#BC0202] bg-[#fdf2f8] px-1.5 py-0.5 rounded inline-block">
                     KIDOBOX Store Admin
                   </div>
                 </div>

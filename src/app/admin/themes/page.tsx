@@ -11,7 +11,7 @@ export default function AdminThemesPage() {
 
   // Theme settings state
   const [defaultMode, setDefaultMode] = useState<'girl' | 'boy'>('girl');
-  const [girlColor, setGirlColor] = useState('#ff268b');
+  const [girlColor, setGirlColor] = useState('#BC0202');
   const [boyColor, setBoyColor] = useState('#0284c7');
   const [announcementEnabled, setAnnouncementEnabled] = useState(true);
   const [freeShippingThreshold, setFreeShippingThreshold] = useState(999);
@@ -31,7 +31,7 @@ export default function AdminThemesPage() {
           if (cfg.branding) {
             setDefaultMode(cfg.branding.default_mode || 'girl');
             setPreviewMode(cfg.branding.default_mode || 'girl');
-            setGirlColor(cfg.branding.girl_color || cfg.branding.primary_color || '#ff268b');
+            setGirlColor(cfg.branding.girl_color || cfg.branding.primary_color || '#BC0202');
             setBoyColor(cfg.branding.boy_color || cfg.branding.secondary_color || '#0284c7');
           }
           if (cfg.announcement_bar) {
@@ -74,7 +74,7 @@ export default function AdminThemesPage() {
         returns_text: returnsText,
         guarantee_text: guaranteeText,
         tagline: tagline,
-        background_color: defaultMode === 'boy' ? '#f0f9ff' : '#fff0f6',
+        background_color: defaultMode === 'boy' ? '#f0f9ff' : '#fef2f2',
         text_color: '#122e50',
       },
     };
@@ -99,7 +99,7 @@ export default function AdminThemesPage() {
   if (loading) {
     return (
       <div className="p-8 flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-3 border-[#ff268b] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-3 border-[#BC0202] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -120,7 +120,7 @@ export default function AdminThemesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#e1e3e5] pb-5">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-[#fff0f6] text-[#ff268b]">
+            <span className="p-1.5 rounded-lg bg-[#fef2f2] text-[#BC0202]">
               <Palette className="w-5 h-5" />
             </span>
             <h1 className="text-2xl font-bold tracking-tight text-[#1a1a1a]">
@@ -136,7 +136,7 @@ export default function AdminThemesPage() {
           <button
             onClick={() => {
               setDefaultMode('girl');
-              setGirlColor('#ff268b');
+              setGirlColor('#BC0202');
               setBoyColor('#0284c7');
               setFreeShippingThreshold(999);
             }}
@@ -147,7 +147,7 @@ export default function AdminThemesPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-5 py-2 bg-[#ff268b] hover:bg-[#e70075] text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-2 transition disabled:opacity-50"
+            className="px-5 py-2 bg-[#BC0202] hover:bg-[#960101] text-white text-xs font-bold rounded-lg shadow-sm flex items-center gap-2 transition disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
             <span>{saving ? 'Publishing...' : 'Save & Publish'}</span>
@@ -161,7 +161,7 @@ export default function AdminThemesPage() {
           {/* Card 1: Boy & Girl Theme Modes */}
           <div className="bg-white border border-[#e1e3e5] rounded-xl p-6 shadow-xs">
             <h2 className="text-sm font-bold text-[#1a1a1a] flex items-center gap-2 mb-1">
-              <Sparkles className="w-4 h-4 text-[#ff268b]" />
+              <Sparkles className="w-4 h-4 text-[#BC0202]" />
               Gender Themes (Boy &amp; Girl Modes)
             </h2>
             <p className="text-xs text-[#6d7175] mb-5">
@@ -182,19 +182,19 @@ export default function AdminThemesPage() {
                     }}
                     className={`p-3.5 border-2 rounded-xl text-left transition flex items-center justify-between ${
                       defaultMode === 'girl'
-                        ? 'border-[#ff268b] bg-[#fff5f9]'
+                        ? 'border-[#BC0202] bg-[#fef2f2]'
                         : 'border-[#e1e3e5] hover:border-[#c9cccf]'
                     }`}
                   >
                     <div>
                       <span className="font-bold text-xs text-[#1a1a1a] block">
-                        Girl Mode (Sweet Pink)
+                        Girl Mode (Crimson Red)
                       </span>
                       <span className="text-[11px] text-[#6d7175]">
                         Blush rose accents &amp; warm florals
                       </span>
                     </div>
-                    <span className="w-4 h-4 rounded-full bg-[#ff268b]" />
+                    <span className="w-4 h-4 rounded-full bg-[#BC0202]" />
                   </button>
 
                   <button
@@ -301,7 +301,7 @@ export default function AdminThemesPage() {
                     type="number"
                     value={freeShippingThreshold}
                     onChange={(e) => setFreeShippingThreshold(Number(e.target.value))}
-                    className="w-full pl-7 pr-3 py-2 border border-[#d2d5d8] rounded-lg text-xs font-bold text-[#1a1a1a] focus:border-[#ff268b] outline-none"
+                    className="w-full pl-7 pr-3 py-2 border border-[#d2d5d8] rounded-lg text-xs font-bold text-[#1a1a1a] focus:border-[#BC0202] outline-none"
                   />
                 </div>
                 <small className="text-[11px] text-[#6d7175] block mt-1">
@@ -318,7 +318,7 @@ export default function AdminThemesPage() {
                     type="text"
                     value={tagline}
                     onChange={(e) => setTagline(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#d2d5d8] rounded-lg text-xs font-semibold text-[#1a1a1a] focus:border-[#ff268b] outline-none"
+                    className="w-full px-3 py-2 border border-[#d2d5d8] rounded-lg text-xs font-semibold text-[#1a1a1a] focus:border-[#BC0202] outline-none"
                   />
                 </div>
                 <div>
@@ -329,7 +329,7 @@ export default function AdminThemesPage() {
                     type="text"
                     value={returnsText}
                     onChange={(e) => setReturnsText(e.target.value)}
-                    className="w-full px-3 py-2 border border-[#d2d5d8] rounded-lg text-xs font-semibold text-[#1a1a1a] focus:border-[#ff268b] outline-none"
+                    className="w-full px-3 py-2 border border-[#d2d5d8] rounded-lg text-xs font-semibold text-[#1a1a1a] focus:border-[#BC0202] outline-none"
                   />
                 </div>
               </div>
@@ -349,7 +349,7 @@ export default function AdminThemesPage() {
                   type="button"
                   onClick={() => setPreviewMode('girl')}
                   className={`px-2 py-1 rounded transition ${
-                    previewMode === 'girl' ? 'bg-[#ff268b] text-white' : 'text-[#6d7175]'
+                    previewMode === 'girl' ? 'bg-[#BC0202] text-white' : 'text-[#6d7175]'
                   }`}
                 >
                   Girl
@@ -371,7 +371,7 @@ export default function AdminThemesPage() {
               <div
                 className="py-1 px-2.5 rounded-t-lg text-[9px] font-bold flex items-center justify-between border-b"
                 style={{
-                  background: previewMode === 'boy' ? '#e0f2fe' : '#fff0f6',
+                  background: previewMode === 'boy' ? '#e0f2fe' : '#fef2f2',
                   color: previewMode === 'boy' ? '#0369a1' : '#be185d',
                   borderColor: previewMode === 'boy' ? '#bae6fd' : '#fbcfe8',
                 }}
@@ -412,7 +412,7 @@ export default function AdminThemesPage() {
                   background:
                     previewMode === 'boy'
                       ? 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)'
-                      : 'linear-gradient(135deg, #ff268b 0%, #ff8bbb 100%)',
+                      : 'linear-gradient(135deg, #BC0202 0%, #ff8bbb 100%)',
                 }}
               >
                 <span className="text-[8px] font-bold uppercase tracking-wider block opacity-90">

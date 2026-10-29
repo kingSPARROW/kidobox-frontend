@@ -9,7 +9,7 @@ import { useCart } from '@/lib/cart-context';
 import { money, Product } from '@/lib/kidobox-data';
 import { useStorefront, mediaUrl, cartItem } from '@/lib/storefront';
 import { LazyImage } from '@/components/lazy-image';
-import { Heart } from 'lucide-react';
+import { Heart, Sparkles, ArrowRight } from 'lucide-react';
 
 interface CatalogViewProps {
   initialCategory?: string;
@@ -91,12 +91,18 @@ export function CatalogView({
       if (searchBrand && p.brand.toLowerCase() !== searchBrand.toLowerCase()) return false;
       if (searchQ) {
         const query = searchQ.toLowerCase();
-        const catName = categories.find((c) => c.slug === p.category)?.name || '';
+        const catNames = categories
+          .filter((c) => p.categorySlugs?.includes(c.slug) || c.slug === p.category)
+          .map((c) => c.name.toLowerCase());
         const match =
           p.name.toLowerCase().includes(query) ||
           p.detail.toLowerCase().includes(query) ||
           p.brand.toLowerCase().includes(query) ||
-          catName.toLowerCase().includes(query);
+          (p.category && p.category.toLowerCase().includes(query)) ||
+          p.categorySlugs?.some((s) => s.toLowerCase().includes(query)) ||
+          catNames.some((n) => n.includes(query)) ||
+          p.tag?.toLowerCase().includes(query) ||
+          p.features?.some((f) => f.toLowerCase().includes(query));
         if (!match) return false;
       }
       return true;
@@ -124,6 +130,17 @@ export function CatalogView({
   const pageSize = 9;
   const totalPages = Math.ceil(filteredList.length / pageSize);
   const pagedList = filteredList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  const matchingCategories = useMemo(() => {
+    if (!searchQ) return [];
+    const query = searchQ.toLowerCase();
+    return categories.filter(
+      (c) =>
+        c.name.toLowerCase().includes(query) ||
+        c.slug.toLowerCase().includes(query) ||
+        c.description.toLowerCase().includes(query)
+    );
+  }, [categories, searchQ]);
 
   const displayTitle = searchQ
     ? `A Little Search: “${searchQ}”`
@@ -218,6 +235,24 @@ export function CatalogView({
           </aside>
 
           <section className="catalog">
+            {searchQ && matchingCategories.length > 0 && (
+              <div className="search-page-categories-match">
+                <div className="search-match-label">
+                  <Sparkles size={15} color="var(--pink)" />
+                  <span>Matching Categories</span>
+                </div>
+                <div className="search-match-pills">
+                  {matchingCategories.map((c) => (
+                    <Link key={c.slug} href={`/collections/${c.slug}`} className="search-match-pill">
+                      <img src={mediaUrl(c.image)} alt={c.name} className="search-match-pill-img" />
+                      <span>{c.name}</span>
+                      <ArrowRight size={13} />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="catalog-toolbar">
               <p id="result-count">
                 {filteredList.length} little treasure{filteredList.length !== 1 ? 's' : ''}

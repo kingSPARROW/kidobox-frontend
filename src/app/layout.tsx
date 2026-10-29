@@ -27,7 +27,12 @@ export const metadata: Metadata = {
   description: "Thoughtfully chosen baby essentials for life’s sweetest little moments. Diapers, toys, feeding, soft clothing & nursery favorites.",
   keywords: ["KIDOBOX", "baby care", "baby essentials", "baby clothing", "diapers", "feeding", "toys", "nursery"],
   icons: {
-    icon: "/logo.png",
+    icon: [
+      { url: '/favicon.png', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
   },
   openGraph: {
     title: "Little Needs. Big Smiles. | KIDOBOX",

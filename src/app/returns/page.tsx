@@ -45,7 +45,7 @@ export default function ReturnsPage() {
             </div>
 
             <div className="info-highlight" style={{ background: '#fff0f6' }}>
-              <span style={{ color: '#ff268b' }}>↻</span>
+              <span style={{ color: '#BC0202' }}>↻</span>
               <div>
                 <h3>7-Day Easy Return Guarantee</h3>
                 <p>Return any unused item with original tags attached within 7 days of delivery.</p>
