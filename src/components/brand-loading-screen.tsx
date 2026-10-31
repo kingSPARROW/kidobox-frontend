@@ -58,24 +58,22 @@ export function BrandLoadingScreen({
 
         {/* Mascot / Brand Logo Container */}
         <div className="relative mb-5 transform transition-transform duration-500 hover:scale-105">
-          <div className="w-48 h-20 sm:w-56 sm:h-24 relative flex items-center justify-center">
+          <div className="w-60 h-24 sm:w-72 sm:h-28 relative flex items-center justify-center">
             {/* Logo Image */}
             <img
-              src="/assets/logo.svg"
-              alt="KIDOBOX Logo"
-              className="w-full h-full object-contain filter drop-shadow-[0_4px_12px_rgba(255,38,139,0.18)]"
-              onError={(e) => {
-                // Fallback to /logo.png if SVG fails
-                (e.target as HTMLImageElement).src = '/logo.png';
-              }}
+              src="/logo.png"
+              alt="KIDOBOX - Little Needs. Big Smiles."
+              className="w-full h-full object-contain filter drop-shadow-[0_8px_20px_rgba(255,38,139,0.22)]"
             />
           </div>
         </div>
 
-        {/* Tagline */}
-        <p className="text-[10px] sm:text-[11px] font-black tracking-[0.25em] text-[#122e50]/70 uppercase mb-4">
-          {subMessage}
-        </p>
+        {/* Tagline / Subtitle (shown if custom e.g. Admin Console) */}
+        {subMessage && subMessage !== 'LITTLE NEEDS. BIG SMILES.' && (
+          <p className="text-[10px] sm:text-[11px] font-black tracking-[0.25em] text-[#122e50]/70 uppercase mb-3">
+            {subMessage}
+          </p>
+        )}
 
         {/* Animated Progress Bar */}
         <div className="w-48 h-1.5 bg-[#ff268b]/10 rounded-full overflow-hidden relative shadow-inner mb-4">
