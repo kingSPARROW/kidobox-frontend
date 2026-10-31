@@ -28,6 +28,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   refreshUser: () => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<{ success: boolean; message: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -40,45 +41,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshUser = async () => {
     try {
-      let storedToken = localStorage.getItem('kidobox_merchant_token') || localStorage.getItem('homzy_merchant_token');
-      if (!storedToken) {
-        // Auto-authenticate as KIDOBOX Store Admin
-        try {
-          let loginRes = await fetchApi('/auth/login', {
-            method: 'POST',
-            body: JSON.stringify({ email: 'admin@kidobox.com', password: 'admin123' }),
-          }).catch(() => null);
-
-          if (!loginRes?.success) {
-            loginRes = await fetchApi('/auth/login', {
-              method: 'POST',
-              body: JSON.stringify({ email: 'merchant@homzy.com', password: 'password123' }),
-            }).catch(() => null);
-          }
-
-          if (loginRes?.success && loginRes.token) {
-            storedToken = String(loginRes.token);
-            localStorage.setItem('kidobox_merchant_token', storedToken);
-            localStorage.setItem('homzy_merchant_token', storedToken);
-          }
-        } catch (err) {}
-      }
+      const storedToken =
+        localStorage.getItem('kidobox_merchant_token') ||
+        localStorage.getItem('homzy_merchant_token');
 
       if (!storedToken) {
+        setUser(null);
+        setStore(null);
+        setToken(null);
         setIsLoading(false);
         return;
       }
+
       setToken(storedToken);
 
       const res = await fetchApi('/auth/me');
-      if (res.success) {
+      if (res?.success && res?.merchant) {
         setUser(res.merchant);
         if (res.active_store) {
           setStore(res.active_store);
         }
+      } else {
+        // Token invalid or expired - require fresh password authentication
+        localStorage.removeItem('kidobox_merchant_token');
+        localStorage.removeItem('homzy_merchant_token');
+        setUser(null);
+        setStore(null);
+        setToken(null);
       }
     } catch (e) {
       console.warn('Auth issue:', e);
+      localStorage.removeItem('kidobox_merchant_token');
+      localStorage.removeItem('homzy_merchant_token');
+      setUser(null);
+      setStore(null);
+      setToken(null);
     } finally {
       setIsLoading(false);
     }
@@ -94,7 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       body: JSON.stringify({ email, password }),
     });
 
-    if (res.success && res.token) {
+    if (res?.success && res?.token) {
       localStorage.setItem('kidobox_merchant_token', res.token);
       localStorage.setItem('homzy_merchant_token', res.token);
       if (res.store) {
@@ -105,6 +102,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return true;
     }
     return false;
+  };
+
+  const changePassword = async (currentPassword: string, newPassword: string) => {
+    try {
+      const res = await fetchApi('/auth/change-password', {
+        method: 'POST',
+        body: JSON.stringify({
+          current_password: currentPassword,
+          new_password: newPassword,
+        }),
+      });
+
+      if (res?.success) {
+        return { success: true, message: res.message || 'Password updated successfully.' };
+      }
+      return {
+        success: false,
+        message: res?.message || res?.errors?.current_password?.[0] || 'Failed to update password.',
+      };
+    } catch (err: any) {
+      return {
+        success: false,
+        message: err.message || 'Failed to update password.',
+      };
+    }
   };
 
   const logout = () => {
@@ -126,6 +148,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         logout,
         refreshUser,
+        changePassword,
       }}
     >
       {children}

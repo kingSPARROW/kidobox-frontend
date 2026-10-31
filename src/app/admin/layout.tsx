@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import {
   Home,
@@ -27,14 +27,107 @@ import {
   X,
   Store as StoreIcon,
   BookOpen,
+  KeyRound,
+  Lock,
+  Eye,
+  EyeOff,
+  Loader2,
+  Check,
 } from 'lucide-react';
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { user, store, logout } = useAuth();
+  const router = useRouter();
+  const { user, token, isLoading, store, logout, changePassword } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  // Change Password Modal State
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
+  const [pwSubmitting, setPwSubmitting] = useState(false);
+  const [pwError, setPwError] = useState('');
+  const [pwSuccess, setPwSuccess] = useState('');
+
+  useEffect(() => {
+    document.title = 'KIDOBOX Admin • Little Needs. Big Smiles.';
+  }, []);
+
+  // Authentication Guard: If not loading, not authenticated, and not on /admin/login, redirect to /admin/login
+  useEffect(() => {
+    if (pathname !== '/admin/login' && !isLoading && (!token || !user)) {
+      router.replace('/admin/login');
+    }
+  }, [pathname, isLoading, token, user, router]);
+
+  // Allow login page to render directly without admin sidebar
+  if (pathname === '/admin/login') {
+    return <>{children}</>;
+  }
+
+  const handleLogout = () => {
+    setUserMenuOpen(false);
+    logout();
+    router.replace('/admin/login');
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwError('');
+    setPwSuccess('');
+
+    if (!currentPassword) {
+      setPwError('Please enter your current password.');
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPwError('New password must be at least 6 characters long.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPwError('New passwords do not match.');
+      return;
+    }
+
+    setPwSubmitting(true);
+    try {
+      const res = await changePassword(currentPassword, newPassword);
+      if (res.success) {
+        setPwSuccess(res.message || 'Password updated successfully!');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setTimeout(() => {
+          setIsPasswordModalOpen(false);
+          setPwSuccess('');
+        }, 1500);
+      } else {
+        setPwError(res.message || 'Failed to update password.');
+      }
+    } catch (err: any) {
+      setPwError(err.message || 'Failed to update password.');
+    } finally {
+      setPwSubmitting(false);
+    }
+  };
+
+  if (isLoading || (!token || !user)) {
+    return (
+      <div className="min-h-screen bg-[#f6f6f7] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#ff268b] to-[#0284c7] flex items-center justify-center text-white shadow-sm animate-pulse">
+            <ShoppingBag className="w-4 h-4 text-white" />
+          </div>
+          <span className="text-xs text-[#616161] font-medium">Verifying store admin authentication...</span>
+        </div>
+      </div>
+    );
+  }
 
   const mainNavigation = [
     { name: 'Home', href: '/admin', icon: Home },
@@ -56,10 +149,6 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     { name: 'Navigation', href: '/admin/navigation' },
     { name: 'Preferences (SEO & Store)', href: '/admin/settings' },
   ];
-
-  React.useEffect(() => {
-    document.title = 'KIDOBOX Admin • Little Needs. Big Smiles.';
-  }, []);
 
   return (
     <div className="min-h-screen bg-[#f6f6f7] flex flex-col font-sans text-[#1a1a1a] antialiased">
@@ -178,13 +267,24 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                   View storefront
                 </Link>
 
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUserMenuOpen(false);
+                    setPwError('');
+                    setPwSuccess('');
+                    setIsPasswordModalOpen(true);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-[#1a1a1a] hover:bg-[#f6f6f7] rounded-lg transition text-left"
+                >
+                  <KeyRound className="w-3.5 h-3.5 text-[#616161]" />
+                  Change password
+                </button>
+
                 <div className="border-t border-[#e1e3e5] my-1" />
 
                 <button
-                  onClick={() => {
-                    setUserMenuOpen(false);
-                    logout();
-                  }}
+                  onClick={handleLogout}
                   className="w-full flex items-center gap-2 px-3 py-2 text-[#d72c0d] hover:bg-[#fff4f2] rounded-lg transition"
                 >
                   <LogOut className="w-3.5 h-3.5" />
@@ -327,11 +427,156 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
           <div className="max-w-6xl mx-auto">{children}</div>
         </main>
       </div>
+
+      {/* Change Password Modal */}
+      {isPasswordModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-[#e1e3e5] shadow-2xl max-w-md w-full p-6 animate-in fade-in space-y-4">
+            <div className="flex items-center justify-between border-b border-[#e1e3e5] pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-[#fdf2f8] flex items-center justify-center text-[#ff268b]">
+                  <KeyRound className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-[#1a1a1a]">Change Store Password</h3>
+                  <p className="text-[11px] text-[#616161]">Update your merchant admin sign-in password</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPasswordModalOpen(false)}
+                className="text-[#616161] hover:text-[#1a1a1a] p-1 rounded-lg"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {pwError && (
+              <div className="p-2.5 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs font-medium">
+                {pwError}
+              </div>
+            )}
+
+            {pwSuccess && (
+              <div className="p-2.5 bg-green-50 border border-green-200 rounded-lg text-green-700 text-xs font-medium flex items-center gap-1.5">
+                <Check className="w-4 h-4 text-green-600" />
+                <span>{pwSuccess}</span>
+              </div>
+            )}
+
+            <form onSubmit={handlePasswordSubmit} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block font-semibold text-[#1a1a1a] mb-1">
+                  Current Password *
+                </label>
+                <div className="relative">
+                  <Lock className="w-3.5 h-3.5 text-[#8c9196] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type={showCurrentPw ? 'text' : 'password'}
+                    required
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Enter current password"
+                    className="w-full pl-8 pr-9 py-2 bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPw(!showCurrentPw)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8c9196] hover:text-[#1a1a1a]"
+                  >
+                    {showCurrentPw ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#1a1a1a] mb-1">
+                  New Password * (Min. 6 characters)
+                </label>
+                <div className="relative">
+                  <Lock className="w-3.5 h-3.5 text-[#8c9196] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type={showNewPw ? 'text' : 'password'}
+                    required
+                    minLength={6}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter new strong password"
+                    className="w-full pl-8 pr-9 py-2 bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPw(!showNewPw)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8c9196] hover:text-[#1a1a1a]"
+                  >
+                    {showNewPw ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#1a1a1a] mb-1">
+                  Confirm New Password *
+                </label>
+                <div className="relative">
+                  <Lock className="w-3.5 h-3.5 text-[#8c9196] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                    className="w-full pl-8 pr-3 py-2 bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b]"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-[#e1e3e5]">
+                <button
+                  type="button"
+                  onClick={() => setIsPasswordModalOpen(false)}
+                  className="px-3.5 py-1.5 bg-white border border-[#c9cccf] hover:bg-[#f6f6f7] text-[#1a1a1a] font-semibold rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={pwSubmitting}
+                  className="px-4 py-1.5 bg-gradient-to-r from-[#ff268b] to-[#0284c7] hover:opacity-95 text-white font-semibold rounded-lg shadow-sm disabled:opacity-50 inline-flex items-center gap-1.5"
+                >
+                  {pwSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  Update Password
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-[#f6f6f7] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#ff268b] to-[#0284c7] flex items-center justify-center text-white shadow-sm animate-pulse">
+            <ShoppingBag className="w-4 h-4 text-white" />
+          </div>
+          <span className="text-xs text-[#616161] font-medium">Loading store admin...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <React.Suspense fallback={<div className="min-h-screen bg-[#f6f6f7]" />}>
       <AdminLayoutContent>{children}</AdminLayoutContent>

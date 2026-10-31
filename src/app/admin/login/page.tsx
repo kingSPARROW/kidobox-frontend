@@ -1,29 +1,42 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { ShoppingBag, Lock, Mail, ArrowRight, Loader2, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, Lock, Mail, ArrowRight, Loader2, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
-  const [email, setEmail] = useState('admin@kidobox.com');
-  const [password, setPassword] = useState('admin123');
+  const { user, token, isLoading: isAuthLoading, login } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // If already authenticated with valid token, redirect directly to admin dashboard
+  useEffect(() => {
+    if (!isAuthLoading && token && user) {
+      router.replace('/admin');
+    }
+  }, [isAuthLoading, token, user, router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email.trim() || !password) {
+      setErrorMsg('Please enter both your email address and password.');
+      return;
+    }
+
     setIsLoading(true);
     setErrorMsg('');
 
     try {
-      const ok = await login(email, password);
+      const ok = await login(email.trim(), password);
       if (ok) {
-        router.push('/admin');
+        router.replace('/admin');
       } else {
-        setErrorMsg('Invalid store credentials.');
+        setErrorMsg('Invalid email or password. Please verify your credentials.');
       }
     } catch (err: any) {
       setErrorMsg(err.message || 'Login failed. Please verify credentials.');
@@ -41,7 +54,7 @@ export default function AdminLoginPage() {
             <ShoppingBag className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-xl font-bold text-[#1a1a1a] tracking-tight">KIDOBOX Admin</h1>
-          <p className="text-xs text-[#616161] mt-1">Baby &amp; Toddler Store Management Console</p>
+          <p className="text-xs text-[#616161] mt-1">Single-Store Merchant Console • Secure Sign-in</p>
         </div>
 
         {/* Card */}
@@ -52,22 +65,11 @@ export default function AdminLoginPage() {
             </div>
           )}
 
-          {/* Demo Hint */}
-          <div className="mb-5 p-3 bg-[#fdf2f8] rounded-xl text-xs text-[#303030] border border-[#fbcfe8]">
-            <div className="flex items-center gap-1.5 font-semibold text-[#9d174d] mb-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#ff268b]" />
-              Store Admin Credentials:
-            </div>
-            <div className="font-mono text-[11px] text-[#4b5563] space-y-0.5">
-              <div>Email: <span className="text-[#1a1a1a] font-bold">admin@kidobox.com</span></div>
-              <div>Pass: <span className="text-[#1a1a1a] font-bold">admin123</span></div>
-              <div className="text-[10px] text-[#9ca3af] pt-1">Alias: merchant@homzy.com / password123</div>
-            </div>
-          </div>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-[#303030] mb-1.5">Email address</label>
+              <label className="block text-xs font-semibold text-[#303030] mb-1.5">
+                Admin Email Address
+              </label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-[#8c9196] absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
@@ -77,6 +79,7 @@ export default function AdminLoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b] focus:ring-1 focus:ring-[#ff268b] transition"
                   placeholder="admin@kidobox.com"
+                  autoComplete="email"
                 />
               </div>
             </div>
@@ -88,12 +91,22 @@ export default function AdminLoginPage() {
               <div className="relative">
                 <Lock className="w-4 h-4 text-[#8c9196] absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b] focus:ring-1 focus:ring-[#ff268b] transition"
+                  className="w-full pl-9 pr-10 py-2 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b] focus:ring-1 focus:ring-[#ff268b] transition"
+                  placeholder="Enter store password"
+                  autoComplete="current-password"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8c9196] hover:text-[#1a1a1a] p-0.5"
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
@@ -105,11 +118,11 @@ export default function AdminLoginPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Signing in...
+                  Verifying password...
                 </>
               ) : (
                 <>
-                  Sign in
+                  Sign in to Admin
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -117,8 +130,9 @@ export default function AdminLoginPage() {
           </form>
         </div>
 
-        <div className="text-center mt-6 text-[11px] text-[#8c9196]">
-          Protected by KIDOBOX Commerce Engine • Single Store Architecture
+        <div className="text-center mt-6 text-[11px] text-[#8c9196] flex items-center justify-center gap-1.5">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#008060]" />
+          <span>Encrypted Session • Multi-tenant Password Authentication</span>
         </div>
       </div>
     </div>

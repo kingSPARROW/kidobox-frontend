@@ -345,6 +345,11 @@ export default function AdminTestimonialsPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              {saveMutation.isError && (
+                <div className="p-2.5 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs">
+                  {(saveMutation.error as any)?.response?.data?.message || 'Failed to save testimonial. Please try again.'}
+                </div>
+              )}
               {/* Author Name & Rating */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>

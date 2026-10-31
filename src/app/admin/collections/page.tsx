@@ -215,9 +215,28 @@ export default function AdminCollectionsPage() {
                   type="text"
                   value={form.image_url}
                   onChange={(e) => setForm({ ...form, image_url: e.target.value })}
+                  placeholder="e.g. /assets/hd/clothing.webp"
                   className="w-full px-3 py-1.5 bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#008060]"
                 />
               </div>
+
+              <div className="pt-1">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={form.is_published}
+                    onChange={(e) => setForm({ ...form, is_published: e.target.checked })}
+                    className="rounded border-[#c9cccf] text-[#1a1a1a] focus:ring-0"
+                  />
+                  <span className="font-medium text-[#1a1a1a]">Published on storefront</span>
+                </label>
+              </div>
+
+              {createMutation.isError && (
+                <div className="p-2.5 bg-red-50 border border-red-200 text-red-700 rounded-lg text-xs" role="alert">
+                  {(createMutation.error as any)?.message || 'Failed to save collection'}
+                </div>
+              )}
 
               <div className="flex justify-end gap-2 pt-3 border-t border-[#e1e3e5]">
                 <button
@@ -236,7 +255,6 @@ export default function AdminCollectionsPage() {
                   Save collection
                 </button>
               </div>
-              <label className="flex gap-2 text-xs"><input type="checkbox" checked={form.is_published} onChange={e => setForm({ ...form, is_published: e.target.checked })} />Published on storefront</label>
             </form>
           </div>
         </div>

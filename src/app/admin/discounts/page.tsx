@@ -184,6 +184,11 @@ export default function AdminDiscountsPage() {
               }}
               className="space-y-3 text-xs"
             >
+              {createMutation.isError && (
+                <div className="p-2.5 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs">
+                  {(createMutation.error as any)?.response?.data?.message || 'Failed to save discount. Please try again.'}
+                </div>
+              )}
               <div>
                 <label className="block font-semibold text-[#1a1a1a] mb-1">Discount code</label>
                 <input
