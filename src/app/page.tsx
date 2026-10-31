@@ -11,6 +11,7 @@ import { HeroSlider } from '@/components/hero-slider';
 import { ProductSlider } from '@/components/product-slider';
 import { ReviewsSlider } from '@/components/reviews-slider';
 import { LazyImage } from '@/components/lazy-image';
+import { BrandLoadingScreen } from '@/components/brand-loading-screen';
 import {
   Sparkles,
   Heart,
@@ -279,6 +280,10 @@ export default function KidoboxHomePage() {
     return [...allMatches, ...otherCatalog];
   }, [products]);
 
+  if (isLoading && products.length === 0) {
+    return <BrandLoadingScreen fullScreen={true} />;
+  }
+
   return (
     <div data-page="home" className="min-h-screen flex flex-col bg-white">
       <StoreNav />
@@ -286,9 +291,17 @@ export default function KidoboxHomePage() {
       <main id="main-content" className="flex-1">
         {/* ── 1. Interactive Hero Slider with Autoplay & Badges ──────── */}
         <HeroSlider />
-        {isLoading && <p className="container" role="status">Loading store…</p>}
-        {isError && <p className="container" role="alert">Unable to load the store. <button onClick={() => refetch()}>Retry</button></p>}
-        {!isLoading && !isError && products.length === 0 && <p className="container">No products are available yet.</p>}
+        {isError && (
+          <p className="container" role="alert">
+            Unable to load the store.{' '}
+            <button onClick={() => refetch()} className="underline font-bold text-[#ff268b]">
+              Retry
+            </button>
+          </p>
+        )}
+        {!isLoading && !isError && products.length === 0 && (
+          <p className="container text-center py-12 text-[#616161]">No products are available yet.</p>
+        )}
 
         <div className="container main-content">
           {/* ── 2. Shop by Category with Quick-Glide Arrows ────────────── */}

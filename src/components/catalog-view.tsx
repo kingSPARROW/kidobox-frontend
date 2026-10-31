@@ -10,6 +10,7 @@ import { money, Product } from '@/lib/kidobox-data';
 import { useStorefront, mediaUrl, cartItem } from '@/lib/storefront';
 import { LazyImage } from '@/components/lazy-image';
 import { Heart, Sparkles, ArrowRight } from 'lucide-react';
+import { BrandLoadingScreen } from '@/components/brand-loading-screen';
 
 interface CatalogViewProps {
   initialCategory?: string;
@@ -153,6 +154,10 @@ export function CatalogView({
     : searchBrand
     ? `Explore little favorites from our ${searchBrand} collection.`
     : description;
+
+  if (isLoading && products.length === 0) {
+    return <BrandLoadingScreen fullScreen={true} message={`Loading ${displayTitle || 'little treasures'}...`} />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-white">

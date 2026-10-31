@@ -34,6 +34,7 @@ import {
   Loader2,
   Check,
 } from 'lucide-react';
+import { BrandLoadingScreen } from '@/components/brand-loading-screen';
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -118,16 +119,14 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 
   if (isLoading || (!token || !user)) {
     return (
-      <div className="min-h-screen bg-[#f6f6f7] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#ff268b] to-[#0284c7] flex items-center justify-center text-white shadow-sm animate-pulse">
-            <ShoppingBag className="w-4 h-4 text-white" />
-          </div>
-          <span className="text-xs text-[#616161] font-medium">Verifying store admin authentication...</span>
-        </div>
-      </div>
+      <BrandLoadingScreen
+        fullScreen={true}
+        message="Verifying store admin authentication..."
+        subMessage="KIDOBOX ADMIN"
+      />
     );
   }
+
 
   const mainNavigation = [
     { name: 'Home', href: '/admin', icon: Home },
@@ -566,14 +565,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-[#f6f6f7] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#ff268b] to-[#0284c7] flex items-center justify-center text-white shadow-sm animate-pulse">
-            <ShoppingBag className="w-4 h-4 text-white" />
-          </div>
-          <span className="text-xs text-[#616161] font-medium">Loading store admin...</span>
-        </div>
-      </div>
+      <BrandLoadingScreen
+        fullScreen={true}
+        message="Loading store admin console..."
+        subMessage="KIDOBOX ADMIN"
+      />
     );
   }
 
