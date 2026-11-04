@@ -273,14 +273,17 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar */}
         <aside
-          className={`w-60 bg-white border-r border-slate-200/90 flex flex-col justify-between flex-shrink-0 transition-all select-none ${
+          className={`w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 transition-all select-none ${
             sidebarOpen ? 'block' : 'hidden md:block'
           }`}
         >
           <div className="overflow-y-auto flex-1 py-4 px-3 space-y-5">
             {navSections.map((section) => (
               <div key={section.title} className="space-y-1">
-                <div className="px-3 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <div
+                  className="px-3 pb-1.5 text-[11px] font-bold text-slate-500 uppercase tracking-wider"
+                  style={{ color: '#64748b' }}
+                >
                   {section.title}
                 </div>
 
@@ -296,25 +299,56 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                       <Link
                         key={item.name}
                         href={item.href}
-                        className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition ${
+                        data-active={isActive ? 'true' : 'false'}
+                        className={`group flex items-center justify-between px-3 py-2 rounded-xl text-[13px] font-medium transition cursor-pointer ${
                           isActive
-                            ? 'bg-slate-900 text-white font-semibold shadow-xs'
-                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
+                            ? 'active-nav-item bg-slate-900 text-white font-semibold shadow-xs'
+                            : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100/90'
                         }`}
+                        style={
+                          isActive
+                            ? { backgroundColor: '#0f172a', color: '#ffffff' }
+                            : { color: '#334155' }
+                        }
                       >
-                        <div className="flex items-center gap-2.5">
+                        <div className="flex items-center gap-3 min-w-0">
                           <Icon
-                            className={`w-4 h-4 ${
-                              isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'
-                            }`}
+                            className="w-4 h-4 shrink-0 transition"
+                            style={
+                              isActive
+                                ? { color: '#ffffff', stroke: '#ffffff' }
+                                : { color: '#64748b' }
+                            }
                           />
-                          <span>{item.name}</span>
+                          <span
+                            className={`truncate ${isActive ? 'font-semibold' : 'font-medium'}`}
+                            style={{ color: isActive ? '#ffffff' : '#334155' }}
+                          >
+                            {item.name}
+                          </span>
                         </div>
-                        {item.badge && !isActive && (
-                          <span className="px-1.5 py-0.2 text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200 rounded-full">
+                        {item.badge ? (
+                          <span
+                            className={`px-1.5 py-0.5 text-[10px] font-bold rounded-full ${
+                              isActive
+                                ? 'bg-white/20 text-white'
+                                : 'bg-amber-100 text-amber-900 border border-amber-300'
+                            }`}
+                            style={
+                              isActive
+                                ? { backgroundColor: 'rgba(255, 255, 255, 0.25)', color: '#ffffff' }
+                                : { backgroundColor: '#fef3c7', color: '#78350f' }
+                            }
+                          >
                             {item.badge}
                           </span>
-                        )}
+                        ) : isActive ? (
+                          <span
+                            className="w-1.5 h-1.5 rounded-full bg-pink-400 shrink-0"
+                            style={{ backgroundColor: '#f472b6' }}
+                            title="Current Page"
+                          />
+                        ) : null}
                       </Link>
                     );
                   })}
@@ -324,16 +358,19 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Bottom Store Status Pill */}
-          <div className="p-3 border-t border-slate-100 bg-slate-50/60">
+          <div className="p-3 border-t border-slate-200/80 bg-slate-50/80">
             <Link
               href="/admin/settings"
-              className="flex items-center justify-between p-2 rounded-lg hover:bg-white text-xs text-slate-600 hover:text-slate-900 transition border border-transparent hover:border-slate-200"
+              className="flex items-center justify-between p-2 rounded-xl hover:bg-white text-xs transition border border-transparent hover:border-slate-200"
+              style={{ color: '#334155' }}
             >
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span className="text-[11px] font-medium text-slate-700">Kidobox Store Online</span>
+              <div className="flex items-center gap-2.5">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-200" />
+                <span className="text-xs font-semibold text-slate-700" style={{ color: '#334155' }}>
+                  Kidobox Store Online
+                </span>
               </div>
-              <Settings className="w-3.5 h-3.5 text-slate-400" />
+              <Settings className="w-3.5 h-3.5 text-slate-400" style={{ color: '#94a3b8' }} />
             </Link>
           </div>
         </aside>
