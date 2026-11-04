@@ -16,13 +16,127 @@ main h3,
   line-height: inherit !important;
 }
 
-/* Ensure admin sidebar links & text never inherit storefront unlayered color styles */
+/* ==========================================================================
+   GLOBAL ADMIN BUTTONS & LINKS TEXT VISIBILITY FIX
+   Prevent storefront unlayered 'a { color: inherit }' and 'button { color: inherit }'
+   from turning white text on dark buttons into invisible dark navy!
+   ========================================================================== */
 body:has(aside) a,
+body:has(aside) button,
 [class*="admin"] a,
-aside a {
-  text-decoration: none !important;
+[class*="admin"] button,
+.admin-portal a,
+.admin-portal button {
+  text-decoration: none;
 }
 
+/* 1. All white-text elements in Admin */
+body:has(aside) .text-white,
+body:has(aside) [class*="text-white"],
+[class*="admin"] .text-white,
+[class*="admin"] [class*="text-white"],
+.admin-portal .text-white,
+.admin-portal [class*="text-white"],
+main .text-white,
+main [class*="text-white"] {
+  color: #ffffff !important;
+}
+
+body:has(aside) .text-white *,
+body:has(aside) [class*="text-white"] *,
+[class*="admin"] .text-white *,
+[class*="admin"] [class*="text-white"] *,
+.admin-portal .text-white *,
+.admin-portal [class*="text-white"] *,
+main .text-white *,
+main [class*="text-white"] * {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* 2. All Dark Primary Buttons and Action Links in Admin (Add product, Create collection, etc.) */
+body:has(aside) [class*="bg-[#1a1a1a]"],
+body:has(aside) [class*="bg-[#303030]"],
+body:has(aside) [class*="bg-slate-900"],
+body:has(aside) [class*="bg-slate-800"],
+body:has(aside) [class*="bg-black"],
+[class*="admin"] [class*="bg-[#1a1a1a]"],
+[class*="admin"] [class*="bg-[#303030]"],
+[class*="admin"] [class*="bg-slate-900"],
+[class*="admin"] [class*="bg-slate-800"],
+[class*="admin"] [class*="bg-black"],
+.admin-portal [class*="bg-[#1a1a1a]"],
+.admin-portal [class*="bg-[#303030]"],
+.admin-portal [class*="bg-slate-900"],
+.admin-portal [class*="bg-slate-800"],
+.admin-portal [class*="bg-black"],
+main [class*="bg-[#1a1a1a]"],
+main [class*="bg-[#303030]"],
+main [class*="bg-slate-900"],
+main [class*="bg-slate-800"],
+main [class*="bg-black"],
+.admin-btn-dark {
+  color: #ffffff !important;
+}
+
+body:has(aside) [class*="bg-[#1a1a1a]"] *,
+body:has(aside) [class*="bg-[#303030]"] *,
+body:has(aside) [class*="bg-slate-900"] *,
+body:has(aside) [class*="bg-slate-800"] *,
+body:has(aside) [class*="bg-black"] *,
+[class*="admin"] [class*="bg-[#1a1a1a]"] *,
+[class*="admin"] [class*="bg-[#303030]"] *,
+[class*="admin"] [class*="bg-slate-900"] *,
+[class*="admin"] [class*="bg-slate-800"] *,
+[class*="admin"] [class*="bg-black"] *,
+.admin-portal [class*="bg-[#1a1a1a]"] *,
+.admin-portal [class*="bg-[#303030]"] *,
+.admin-portal [class*="bg-slate-900"] *,
+.admin-portal [class*="bg-slate-800"] *,
+.admin-portal [class*="bg-black"] *,
+main [class*="bg-[#1a1a1a]"] *,
+main [class*="bg-[#303030]"] *,
+main [class*="bg-slate-900"] *,
+main [class*="bg-slate-800"] *,
+main [class*="bg-black"] *,
+.admin-btn-dark * {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* 3. Branded primary buttons (Pink / Blue / Emerald) in Admin */
+body:has(aside) [class*="bg-[#ff268b]"],
+body:has(aside) [class*="bg-pink-600"],
+body:has(aside) [class*="bg-blue-600"],
+body:has(aside) [class*="bg-emerald-600"],
+[class*="admin"] [class*="bg-[#ff268b]"],
+[class*="admin"] [class*="bg-pink-600"],
+[class*="admin"] [class*="bg-blue-600"],
+[class*="admin"] [class*="bg-emerald-600"],
+.admin-portal [class*="bg-[#ff268b]"],
+.admin-portal [class*="bg-pink-600"],
+.admin-portal [class*="bg-blue-600"],
+.admin-portal [class*="bg-emerald-600"] {
+  color: #ffffff !important;
+}
+
+body:has(aside) [class*="bg-[#ff268b]"] *,
+body:has(aside) [class*="bg-pink-600"] *,
+body:has(aside) [class*="bg-blue-600"] *,
+body:has(aside) [class*="bg-emerald-600"] *,
+[class*="admin"] [class*="bg-[#ff268b]"] *,
+[class*="admin"] [class*="bg-pink-600"] *,
+[class*="admin"] [class*="bg-blue-600"] *,
+[class*="admin"] [class*="bg-emerald-600"] *,
+.admin-portal [class*="bg-[#ff268b]"] *,
+.admin-portal [class*="bg-pink-600"] *,
+.admin-portal [class*="bg-blue-600"] *,
+.admin-portal [class*="bg-emerald-600"] * {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* 4. Admin Sidebar Specific Overrides */
 aside a.active-nav-item,
 aside a[data-active="true"] {
   background-color: #0f172a !important;

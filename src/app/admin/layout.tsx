@@ -189,7 +189,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       ];
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex flex-col font-sans text-slate-800 antialiased">
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col font-sans text-slate-800 antialiased admin-portal">
       {/* 1. TOP HEADER: Clean white modern bar */}
       <header className="h-14 bg-white text-slate-800 px-4 flex items-center justify-between sticky top-0 z-40 select-none border-b border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
         {/* Left: Mobile Toggle + Brand Logo */}

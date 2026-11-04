@@ -182,10 +182,11 @@ export default function AdminCollectionsPage() {
 
         <button
           onClick={handleOpenCreate}
-          className="px-3.5 py-1.5 bg-[#1a1a1a] hover:bg-[#303030] text-white text-xs font-semibold rounded-lg shadow-sm transition inline-flex items-center gap-1.5 self-start"
+          className="px-3.5 py-1.5 bg-[#1a1a1a] hover:bg-[#303030] text-white text-xs font-semibold rounded-lg shadow-sm transition inline-flex items-center gap-1.5 self-start cursor-pointer admin-btn-dark"
+          style={{ color: '#ffffff', backgroundColor: '#1a1a1a' }}
         >
-          <Plus className="w-3.5 h-3.5" />
-          Create collection
+          <Plus className="w-3.5 h-3.5" style={{ color: '#ffffff', stroke: '#ffffff' }} />
+          <span style={{ color: '#ffffff' }}>Create collection</span>
         </button>
       </div>
 

@@ -458,14 +458,15 @@ export default function ShopifyProductForm({
           <button
             onClick={() => saveMutation.mutate()}
             disabled={saveMutation.isPending || !form.title.trim()}
-            className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg shadow-xs transition inline-flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+            className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg shadow-xs transition inline-flex items-center gap-1.5 disabled:opacity-50 cursor-pointer admin-btn-dark"
+            style={{ color: '#ffffff', backgroundColor: '#0f172a' }}
           >
             {saveMutation.isPending ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: '#ffffff', stroke: '#ffffff' }} />
             ) : saveSuccess ? (
               <Check className="w-3.5 h-3.5 text-emerald-400" />
             ) : null}
-            {saveSuccess ? 'Saved' : isEdit ? 'Save changes' : 'Save product'}
+            <span style={{ color: '#ffffff' }}>{saveSuccess ? 'Saved' : isEdit ? 'Save changes' : 'Save product'}</span>
           </button>
         </div>
       </div>
