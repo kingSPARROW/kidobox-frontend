@@ -163,6 +163,7 @@ export default function ShopifyProductForm({
   const [imageUrlInput, setImageUrlInput] = useState('');
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [formTab, setFormTab] = useState<'details' | 'pricing' | 'variants' | 'seo' | 'all'>('details');
 
   // Available collections for single store
   const { data: collectionData } = useQuery({ queryKey: ['adminCollections'], queryFn: () => fetchApi('/collections') });
@@ -396,58 +397,68 @@ export default function ShopifyProductForm({
 
   return (
     <div className="space-y-6 pb-20">
-      {/* 1. TOP HEADER & SHOPIFY ACTIONS */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sticky top-0 bg-[#f6f6f7] py-3 z-30 border-b border-[#e1e3e5]">
-        <div className="flex items-center gap-3">
+      {/* 1. COMPACT TOP HEADER & ACTIONS */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sticky top-0 bg-white/95 backdrop-blur-sm py-2.5 px-4 rounded-xl z-30 border border-slate-200 shadow-2xs">
+        <div className="flex items-center gap-3 min-w-0">
           <Link
             href="/admin/products"
-            className="p-1.5 text-[#616161] hover:text-[#1a1a1a] hover:bg-white rounded-lg border border-transparent hover:border-[#e1e3e5] transition"
+            className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg border border-slate-200 transition flex-shrink-0"
+            title="Back to products list"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-[#1a1a1a] tracking-tight">
+              <h1
+                className="text-base sm:text-lg font-bold text-slate-900 tracking-tight truncate"
+                style={{
+                  transform: 'none',
+                  maxWidth: '550px',
+                  fontFamily: 'inherit',
+                  fontSize: '18px',
+                  lineHeight: '1.25',
+                }}
+              >
                 {isEdit ? form.title || 'Edit Product' : 'Add Product'}
               </h1>
               <span
-                className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex-shrink-0 ${
                   form.status === 'active'
-                    ? 'bg-[#e3f1df] text-[#0d5921]'
+                    ? 'bg-emerald-50 text-emerald-700'
                     : form.status === 'draft'
-                    ? 'bg-[#fff4e5] text-[#8a4b08]'
-                    : 'bg-[#ebebeb] text-[#616161]'
+                    ? 'bg-amber-50 text-amber-700'
+                    : 'bg-slate-100 text-slate-600'
                 }`}
               >
                 {form.status}
               </span>
             </div>
-            <p className="text-xs text-[#616161]">Single Store Commerce • HOMZY</p>
+            <p className="text-[11px] text-slate-400">Kidobox Product Catalog</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-shrink-0">
           {isEdit && form.slug && (
             <a
               href={`/products/${form.slug}`}
               target="_blank"
               rel="noreferrer"
-              className="px-3 py-1.5 bg-white border border-[#c9cccf] hover:bg-[#f6f6f7] text-[#1a1a1a] text-xs font-semibold rounded-lg shadow-xs transition inline-flex items-center gap-1.5"
+              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold rounded-lg shadow-2xs transition inline-flex items-center gap-1.5"
             >
-              <ExternalLink className="w-3.5 h-3.5 text-[#616161]" />
-              View on store
+              <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+              <span>View on store</span>
             </a>
           )}
           <Link
             href="/admin/products"
-            className="px-3 py-1.5 bg-white border border-[#c9cccf] hover:bg-[#f6f6f7] text-[#1a1a1a] text-xs font-semibold rounded-lg shadow-xs transition"
+            className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-lg shadow-2xs transition"
           >
             Discard
           </Link>
           <button
             onClick={() => saveMutation.mutate()}
             disabled={saveMutation.isPending || !form.title.trim()}
-            className="px-4 py-1.5 bg-[#1a1a1a] hover:bg-[#303030] text-white text-xs font-semibold rounded-lg shadow-sm transition inline-flex items-center gap-1.5 disabled:opacity-50"
+            className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg shadow-xs transition inline-flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
           >
             {saveMutation.isPending ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -459,10 +470,35 @@ export default function ShopifyProductForm({
         </div>
       </div>
 
+      {/* QUICK SECTION TABS: Avoid endless scrolling */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-200">
+        {[
+          { key: 'details', label: '1. Title, Description & Media' },
+          { key: 'pricing', label: '2. Pricing, Inventory & Shipping' },
+          { key: 'variants', label: '3. Variants & Options' },
+          { key: 'seo', label: '4. On-Page SEO & Schema' },
+          { key: 'all', label: 'View All' },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => setFormTab(tab.key as any)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+              formTab === tab.key
+                ? 'bg-slate-900 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       {/* 2. 2-COLUMN SHOPIFY GRID LAYOUT */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* LEFT COLUMN: Main Content (8 cols) */}
         <div className="lg:col-span-8 space-y-5">
+          {(formTab === 'details' || formTab === 'all') && (<>
           {/* A. Title & Description */}
           <div className="bg-white rounded-xl border border-[#e1e3e5] p-5 shadow-[0_1px_0_rgba(0,0,0,0.05)] space-y-4">
             <div>
@@ -517,7 +553,7 @@ export default function ShopifyProductForm({
                 </div>
               </div>
               <textarea
-                rows={6}
+                rows={4}
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
                 placeholder="Crafted with rust-resistant powder-coated wrought iron, these sturdy dual-height stands offer exceptional balance for ceramic, terracotta, or metal pots..."
@@ -672,6 +708,9 @@ export default function ShopifyProductForm({
             )}
           </div>
 
+          </>)}
+
+          {(formTab === 'pricing' || formTab === 'all') && (<>
           {/* C. Pricing & Shopify Margin Calculator */}
           <div className="bg-white rounded-xl border border-[#e1e3e5] p-5 shadow-[0_1px_0_rgba(0,0,0,0.05)] space-y-4">
             <h3 className="text-xs font-bold text-[#1a1a1a] border-b border-[#e1e3e5] pb-2">Pricing</h3>
@@ -910,6 +949,9 @@ export default function ShopifyProductForm({
             )}
           </div>
 
+          </>)}
+
+          {(formTab === 'variants' || formTab === 'all') && (<>
           {/* F. Variants & Options (Shopify Variant Matrix) */}
           <div className="bg-white rounded-xl border border-[#e1e3e5] p-5 shadow-[0_1px_0_rgba(0,0,0,0.05)] space-y-4">
             <div className="flex items-center justify-between border-b border-[#e1e3e5] pb-2">
@@ -1097,6 +1139,9 @@ export default function ShopifyProductForm({
             )}
           </div>
 
+          </>)}
+
+          {(formTab === 'seo' || formTab === 'all') && (<>
           {/* G. Complete On-Page SEO & Headings Suite */}
           <div className="bg-white rounded-xl border border-[#e1e3e5] p-5 shadow-[0_1px_0_rgba(0,0,0,0.05)] space-y-5">
             <div className="flex items-center justify-between border-b border-[#e1e3e5] pb-2">
@@ -1384,6 +1429,7 @@ export default function ShopifyProductForm({
               ) : null}
             </div>
           </div>
+          </>)}
         </div>
 
         {/* RIGHT COLUMN: Sidebar Organization (4 cols) */}
