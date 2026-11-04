@@ -55,11 +55,15 @@ export interface ProductFormData {
   id?: string;
   _id?: string;
   title: string;
+  heading_h1?: string;
+  heading_h2?: string;
+  heading_h3?: string;
   description: string;
   vendor: string;
   product_type: string;
   status: 'active' | 'draft' | 'archived';
   images: string[];
+  image_alts?: Record<number, string>;
   price: number;
   compare_at_price?: number | null;
   cost_per_item?: number | null;
@@ -82,6 +86,10 @@ export interface ProductFormData {
   seo_title: string;
   seo_description: string;
   slug: string;
+  canonical_url?: string;
+  meta_robots?: string;
+  schema_markup?: string;
+  focus_keyword?: string;
 }
 
 interface ShopifyProductFormProps {
@@ -100,15 +108,25 @@ export default function ShopifyProductForm({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Form State
+  // Extract images and image alts
+  const rawImgs = initialData?.images || [];
+  const initialImgUrls = rawImgs.map((i: any) => typeof i === 'string' ? i : (i.url || i.src || ''));
+  const initialAlts: Record<number, string> = {};
+  rawImgs.forEach((i: any, idx: number) => {
+    if (typeof i === 'object' && i.alt) initialAlts[idx] = i.alt;
+  });
+
   const [form, setForm] = useState<ProductFormData>({
     title: initialData?.title || '',
+    heading_h1: initialData?.heading_h1 || initialData?.title || '',
+    heading_h2: initialData?.heading_h2 || '',
+    heading_h3: initialData?.heading_h3 || '',
     description: initialData?.description || '',
     vendor: initialData?.vendor || '',
     product_type: initialData?.product_type || '',
     status: initialData?.status || 'active',
-    images: initialData?.images && initialData.images.length > 0
-      ? initialData.images
-      : [],
+    images: initialImgUrls.length > 0 ? initialImgUrls : [],
+    image_alts: initialAlts,
     price: initialData?.price ?? (initialData?.variants?.[0]?.price ?? 0),
     compare_at_price: initialData?.compare_at_price ?? (initialData?.variants?.[0]?.compare_at_price ?? null),
     cost_per_item: initialData?.cost_per_item ?? (initialData?.variants?.[0]?.cost_per_item ?? null),
@@ -131,7 +149,14 @@ export default function ShopifyProductForm({
     seo_title: initialData?.seo_title || initialData?.title || '',
     seo_description: initialData?.seo_description || '',
     slug: initialData?.slug || '',
+    canonical_url: initialData?.canonical_url || '',
+    meta_robots: initialData?.meta_robots || 'index, follow',
+    schema_markup: initialData?.schema_markup || '',
+    focus_keyword: initialData?.focus_keyword || '',
   });
+
+  const [serpDevice, setSerpDevice] = useState<'desktop' | 'mobile'>('desktop');
+  const [schemaError, setSchemaError] = useState<string | null>(null);
 
   // UI state
   const [newTagInput, setNewTagInput] = useState('');
@@ -287,13 +312,22 @@ export default function ShopifyProductForm({
   // Save Mutation
   const saveMutation = useMutation({
     mutationFn: async () => {
+      // Format images with ALT text for Google Images & Accessibility
+      const formattedImages = form.images.map((url, idx) => ({
+        url,
+        alt: (form.image_alts && form.image_alts[idx]) ? form.image_alts[idx] : (form.title || 'Product Image'),
+      }));
+
       const payload = {
         title: form.title,
+        heading_h1: form.heading_h1 || form.title,
+        heading_h2: form.heading_h2 || '',
+        heading_h3: form.heading_h3 || '',
         description: form.description,
         vendor: form.vendor,
         product_type: form.product_type,
         status: form.status,
-        images: form.images,
+        images: formattedImages,
         price: Number(form.price),
         compare_at_price: form.compare_at_price ? Number(form.compare_at_price) : null,
         cost_per_item: form.cost_per_item ? Number(form.cost_per_item) : null,
@@ -324,6 +358,18 @@ export default function ShopifyProductForm({
         seo_title: form.seo_title || form.title,
         seo_description: form.seo_description || form.description,
         slug: form.slug,
+        canonical_url: form.canonical_url || '',
+        meta_robots: form.meta_robots || 'index, follow',
+        schema_markup: form.schema_markup || '',
+        focus_keyword: form.focus_keyword || '',
+        seo: {
+          title: form.seo_title || form.title,
+          description: form.seo_description || form.description,
+          canonical_url: form.canonical_url || '',
+          meta_robots: form.meta_robots || 'index, follow',
+          schema_markup: form.schema_markup || '',
+          focus_keyword: form.focus_keyword || '',
+        },
       };
 
       if (isEdit && productId) {
@@ -552,46 +598,76 @@ export default function ShopifyProductForm({
               </div>
             </div>
 
-            {/* Media Thumbnails Grid */}
+            {/* Media Thumbnails Grid with Image ALT Text */}
             {form.images.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                {form.images.map((imgUrl, index) => (
-                  <div
-                    key={index}
-                    className="relative group rounded-xl overflow-hidden border border-[#e1e3e5] bg-[#f6f6f7] aspect-square"
-                  >
-                    <img src={imgUrl} alt={`Product ${index + 1}`} className="w-full h-full object-cover" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+                {form.images.map((imgUrl, index) => {
+                  const currentAlt = (form.image_alts && form.image_alts[index]) || '';
+                  return (
+                    <div
+                      key={index}
+                      className="border border-[#e1e3e5] rounded-xl p-2 bg-[#fafafa] flex flex-col justify-between space-y-2"
+                    >
+                      <div className="relative group rounded-lg overflow-hidden border border-[#e1e3e5] bg-[#f6f6f7] aspect-square">
+                        <img src={imgUrl} alt={currentAlt || `Product ${index + 1}`} className="w-full h-full object-cover" />
 
-                    {/* Primary Badge */}
-                    {index === 0 && (
-                      <span className="absolute top-1.5 left-1.5 bg-[#1a1a1a] text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow">
-                        ★ Primary
-                      </span>
-                    )}
+                        {/* Primary Badge */}
+                        {index === 0 && (
+                          <span className="absolute top-1.5 left-1.5 bg-[#1a1a1a] text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow">
+                            ★ Primary
+                          </span>
+                        )}
 
-                    {/* Overlay controls */}
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
-                      {index !== 0 && (
-                        <button
-                          type="button"
-                          onClick={() => handleSetPrimaryImage(index)}
-                          title="Make primary"
-                          className="p-1.5 bg-white text-[#1a1a1a] rounded-lg hover:bg-emerald-50 transition"
-                        >
-                          <Star className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveImage(index)}
-                        title="Delete image"
-                        className="p-1.5 bg-white text-[#d72c0d] rounded-lg hover:bg-rose-50 transition"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                        {/* Overlay controls */}
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+                          {index !== 0 && (
+                            <button
+                              type="button"
+                              onClick={() => handleSetPrimaryImage(index)}
+                              title="Make primary"
+                              className="p-1.5 bg-white text-[#1a1a1a] rounded-lg hover:bg-emerald-50 transition"
+                            >
+                              <Star className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(index)}
+                            title="Delete image"
+                            className="p-1.5 bg-white text-[#d72c0d] rounded-lg hover:bg-rose-50 transition"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Image ALT Text Input (On-page SEO) */}
+                      <div>
+                        <div className="flex items-center justify-between text-[10px] text-[#616161] mb-1 font-semibold">
+                          <span>ALT Text (Image SEO)</span>
+                          {currentAlt ? (
+                            <span className="text-emerald-700">✓ Set</span>
+                          ) : (
+                            <span className="text-amber-700">Empty</span>
+                          )}
+                        </div>
+                        <input
+                          type="text"
+                          value={currentAlt}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setForm((prev) => ({
+                              ...prev,
+                              image_alts: { ...(prev.image_alts || {}), [index]: val },
+                            }));
+                          }}
+                          placeholder={form.title ? `${form.title} photo ${index + 1}` : 'Descriptive ALT text...'}
+                          className="w-full px-2 py-1 text-[11px] bg-white border border-[#c9cccf] rounded focus:outline-none focus:border-[#008060]"
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -1021,78 +1097,291 @@ export default function ShopifyProductForm({
             )}
           </div>
 
-          {/* G. Search Engine Listing Preview (SEO) */}
-          <div className="bg-white rounded-xl border border-[#e1e3e5] p-5 shadow-[0_1px_0_rgba(0,0,0,0.05)] space-y-4">
+          {/* G. Complete On-Page SEO & Headings Suite */}
+          <div className="bg-white rounded-xl border border-[#e1e3e5] p-5 shadow-[0_1px_0_rgba(0,0,0,0.05)] space-y-5">
             <div className="flex items-center justify-between border-b border-[#e1e3e5] pb-2">
-              <h3 className="text-xs font-bold text-[#1a1a1a]">Search engine listing (SEO)</h3>
-              <span className="text-[11px] text-[#008060] font-semibold">Google Rich Snippet</span>
+              <div>
+                <h3 className="text-xs font-bold text-[#1a1a1a]">Search Engine Optimization (SEO) & Headings</h3>
+                <p className="text-[11px] text-[#616161]">Manage titles, meta descriptions, on-page headings (H1, H2, H3), slugs, robots, canonical tags, and schema.</p>
+              </div>
+              <div className="flex items-center gap-1.5 bg-[#f6f6f7] p-0.5 rounded-lg border border-[#e1e3e5]">
+                <button
+                  type="button"
+                  onClick={() => setSerpDevice('desktop')}
+                  className={`px-2 py-0.5 text-[10px] font-semibold rounded ${serpDevice === 'desktop' ? 'bg-white text-[#1a1a1a] shadow-sm' : 'text-[#616161]'}`}
+                >
+                  Desktop
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSerpDevice('mobile')}
+                  className={`px-2 py-0.5 text-[10px] font-semibold rounded ${serpDevice === 'mobile' ? 'bg-white text-[#1a1a1a] shadow-sm' : 'text-[#616161]'}`}
+                >
+                  Mobile
+                </button>
+              </div>
             </div>
 
             {/* Google SERP Preview Box */}
-            <div className="p-4 bg-[#f8f9fa] border border-[#e1e3e5] rounded-xl space-y-1 font-sans">
+            <div className={`p-4 bg-[#f8f9fa] border border-[#e1e3e5] rounded-xl space-y-1.5 font-sans ${serpDevice === 'mobile' ? 'max-w-sm mx-auto shadow-sm' : ''}`}>
               <div className="text-[11px] text-[#202124] flex items-center gap-1.5">
-                <span className="w-3.5 h-3.5 rounded-full bg-emerald-700 text-white flex items-center justify-center text-[8px] font-bold">
-                  A
+                <span className="w-4 h-4 rounded-full bg-[#ff268b] text-white flex items-center justify-center text-[9px] font-bold">
+                  K
                 </span>
-                <span>homzy.in &gt; products &gt; {form.slug || 'product-handle'}</span>
+                <div className="leading-tight">
+                  <div className="text-[10px] text-[#202124] font-medium">kidobox.store</div>
+                  <div className="text-[9px] text-[#5f6368]">https://kidobox.store &gt; products &gt; {form.slug || 'product-slug'}</div>
+                </div>
               </div>
               <h4 className="text-[#1a0dab] hover:underline cursor-pointer text-sm font-medium leading-snug line-clamp-1">
-                {form.seo_title || form.title || 'Product Title'} | HOMZY
+                {form.seo_title || form.title || 'Product Title'} | KIDOBOX
               </h4>
               <p className="text-[11px] text-[#4d5156] line-clamp-2 leading-relaxed">
                 {form.seo_description ||
-                  form.description ||
-                  'Explore our handcrafted, sustainable home goods. Buy directly online with secure Razorpay payment and express Shiprocket delivery.'}
+                  (form.description ? form.description.replace(/<[^>]*>/g, '').slice(0, 160) : '') ||
+                  'Shop thoughtfully chosen baby & toddler essentials. 100% skin-safe organic materials with express Shiprocket delivery and COD.'}
               </p>
             </div>
 
-            <div className="space-y-3 pt-2">
+            {/* 1. SEO Title & Description */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-[#1a1a1a]">Page title</label>
-                  <span className="text-[10px] text-[#616161]">
-                    {(form.seo_title || form.title).length} of 70 characters used
+                  <label className="text-xs font-semibold text-[#1a1a1a]">SEO Title Tag</label>
+                  <span className={`text-[10px] font-mono ${(form.seo_title || form.title).length > 60 ? 'text-amber-700 font-bold' : 'text-[#616161]'}`}>
+                    {(form.seo_title || form.title).length} / 60 chars
                   </span>
                 </div>
                 <input
                   type="text"
                   value={form.seo_title}
                   onChange={(e) => setForm({ ...form, seo_title: e.target.value })}
-                  placeholder={form.title || 'Product Page Title'}
+                  placeholder={form.title || 'Product Page Title (Recommended: 50-60 characters)'}
                   className="w-full px-3 py-1.5 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#008060]"
                 />
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-[#1a1a1a]">Meta description</label>
-                  <span className="text-[10px] text-[#616161]">
-                    {(form.seo_description || form.description).length} of 320 characters used
-                  </span>
+                  <label className="text-xs font-semibold text-[#1a1a1a]">Focus Keyword (Optional)</label>
+                  {form.focus_keyword && (
+                    <span className="text-[10px] text-emerald-700 font-medium">
+                      {(form.title.toLowerCase().includes(form.focus_keyword.toLowerCase()) ? '✓ in title' : '✗ not in title')}
+                    </span>
+                  )}
                 </div>
-                <textarea
-                  rows={3}
-                  value={form.seo_description}
-                  onChange={(e) => setForm({ ...form, seo_description: e.target.value })}
-                  placeholder="Summary that will appear in search results..."
-                  className="w-full p-2.5 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#008060]"
+                <input
+                  type="text"
+                  value={form.focus_keyword || ''}
+                  onChange={(e) => setForm({ ...form, focus_keyword: e.target.value })}
+                  placeholder="e.g. organic baby romper"
+                  className="w-full px-3 py-1.5 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#008060]"
                 />
               </div>
+            </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-[#1a1a1a] mb-1">URL handle / slug</label>
-                <div className="flex items-center">
-                  <span className="px-3 py-1.5 bg-[#f6f6f7] border border-r-0 border-[#c9cccf] rounded-l-lg text-xs text-[#616161]">
-                    /products/
-                  </span>
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-semibold text-[#1a1a1a]">Meta Description</label>
+                <span className={`text-[10px] font-mono ${(form.seo_description || '').length > 160 ? 'text-amber-700 font-bold' : 'text-[#616161]'}`}>
+                  {(form.seo_description || '').length} / 160 chars
+                </span>
+              </div>
+              <textarea
+                rows={2}
+                value={form.seo_description}
+                onChange={(e) => setForm({ ...form, seo_description: e.target.value })}
+                placeholder="High-converting search snippet. Include benefits, baby safety credentials, and a call-to-action."
+                className="w-full p-2.5 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#008060]"
+              />
+            </div>
+
+            {/* 2. URL Slug with Auto-Generator */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-semibold text-[#1a1a1a]">URL Handle / Slug</label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const cleanSlug = form.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                    setForm({ ...form, slug: cleanSlug });
+                  }}
+                  className="text-[11px] text-[#008060] hover:underline font-semibold"
+                >
+                  Regenerate from Title
+                </button>
+              </div>
+              <div className="flex items-center">
+                <span className="px-3 py-1.5 bg-[#f6f6f7] border border-r-0 border-[#c9cccf] rounded-l-lg text-xs text-[#616161]">
+                  https://kidobox.store/products/
+                </span>
+                <input
+                  type="text"
+                  value={form.slug}
+                  onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}
+                  className="flex-1 px-3 py-1.5 text-xs bg-white border border-[#c9cccf] rounded-r-lg font-mono focus:outline-none focus:border-[#008060]"
+                />
+              </div>
+            </div>
+
+            {/* 3. On-Page Headings (H1, H2, H3) */}
+            <div className="border border-[#e1e3e5] rounded-xl p-4 bg-[#fcfcfd] space-y-3">
+              <div className="text-xs font-bold text-[#1a1a1a] flex items-center justify-between">
+                <span>On-Page Semantic Headings</span>
+                <span className="text-[10px] text-[#616161] font-normal">H1 for main title, H2 for subheading, H3 for detail highlights</span>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#1a1a1a] mb-1">
+                    <span className="bg-pink-100 text-pink-800 text-[9px] font-bold px-1.5 py-0.5 rounded mr-1">H1</span>
+                    Main Page Heading
+                  </label>
                   <input
                     type="text"
-                    value={form.slug}
-                    onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                    className="flex-1 px-3 py-1.5 text-xs bg-white border border-[#c9cccf] rounded-r-lg font-mono focus:outline-none focus:border-[#008060]"
+                    value={form.heading_h1 || ''}
+                    onChange={(e) => setForm({ ...form, heading_h1: e.target.value })}
+                    placeholder={form.title || 'Defaults to product title'}
+                    className="w-full px-2.5 py-1.5 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#008060]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#1a1a1a] mb-1">
+                    <span className="bg-blue-100 text-blue-800 text-[9px] font-bold px-1.5 py-0.5 rounded mr-1">H2</span>
+                    Subheading / Tagline
+                  </label>
+                  <input
+                    type="text"
+                    value={form.heading_h2 || ''}
+                    onChange={(e) => setForm({ ...form, heading_h2: e.target.value })}
+                    placeholder="e.g. Cloud-Soft Comfort For Sweet Milestones"
+                    className="w-full px-2.5 py-1.5 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#008060]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#1a1a1a] mb-1">
+                    <span className="bg-emerald-100 text-emerald-800 text-[9px] font-bold px-1.5 py-0.5 rounded mr-1">H3</span>
+                    Highlights Heading
+                  </label>
+                  <input
+                    type="text"
+                    value={form.heading_h3 || ''}
+                    onChange={(e) => setForm({ ...form, heading_h3: e.target.value })}
+                    placeholder="e.g. Pediatrician Tested & Certified Safe"
+                    className="w-full px-2.5 py-1.5 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#008060]"
                   />
                 </div>
               </div>
+            </div>
+
+            {/* 4. Canonical URL & Meta Robots */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-[#1a1a1a] mb-1">Canonical Tag URL</label>
+                <input
+                  type="url"
+                  value={form.canonical_url || ''}
+                  onChange={(e) => setForm({ ...form, canonical_url: e.target.value })}
+                  placeholder={`https://kidobox.store/products/${form.slug || 'product-slug'}`}
+                  className="w-full px-3 py-1.5 text-xs bg-white border border-[#c9cccf] rounded-lg font-mono focus:outline-none focus:border-[#008060]"
+                />
+                <span className="text-[10px] text-[#616161] block mt-0.5">Leave blank to default to this product's canonical URL.</span>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#1a1a1a] mb-1">Meta Robots Directives</label>
+                <select
+                  value={form.meta_robots || 'index, follow'}
+                  onChange={(e) => setForm({ ...form, meta_robots: e.target.value })}
+                  className="w-full px-3 py-1.5 text-xs bg-white border border-[#c9cccf] rounded-lg font-semibold focus:outline-none focus:border-[#008060]"
+                >
+                  <option value="index, follow">index, follow (Standard - indexed by Google)</option>
+                  <option value="noindex, follow">noindex, follow (Hide from search, follow links)</option>
+                  <option value="noindex, nofollow">noindex, nofollow (Complete search blackout)</option>
+                  <option value="index, nofollow">index, nofollow (Index page, ignore links)</option>
+                </select>
+                <span className="text-[10px] text-[#616161] block mt-0.5">Controls Googlebot indexing directives for this specific product.</span>
+              </div>
+            </div>
+
+            {/* 5. Schema Markup (JSON-LD) */}
+            <div className="space-y-2 pt-2 border-t border-[#e1e3e5]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-xs font-semibold text-[#1a1a1a]">Schema Markup (Structured Data JSON-LD)</label>
+                  <span className="text-[10px] text-[#616161] block">Custom or auto-generated schema.org/Product JSON-LD.</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const generated = {
+                      "@context": "https://schema.org/",
+                      "@type": "Product",
+                      "name": form.title,
+                      "image": form.images[0] || "https://kidobox.store/logo.png",
+                      "description": form.seo_description || (form.description ? form.description.replace(/<[^>]*>/g, '').slice(0, 160) : ''),
+                      "sku": form.sku || "KDB-" + Math.floor(1000 + Math.random() * 9000),
+                      "brand": {
+                        "@type": "Brand",
+                        "name": form.vendor || "KIDOBOX"
+                      },
+                      "offers": {
+                        "@type": "Offer",
+                        "url": `https://kidobox.store/products/${form.slug}`,
+                        "priceCurrency": "INR",
+                        "price": Number(form.price),
+                        "priceValidUntil": "2027-12-31",
+                        "availability": form.inventory_quantity > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+                        "itemCondition": "https://schema.org/NewCondition"
+                      }
+                    };
+                    setForm({ ...form, schema_markup: JSON.stringify(generated, null, 2) });
+                    setSchemaError(null);
+                  }}
+                  className="px-2.5 py-1 bg-white border border-[#c9cccf] hover:bg-emerald-50 text-emerald-800 text-[11px] font-semibold rounded-lg shadow-sm transition"
+                >
+                  ⚡ Auto-Generate Product Schema
+                </button>
+              </div>
+
+              <textarea
+                rows={5}
+                value={form.schema_markup || ''}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setForm({ ...form, schema_markup: val });
+                  if (!val.trim()) {
+                    setSchemaError(null);
+                  } else {
+                    try {
+                      JSON.parse(val);
+                      setSchemaError(null);
+                    } catch (err: any) {
+                      setSchemaError(err.message);
+                    }
+                  }
+                }}
+                placeholder='{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "..."
+}'
+                className="w-full p-2.5 text-xs bg-[#f8f9fa] border border-[#c9cccf] rounded-lg font-mono focus:outline-none focus:border-[#008060]"
+              />
+
+              {schemaError ? (
+                <div className="text-[11px] text-rose-600 font-semibold flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  JSON Syntax Error: {schemaError}
+                </div>
+              ) : form.schema_markup ? (
+                <div className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Valid JSON-LD Schema (will be injected into &lt;head&gt;)
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

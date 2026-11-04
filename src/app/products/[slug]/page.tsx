@@ -9,6 +9,7 @@ import { useCart } from '@/lib/cart-context';
 import { money, Product } from '@/lib/kidobox-data';
 import { useStorefront, mediaUrl, cartItem } from '@/lib/storefront';
 import { ImageMagnifier } from '@/components/image-magnifier';
+import { SeoHead } from '@/components/seo-head';
 import { Truck, RotateCcw, Heart, Sparkles, MessageSquareHeart } from 'lucide-react';
 
 export default function ProductDetailPage() {
@@ -118,7 +119,7 @@ export default function ProductDetailPage() {
           <div className="product-gallery">
             <ImageMagnifier
               src={mediaUrl(product.images?.[activeImage] || product.image)}
-              alt={product.name}
+              alt={product.imageAlts?.[activeImage] || product.imageAlt || product.name}
               tag={product.tag}
               isNew={product.isNew}
               zoomLevel={2.8}
@@ -140,7 +141,8 @@ export default function ProductDetailPage() {
             <Link className="mini-eyebrow" href={`/${product.category}`}>
               {categoryObj?.name || product.category}
             </Link>
-            <h1>{product.name}</h1>
+            <h1>{product.heading_h1 || product.name}</h1>
+            {product.heading_h2 && <h2 className="text-xs font-semibold text-[#ff268b] tracking-wide uppercase mt-1">{product.heading_h2}</h2>}
             <p className="product-subtitle">{product.detail}</p>
 
             <a className="detail-rating" href="#product-reviews">

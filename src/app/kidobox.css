@@ -2412,6 +2412,42 @@ html[data-theme="girl"] {
 }
 
 /* 5. Modern Lucide Section & Benefit Icons */
+/* Section Title & Subtitle Alignment Fix */
+.section-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  margin-bottom: 14px !important;
+}
+
+.section-title > div:first-child {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+}
+
+.section-title h2 {
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.5px !important;
+  line-height: 1.25 !important;
+  margin: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+}
+
+.section-title p {
+  margin: 4px 0 0 0 !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--muted, #637389) !important;
+  line-height: 1.4 !important;
+  text-align: left !important;
+}
+
 .section-icon-wrap {
   display: inline-flex !important;
   align-items: center !important;

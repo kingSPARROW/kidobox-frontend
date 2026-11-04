@@ -12,6 +12,7 @@ import { ProductSlider } from '@/components/product-slider';
 import { ReviewsSlider } from '@/components/reviews-slider';
 import { LazyImage } from '@/components/lazy-image';
 import { BrandLoadingScreen } from '@/components/brand-loading-screen';
+import { SeoHead } from '@/components/seo-head';
 import {
   Sparkles,
   Heart,
@@ -37,7 +38,7 @@ import {
 } from 'lucide-react';
 
 export default function KidoboxHomePage() {
-  const { categories, products, ages, articles, brands, isLoading, isError, refetch, content, banners, offers } = useStorefront();
+  const { categories, products, ages, articles, brands, isLoading, isError, refetch, content, banners, offers, globalSeo, pageSeo } = useStorefront();
   const { addItem, setIsOpen } = useCart();
   const [activeTab, setActiveTab] = useState('all');
   const [wishlist, setWishlist] = useState<string[]>([]);
@@ -381,32 +382,19 @@ export default function KidoboxHomePage() {
 
           {/* ── 5. Tabbed Bestsellers Catalog ─────────────────────────── */}
           <section id="bestsellers" style={{ marginTop: '45px' }}>
-            <div className="section-title product-heading">
+            <div className="section-title">
               <div>
                 <h2>
                   <span className="section-icon-wrap"><Heart size={20} fill="currentColor" /></span> Most-Loved Bestsellers
                 </h2>
                 <p>Pediatrician-recommended, parent-approved everyday staples</p>
               </div>
-              <div className="bestsellers-toolbar">
-                <div className="filter-tabs" aria-label="Product categories">
-                  {[['all', 'All Favorites'], ...categories.map(c => [c.slug, c.name])].map(([tabKey, label]) => (
-                    <button
-                      key={tabKey}
-                      onClick={() => setActiveTab(tabKey)}
-                      className={activeTab === tabKey ? 'active' : ''}
-                      aria-pressed={activeTab === tabKey}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <Link className="view-link" href="/bestsellers">
-                    View All Bestsellers →
-                  </Link>
-                  <div className="slider-nav-arrows">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Link className="view-link" href="/bestsellers">
+                  View All Bestsellers →
+                </Link>
+                <div className="slider-nav-arrows">
                     <button
                       type="button"
                       className="slider-nav-btn"
@@ -424,8 +412,23 @@ export default function KidoboxHomePage() {
                       ›
                     </button>
                   </div>
-                </div>
               </div>
+            </div>
+
+            {/* Category Filter Tabs on dedicated clean row */}
+            <div className="bestsellers-filter-strip" style={{ marginTop: '8px', marginBottom: '16px' }}>
+              <div className="filter-tabs" aria-label="Product categories" style={{ margin: 0 }}>
+                  {[['all', 'All Favorites'], ...categories.map(c => [c.slug, c.name])].map(([tabKey, label]) => (
+                    <button
+                      key={tabKey}
+                      onClick={() => setActiveTab(tabKey)}
+                      className={activeTab === tabKey ? 'active' : ''}
+                      aria-pressed={activeTab === tabKey}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
             </div>
 
             <div

@@ -34,6 +34,7 @@ interface BannerItem {
   subtitle?: string;
   desktop_image_url: string;
   mobile_image_url?: string;
+  alt_text?: string;
   cta_text?: string;
   cta_link?: string;
   secondary_cta_text?: string;
@@ -68,6 +69,7 @@ export default function AdminBannersPage() {
     subtitle: 'Thoughtfully designed essentials crafted with organic cotton and hypoallergenic care for every little moment.',
     desktop_image_url: '/assets/hd/hero.webp',
     mobile_image_url: '/assets/hd/hero.webp',
+    alt_text: 'Kidobox baby essentials promotional hero banner',
     cta_text: 'Shop Baby Essentials',
     cta_link: '/shop',
     secondary_cta_text: 'Explore Categories',
@@ -285,7 +287,7 @@ export default function AdminBannersPage() {
                       <div className="w-28 h-16 rounded-lg overflow-hidden border border-[#c9cccf] bg-slate-100 relative">
                         <img
                           src={b.desktop_image_url}
-                          alt="Desktop View"
+                          alt={b.alt_text || "Desktop View"}
                           className="w-full h-full object-cover"
                         />
                         <div className="absolute bottom-1 right-1 bg-black/70 backdrop-blur-sm px-1 py-0.5 rounded text-[8px] font-bold text-white flex items-center gap-0.5">
@@ -299,7 +301,7 @@ export default function AdminBannersPage() {
                       <div className="w-12 h-16 rounded-lg overflow-hidden border border-[#c9cccf] bg-slate-100 relative">
                         <img
                           src={b.mobile_image_url || b.desktop_image_url}
-                          alt="Mobile View"
+                          alt={b.alt_text || "Mobile View"}
                           className="w-full h-full object-cover"
                         />
                         <div className="absolute bottom-1 right-1 bg-black/70 backdrop-blur-sm px-0.5 py-0.5 rounded text-[7px] font-bold text-white">
@@ -336,6 +338,12 @@ export default function AdminBannersPage() {
                       <span>Alignment: {b.text_alignment || 'left'}</span>
                       <span>•</span>
                       <span>Priority: #{b.order || 1}</span>
+                      {b.alt_text && (
+                        <>
+                          <span>•</span>
+                          <span className="text-emerald-700 font-medium">ALT: &ldquo;{b.alt_text}&rdquo;</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -847,6 +855,24 @@ export default function AdminBannersPage() {
                         </div>
                       )}
                     </div>
+                  </div>
+
+                  {/* Banner Image ALT Text (SEO) */}
+                  <div className="pt-3 border-t border-[#f1f2f4]">
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="font-semibold text-[#1a1a1a]">Image ALT Text (Accessibility & SEO)</label>
+                      <span className="text-[10px] text-[#008060] font-bold">Recommended for Google Image Search</span>
+                    </div>
+                    <input
+                      type="text"
+                      value={form.alt_text || ''}
+                      onChange={(e) => setForm({ ...form, alt_text: e.target.value })}
+                      placeholder="e.g. Newborn infant wearing organic muslin romper playing with eco blocks"
+                      className="w-full px-3 py-1.5 bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#008060]"
+                    />
+                    <p className="text-[10px] text-[#616161] mt-0.5">
+                      Descriptive alternative text for search engines and accessibility screen readers.
+                    </p>
                   </div>
                 </div>
 
