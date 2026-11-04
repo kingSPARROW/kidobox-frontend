@@ -7,6 +7,9 @@ export interface StoreAdminUser {
   id: string;
   name: string;
   email: string;
+  role?: string;
+  permissions?: string[];
+  subscription_plan?: string;
 }
 
 export interface Store {

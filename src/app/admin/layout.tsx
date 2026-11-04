@@ -126,38 +126,67 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Simplified Navigation Sections (clean, grouped, no confusing sub-indentations)
-  const navSections = [
-    {
-      title: 'Store Operations',
-      items: [
-        { name: 'Dashboard', href: '/admin', icon: Home },
-        { name: 'Orders', href: '/admin/orders', icon: ShoppingBag, badge: '1' },
-        { name: 'Products', href: '/admin/products', icon: Tag },
-        { name: 'Collections', href: '/admin/collections', icon: FolderTree },
-        { name: 'Inventory', href: '/admin/inventory', icon: Boxes },
-        { name: 'Customers', href: '/admin/customers', icon: Users },
-      ],
-    },
-    {
-      title: 'Content & Marketing',
-      items: [
-        { name: 'SEO & Meta Tags', href: '/admin/seo', icon: Search },
-        { name: 'Hero Banners', href: '/admin/banners', icon: StoreIcon },
-        { name: 'Parenting Blog', href: '/admin/guides', icon: BookOpen },
-        { name: 'Customer Reviews', href: '/admin/testimonials', icon: MessageSquare },
-        { name: 'Theme & Customizer', href: '/admin/themes', icon: LayoutGrid },
-      ],
-    },
-    {
-      title: 'Store Settings',
-      items: [
-        { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
-        { name: 'Discounts', href: '/admin/discounts', icon: Percent },
-        { name: 'Preferences', href: '/admin/settings', icon: Settings },
-      ],
-    },
-  ];
+  const isSeoRole = user?.role === 'seo' || user?.email === 'seo@kidobox.store';
+
+  // Role-Based Navigation Sections
+  const navSections = isSeoRole
+    ? [
+        {
+          title: 'SEO & Search Workspace',
+          items: [
+            { name: 'Dashboard', href: '/admin', icon: Home },
+            { name: 'SEO & Meta Tags Hub', href: '/admin/seo', icon: Search },
+            { name: 'Products & On-Page SEO', href: '/admin/products', icon: Tag },
+            { name: 'Collections & Category Slugs', href: '/admin/collections', icon: FolderTree },
+          ],
+        },
+        {
+          title: 'Content & Publishing',
+          items: [
+            { name: 'Parenting Blog (Articles)', href: '/admin/guides', icon: BookOpen },
+            { name: 'Hero Banners & ALT Tags', href: '/admin/banners', icon: StoreIcon },
+            { name: 'Customer Reviews & UGC', href: '/admin/testimonials', icon: MessageSquare },
+            { name: 'Theme & Meta Preview', href: '/admin/themes', icon: LayoutGrid },
+          ],
+        },
+        {
+          title: 'Search Performance',
+          items: [
+            { name: 'Traffic & Analytics', href: '/admin/analytics', icon: BarChart3 },
+          ],
+        },
+      ]
+    : [
+        {
+          title: 'Store Operations',
+          items: [
+            { name: 'Dashboard', href: '/admin', icon: Home },
+            { name: 'Orders', href: '/admin/orders', icon: ShoppingBag, badge: '1' },
+            { name: 'Products', href: '/admin/products', icon: Tag },
+            { name: 'Collections', href: '/admin/collections', icon: FolderTree },
+            { name: 'Inventory', href: '/admin/inventory', icon: Boxes },
+            { name: 'Customers', href: '/admin/customers', icon: Users },
+          ],
+        },
+        {
+          title: 'Content & Marketing',
+          items: [
+            { name: 'SEO & Meta Tags', href: '/admin/seo', icon: Search },
+            { name: 'Hero Banners', href: '/admin/banners', icon: StoreIcon },
+            { name: 'Parenting Blog', href: '/admin/guides', icon: BookOpen },
+            { name: 'Customer Reviews', href: '/admin/testimonials', icon: MessageSquare },
+            { name: 'Theme & Customizer', href: '/admin/themes', icon: LayoutGrid },
+          ],
+        },
+        {
+          title: 'Store Settings',
+          items: [
+            { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+            { name: 'Discounts', href: '/admin/discounts', icon: Percent },
+            { name: 'Preferences', href: '/admin/settings', icon: Settings },
+          ],
+        },
+      ];
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col font-sans text-slate-800 antialiased">
@@ -227,18 +256,34 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
             {userMenuOpen && (
               <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-lg p-1.5 z-50 text-xs text-slate-800 animate-in fade-in">
                 <div className="px-3 py-2 border-b border-slate-100 mb-1">
-                  <div className="font-semibold text-slate-900">{user?.name || 'Store Admin'}</div>
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="font-semibold text-slate-900">{user?.name || 'Store Admin'}</span>
+                    <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded-md ${isSeoRole ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-slate-100 text-slate-700'}`}>
+                      {isSeoRole ? 'SEO Manager' : 'Admin'}
+                    </span>
+                  </div>
                   <div className="text-[11px] text-slate-500 truncate">{user?.email || 'admin@kidobox.com'}</div>
                 </div>
 
-                <Link
-                  href="/admin/settings"
-                  onClick={() => setUserMenuOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition"
-                >
-                  <Settings className="w-3.5 h-3.5 text-slate-500" />
-                  Store settings
-                </Link>
+                {isSeoRole ? (
+                  <Link
+                    href="/admin/seo"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition"
+                  >
+                    <Search className="w-3.5 h-3.5 text-slate-500" />
+                    SEO Management Hub
+                  </Link>
+                ) : (
+                  <Link
+                    href="/admin/settings"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition"
+                  >
+                    <Settings className="w-3.5 h-3.5 text-slate-500" />
+                    Store settings
+                  </Link>
+                )}
 
                 <button
                   type="button"
@@ -377,7 +422,35 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 
         {/* 3. MAIN CONTENT CANVAS */}
         <main className="flex-1 overflow-y-auto bg-[#f8fafc] p-6 sm:p-8">
-          <div className="max-w-6xl mx-auto">{children}</div>
+          <div className="max-w-6xl mx-auto">
+            {isSeoRole && ['/admin/orders', '/admin/settings', '/admin/customers', '/admin/discounts', '/admin/inventory'].some(r => pathname.startsWith(r)) ? (
+              <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center max-w-lg mx-auto my-12 shadow-xs">
+                <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mx-auto mb-4">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <h2 className="text-lg font-bold text-slate-900 mb-2">Restricted to Store Administrators</h2>
+                <p className="text-xs text-slate-500 mb-6 leading-relaxed">
+                  You are logged in as <strong>{user?.name || 'SEO Manager'}</strong> ({user?.email}). Your role manages Search Engine Optimization, content publishing, and catalog metadata.
+                </p>
+                <div className="flex justify-center gap-3">
+                  <Link
+                    href="/admin/seo"
+                    className="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-semibold hover:bg-slate-800 transition"
+                  >
+                    Open SEO &amp; Meta Tags Hub
+                  </Link>
+                  <Link
+                    href="/admin/products"
+                    className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold hover:bg-slate-200 transition"
+                  >
+                    Optimize Products
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              children
+            )}
+          </div>
         </main>
       </div>
 
