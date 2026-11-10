@@ -1,5 +1,6 @@
 'use client';
 
+import { ProductQuickView } from '@/components/product-quick-view';
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -181,21 +182,14 @@ export function CatalogView({
         {isError && <p role="alert">Unable to load products. <button onClick={() => refetch()}>Retry</button></p>}
         {initialMode === 'offers' && <section className="offer-slider-track">{offers.map(offer => <article className="offer offer-slider-card pink-bg" key={offer.code}><h3>{offer.code}</h3><p>{offer.title}</p><p>{offer.type === 'percentage' ? `${offer.value}% off` : offer.type === 'free_shipping' ? 'Free shipping' : `${money(offer.value)} off`}{offer.min_cart_amount ? ` on orders over ${money(offer.min_cart_amount)}` : ''}</p></article>)}</section>}
         {/* Collection Hero */}
-        <section className={`collection-hero ${heroColor}`}>
-          <div>
-            <span className="mini-eyebrow">A LITTLE LOVE, EVERY DAY</span>
-            <h1>{displayTitle}</h1>
+        <section className={`catalog-banner ${heroColor}`} aria-labelledby="catalog-banner-title">
+          <div className="catalog-banner-copy">
+            <h1 id="catalog-banner-title">{displayTitle}</h1>
             <p>{displayDesc}</p>
-            <span className="tiny-note">Thoughtfully chosen · Made for everyday moments</span>
           </div>
-          <img
-            src={mediaUrl(heroImage)}
-            alt={displayTitle}
-            width={1000}
-            height={750}
-            fetchPriority="high"
-          />
-          <div className="collection-decoration">★</div>
+          <div className="catalog-banner-media">
+            <img src={mediaUrl(heroImage)} alt="" width={1000} height={750} fetchPriority="high" />
+          </div>
         </section>
 
         {/* Shop Layout: Sidebar + Catalog */}
@@ -356,6 +350,7 @@ export function CatalogView({
                   return (
                     <article className="product-card" key={p.id}>
                       <div className="product-image-wrap">
+                        <ProductQuickView product={p} />
                         <Link href={`/products/${p.slug}`} aria-label={`View ${p.name}`}>
                           <LazyImage
                             className="product-photo"
@@ -457,7 +452,7 @@ export function CatalogView({
         <span>{toastMessage}</span>
         <button
           onClick={() => setIsOpen(true)}
-          style={{ color: '#ffbbd9', textDecoration: 'underline', marginLeft: '10px', background: 'none', border: 0, font: 'inherit', cursor: 'pointer' }}
+          style={{ color: '#ddb4c2', textDecoration: 'underline', marginLeft: '10px', background: 'none', border: 0, font: 'inherit', cursor: 'pointer' }}
         >
           View Bag →
         </button>

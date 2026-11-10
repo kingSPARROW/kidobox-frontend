@@ -389,15 +389,13 @@ export default function AdminBannersPage() {
 
       {/* 4. Full-Featured Banner Editor & Live Dual Viewport Preview Modal */}
       {isEditorOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-          <div className="bg-[#f6f6f7] rounded-2xl border border-[#e1e3e5] shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden">
+        <div className="banner-editor-overlay fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+          <div className="banner-editor-panel rounded-2xl border border-[#e1e3e5] shadow-2xl max-w-6xl w-full max-h-[92dvh] flex flex-col overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="banner-editor-title">
             {/* Modal Header */}
-            <div className="h-14 bg-white border-b border-[#e1e3e5] px-6 flex items-center justify-between flex-shrink-0">
+            <div className="banner-editor-header bg-white border-b border-[#e1e3e5] px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3 flex-shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-[#1a1a1a] text-white flex items-center justify-center">
-                  <ImageIcon className="w-4 h-4" />
-                </div>
-                <h2 className="text-sm font-bold text-[#1a1a1a]">
+                <img src="/logo.png" alt="KIDOBOX" width={94} height={32} className="h-8 w-auto max-w-24 object-contain" />
+                <h2 id="banner-editor-title" className="font-bold text-[#1a1a1a]">
                   {editingBanner ? 'Edit Promotional Banner' : 'Create New Promotional Banner'}
                 </h2>
               </div>
@@ -406,6 +404,7 @@ export default function AdminBannersPage() {
               <div className="flex items-center gap-1 bg-[#f1f2f4] p-1 rounded-lg border border-[#e1e3e5]">
                 <button
                   type="button"
+                  aria-pressed={previewDevice === 'desktop'}
                   onClick={() => setPreviewDevice('desktop')}
                   className={`px-3 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 transition ${
                     previewDevice === 'desktop'
@@ -417,6 +416,7 @@ export default function AdminBannersPage() {
                 </button>
                 <button
                   type="button"
+                  aria-pressed={previewDevice === 'mobile'}
                   onClick={() => setPreviewDevice('mobile')}
                   className={`px-3 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 transition ${
                     previewDevice === 'mobile'
@@ -429,6 +429,8 @@ export default function AdminBannersPage() {
               </div>
 
               <button
+                type="button"
+                aria-label="Close banner editor"
                 onClick={() => setIsEditorOpen(false)}
                 className="p-1.5 text-[#616161] hover:text-[#1a1a1a] hover:bg-[#f1f2f4] rounded-lg"
               >
@@ -437,7 +439,7 @@ export default function AdminBannersPage() {
             </div>
 
             {/* Modal Body: Interactive Preview (Top) + Settings Form (Bottom) */}
-            <div className="overflow-y-auto flex-1 p-6 space-y-6">
+            <div className="overflow-y-auto flex-1 p-4 sm:p-6 space-y-6">
               {/* LIVE VIEWPORT PREVIEW */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
@@ -948,7 +950,7 @@ export default function AdminBannersPage() {
                 </div>
 
                 {/* Submit Actions */}
-                <div className="flex items-center justify-end gap-2 pt-2">
+                <div className="banner-editor-actions sticky bottom-0 flex items-center justify-end gap-2 py-3">
                   <button
                     type="button"
                     onClick={() => setIsEditorOpen(false)}

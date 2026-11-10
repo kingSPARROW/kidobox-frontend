@@ -1,5 +1,6 @@
 'use client';
 
+import { ProductQuickView } from '@/components/product-quick-view';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
@@ -80,6 +81,7 @@ export default function WishlistPage() {
               return (
                 <article className="product-card" key={p.id}>
                   <div className="product-image-wrap">
+                    <ProductQuickView product={p} />
                     <Link href={`/products/${p.slug}`}>
                       <img
                         className="product-photo"
@@ -139,7 +141,7 @@ export default function WishlistPage() {
         <span>{toastMessage}</span>
         <button
           onClick={() => setIsOpen(true)}
-          style={{ color: '#ffbbd9', textDecoration: 'underline', marginLeft: '10px', background: 'none', border: 0, font: 'inherit', cursor: 'pointer' }}
+          style={{ color: '#ddb4c2', textDecoration: 'underline', marginLeft: '10px', background: 'none', border: 0, font: 'inherit', cursor: 'pointer' }}
         >
           View Bag →
         </button>

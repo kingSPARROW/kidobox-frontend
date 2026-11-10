@@ -1,5 +1,6 @@
 'use client';
 
+import { ProductQuickView } from '@/components/product-quick-view';
 import React, { useRef } from 'react';
 import Link from 'next/link';
 import { Product, money } from '@/lib/kidobox-data';
@@ -94,6 +95,7 @@ export function ProductSlider({
           return (
             <article className="product-card product-slider-card" key={p.id}>
               <div className="product-image-wrap">
+                <ProductQuickView product={p} />
                 <button
                   type="button"
                   className={`wish ${isSaved ? 'saved heart-bounce' : ''}`}

@@ -110,7 +110,7 @@ export default function GiftCardsPage() {
         <span>{toastMessage}</span>
         <button
           onClick={() => setIsOpen(true)}
-          style={{ color: '#ffbbd9', textDecoration: 'underline', marginLeft: '10px', background: 'none', border: 0, font: 'inherit', cursor: 'pointer' }}
+          style={{ color: '#ddb4c2', textDecoration: 'underline', marginLeft: '10px', background: 'none', border: 0, font: 'inherit', cursor: 'pointer' }}
         >
           View Bag →
         </button>

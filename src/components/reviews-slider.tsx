@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { MessageSquareHeart } from 'lucide-react';
+import { ArrowLeft, ArrowRight, MessageSquareHeart } from 'lucide-react';
 import { useStorefront, mediaUrl } from '@/lib/storefront';
 
 export function ReviewsSlider() {
@@ -68,12 +68,11 @@ export function ReviewsSlider() {
   };
 
   return (
-    <section className="reviews-section" aria-label="Customer Reviews">
-      <div className="section-title">
+    <section className="reviews-section home-testimonials" aria-labelledby="home-testimonials-title">
+      <div className="home-testimonials-heading">
         <div>
-          <h2>
-            <span className="section-icon-wrap"><MessageSquareHeart size={20} /></span> Loved by Parents Everywhere
-          </h2>
+          <span className="home-testimonials-kicker"><MessageSquareHeart size={16} aria-hidden="true" /> PARENT STORIES</span>
+          <h2 id="home-testimonials-title">Loved by Parents Everywhere</h2>
           <p>Stories and smiles from our customers.</p>
         </div>
         <div className="slider-nav-arrows">
@@ -83,7 +82,7 @@ export function ReviewsSlider() {
             onClick={() => scroll('left')}
             aria-label="Previous review"
           >
-            ‹
+            <ArrowLeft size={18} aria-hidden="true" />
           </button>
           <button
             type="button"
@@ -91,7 +90,7 @@ export function ReviewsSlider() {
             onClick={() => scroll('right')}
             aria-label="Next review"
           >
-            ›
+            <ArrowRight size={18} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -99,10 +98,14 @@ export function ReviewsSlider() {
       <div className="reviews-carousel-track" ref={trackRef}>
         {reviewsData.map((item) => (
           <article key={item.id} className="review-card-slide">
-            <div className="review-quote-mark">“</div>
+            <div className="review-stars-row">
+              <span className="stars" aria-label={`${item.rating} out of 5 stars`}>{'★'.repeat(item.rating)}</span>
+              {item.verified && <span className="review-verified-label">Verified</span>}
+            </div>
+            <blockquote className="review-text">&ldquo;{item.comment}&rdquo;</blockquote>
             <div className="review-card-header">
               <div className="review-avatar-wrap">
-                <img src={item.avatar} alt={item.name} className="review-avatar-img" />
+                <img src={item.avatar} alt="" className="review-avatar-img" loading="lazy" />
                 {item.verified && (
                   <span className="review-verified-badge" title="Verified Customer">
                     ✓
@@ -110,15 +113,10 @@ export function ReviewsSlider() {
                 )}
               </div>
               <div className="review-header-info">
-                <div className="review-stars-row">
-                  <span className="stars">{'★'.repeat(item.rating)}</span>
-                  <span className="review-verified-label">Verified</span>
-                </div>
                 <strong className="review-author-name">{item.name}</strong>
                 <span className="review-author-role">{item.role}</span>
               </div>
             </div>
-            <p className="review-text">&ldquo;{item.comment}&rdquo;</p>
           </article>
         ))}
       </div>

@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@theme inline {
+  --font-sans: var(--font-jakarta), system-ui, sans-serif;
+  --color-pink-50: #fbf4f6;
+  --color-pink-100: #f5e8ed;
+  --color-pink-400: #a25570;
+  --color-pink-500: #802f4a;
+  --color-pink-600: #802f4a;
+  --color-pink-700: #642238;
+  --color-pink-800: #541c2e;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #1e1c1a;
@@ -21,7 +32,7 @@ button,
 input,
 select,
 textarea {
-  font-family: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-jakarta), system-ui, sans-serif;
   font-size: 15px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;

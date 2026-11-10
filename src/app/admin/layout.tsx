@@ -203,12 +203,10 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
           </button>
 
           <Link href="/admin" className="flex items-center gap-2.5 group">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-pink-500 to-sky-500 flex items-center justify-center text-white shadow-xs font-bold text-xs">
-              <ShoppingBag className="w-3.5 h-3.5 text-white" />
-            </div>
+            <img src="/logo.png" alt="KIDOBOX" width={112} height={38} className="h-9 w-auto max-w-28 object-contain" />
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-sm tracking-tight text-slate-900">
-                {store?.name || 'Kidobox'}
+                Admin
               </span>
               <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-100" title="Store Live" />
             </div>
@@ -390,7 +388,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                         ) : isActive ? (
                           <span
                             className="w-1.5 h-1.5 rounded-full bg-pink-400 shrink-0"
-                            style={{ backgroundColor: '#f472b6' }}
+                            style={{ backgroundColor: '#802f4a' }}
                             title="Current Page"
                           />
                         ) : null}

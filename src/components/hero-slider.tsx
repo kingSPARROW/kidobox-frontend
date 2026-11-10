@@ -8,24 +8,45 @@ export function HeroSlider() {
   const { banners } = useStorefront();
   const heroBanners = banners.filter((b) => b.position === 'hero');
 
-  const slides =
-    heroBanners.length > 0
-      ? heroBanners.map((b) => ({
-          id: b.id,
-          image: mediaUrl(b.desktop_image_url),
-          mobileImage: mediaUrl(b.mobile_image_url || b.desktop_image_url),
-          alt: b.title || 'KIDOBOX Promotion',
-          link: safeLink(b.cta_link),
-        }))
-      : [
-          {
-            id: 'default',
-            image: mediaUrl('/assets/hd/hero.webp'),
-            mobileImage: mediaUrl('/assets/hd/hero.webp'),
-            alt: 'KIDOBOX Promotion',
-            link: '/shop',
-          },
-        ];
+  const fallbackSlides = [
+    {
+      id: 'kidobox-editorial',
+      image: '/assets/hd/hero-editorial-desktop.webp',
+      mobileImage: '/assets/hd/hero-editorial-mobile.webp',
+      alt: 'Little essentials for big firsts. Shop baby essentials.',
+      link: '/shop',
+      editorial: true as const,
+      headline: 'Little essentials for big firsts.',
+      kicker: 'THE KIDOBOX COLLECTION',
+      cta: 'Shop baby essentials',
+      description: 'Discover soft clothing, playful toys, and everyday care for every little milestone.',
+    },
+    {
+      id: 'kidobox-nursery',
+      image: '/assets/hd/hero-nursery-desktop.webp',
+      mobileImage: '/assets/hd/hero-nursery-mobile.webp',
+      alt: 'Make room for little moments. Shop nursery essentials.',
+      link: '/nursery',
+      editorial: true as const,
+      headline: 'Make room for little moments.',
+      kicker: 'THE NURSERY COLLECTION',
+      description: 'Soft layers, cozy textures, and nursery essentials for the little moments you’ll remember.',
+      cta: 'Shop nursery essentials',
+    },
+  ];
+
+  const slides = heroBanners.length ? heroBanners.map((banner) => ({
+    id: banner.id,
+    image: mediaUrl(banner.desktop_image_url),
+    mobileImage: mediaUrl(banner.mobile_image_url || banner.desktop_image_url),
+    alt: banner.alt_text || banner.title || 'KIDOBOX Promotion',
+    link: safeLink(banner.cta_link),
+    editorial: Boolean(banner.title && banner.cta_text),
+    headline: banner.title,
+    kicker: banner.title_tag,
+    description: banner.subtitle,
+    cta: banner.cta_text,
+  })) : fallbackSlides;
 
   const hasMultiple = slides.length > 1;
 
@@ -130,7 +151,7 @@ export function HeroSlider() {
           onTouchEnd={handleTouchEnd}
         >
           {slides.map((slide, i) => {
-            const isActive = i === current;
+            const isActive = i === current % slides.length;
             const isPrev = i === prevIndex;
 
             // Only render the active slide and the currently transitioning slide
@@ -153,7 +174,7 @@ export function HeroSlider() {
               >
                 <Link
                   href={slide.link || '/shop'}
-                  className="hero-banner-link"
+                  className={`hero-banner-link${slide.editorial ? ' hero-editorial-link' : ''}`}
                   aria-label={slide.alt}
                   onClick={handleLinkClick}
                 >
@@ -162,10 +183,18 @@ export function HeroSlider() {
                     <img
                       className="hero-banner-image"
                       src={slide.image}
-                      alt={slide.alt}
+                      alt={slide.editorial ? '' : slide.alt}
                       loading={i === 0 ? 'eager' : 'lazy'}
                     />
                   </picture>
+                  {slide.editorial && (
+                    <div className={`hero-editorial-copy${slide.description ? ' hero-editorial-copy-expanded' : ''}`}>
+                      <span className="hero-editorial-kicker">{slide.headline && slide.kicker}</span>
+                      <h2>{slide.headline}</h2>
+                      {slide.description && <p>{slide.description}</p>}
+                      <span className="hero-editorial-cta">{slide.cta} <span aria-hidden="true">→</span></span>
+                    </div>
+                  )}
                 </Link>
               </div>
             );

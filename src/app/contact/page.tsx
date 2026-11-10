@@ -73,9 +73,9 @@ export default function ContactPage() {
                 marginTop: '22px',
                 padding: '24px',
                 borderRadius: '16px',
-                background: 'linear-gradient(135deg, #fff7fb 0%, #f0f9ff 100%)',
-                border: '1px solid #ffdbe8',
-                boxShadow: '0 4px 18px rgba(255, 38, 139, 0.05)',
+                background: 'linear-gradient(135deg, #fdf9fa 0%, #f0f9ff 100%)',
+                border: '1px solid #f4e6eb',
+                boxShadow: '0 4px 18px rgba(128, 47, 74, 0.05)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
@@ -84,13 +84,13 @@ export default function ContactPage() {
                     width: '46px',
                     height: '46px',
                     borderRadius: '12px',
-                    background: 'var(--theme-gradient, linear-gradient(135deg, #ff268b, #ff5b99))',
+                    background: 'var(--theme-gradient, linear-gradient(135deg, #802f4a, #802f4a))',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: '#ffffff',
                     flexShrink: 0,
-                    boxShadow: '0 4px 12px rgba(255, 38, 139, 0.25)',
+                    boxShadow: '0 4px 12px rgba(128, 47, 74, 0.25)',
                   }}
                 >
                   <MapPin size={24} />
@@ -99,7 +99,7 @@ export default function ContactPage() {
                   <span style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '1.5px', color: 'var(--pink)', textTransform: 'uppercase' }}>
                     HEADQUARTERS &amp; STORE LOCATION
                   </span>
-                  <h3 style={{ fontSize: '20px', margin: '4px 0 10px', color: 'var(--navy)', fontFamily: 'var(--font-fredoka)' }}>
+                  <h3 style={{ fontSize: '20px', margin: '4px 0 10px', color: 'var(--navy)', fontFamily: 'var(--font-jakarta)' }}>
                     KIDOBOX Experience Studio &amp; Office
                   </h3>
                   <p style={{ margin: '0 0 12px', fontSize: '14px', lineHeight: 1.6, color: '#2b3f56', fontWeight: 600 }}>
@@ -139,7 +139,7 @@ export default function ContactPage() {
                         fontSize: '12px',
                         fontWeight: 800,
                         textDecoration: 'none',
-                        boxShadow: '0 4px 14px rgba(255, 38, 139, 0.2)',
+                        boxShadow: '0 4px 14px rgba(128, 47, 74, 0.2)',
                       }}
                     >
                       <Navigation size={14} />

@@ -104,3 +104,11 @@ export const image = (name: string) => {
   if (name.startsWith('/') || name.startsWith('http')) return name;
   return `/assets/hd/${name}.webp`;
 };
+
+
+export const stagePhotography: Record<string, string | undefined> = {
+  newborn: '/assets/hd/home-stage-newborn.webp',
+  baby: '/assets/hd/home-stage-baby.webp',
+  toddler: '/assets/hd/home-stage-toddler.webp',
+  kids: '/assets/hd/home-stage-kids.webp',
+};

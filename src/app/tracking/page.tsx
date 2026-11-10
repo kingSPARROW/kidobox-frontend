@@ -95,8 +95,8 @@ function TrackingInner() {
               </ol>
             </div>
           ) : (
-            <div className="tracking-card" style={{ borderColor: '#ffd6e6', background: '#fff5f9' }}>
-              <h3 style={{ color: '#ff268b' }}>We couldn’t find that order reference</h3>
+            <div className="tracking-card" style={{ borderColor: '#f2e3e8', background: '#fcf8f9' }}>
+              <h3 style={{ color: '#802f4a' }}>We couldn’t find that order reference</h3>
               <p>
                 Please double check the order number or visit{' '}
                 <Link className="text-link" href="/account">

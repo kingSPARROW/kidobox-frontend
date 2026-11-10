@@ -1171,7 +1171,7 @@ export default function ShopifyProductForm({
             {/* Google SERP Preview Box */}
             <div className={`p-4 bg-[#f8f9fa] border border-[#e1e3e5] rounded-xl space-y-1.5 font-sans ${serpDevice === 'mobile' ? 'max-w-sm mx-auto shadow-sm' : ''}`}>
               <div className="text-[11px] text-[#202124] flex items-center gap-1.5">
-                <span className="w-4 h-4 rounded-full bg-[#ff268b] text-white flex items-center justify-center text-[9px] font-bold">
+                <span className="w-4 h-4 rounded-full bg-[#802f4a] text-white flex items-center justify-center text-[9px] font-bold">
                   K
                 </span>
                 <div className="leading-tight">

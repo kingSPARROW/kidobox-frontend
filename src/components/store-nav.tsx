@@ -1,7 +1,7 @@
 'use client';
 
 import { useStorefront, useNavigation, mediaUrl, safeLink } from '@/lib/storefront';
-import { Category, Product } from '@/lib/kidobox-data';
+import { Category, Product, money } from '@/lib/kidobox-data';
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -20,6 +20,7 @@ import {
   ShoppingBag,
   ArrowRight,
   TrendingUp,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
@@ -34,6 +35,12 @@ export function StoreNav() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [openCategory, setOpenCategory] = useState<Category | null>(null);
+  const megaTrigger = useRef<HTMLAnchorElement>(null);
+  const megaPanel = useRef<HTMLDivElement>(null);
+  const featuredProducts = openCategory
+    ? products.filter(product => product.category === openCategory.slug || product.categorySlugs?.includes(openCategory.slug)).slice(0, 4)
+    : [];
 
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
@@ -531,7 +538,21 @@ export function StoreNav() {
         </div>
 
         {/* Navigation Categories Strip */}
-        <div className="nav-bar-wrapper">
+        <div
+          className="nav-bar-wrapper"
+          onPointerLeave={(event) => {
+            if (event.pointerType === 'mouse' && !megaPanel.current?.contains(document.activeElement)) setOpenCategory(null);
+          }}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) setOpenCategory(null);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape' && openCategory) {
+              megaTrigger.current?.focus();
+              setOpenCategory(null);
+            }
+          }}
+        >
           <div className={`nav-scroll-container container ${canScrollNavLeft ? 'has-left' : ''} ${canScrollNavRight ? 'has-right' : ''}`}>
             {canScrollNavLeft && (
               <button
@@ -553,57 +574,46 @@ export function StoreNav() {
               onMouseUp={handleNavMouseUp}
               onMouseLeave={handleNavMouseUp}
             >
-              {(navigation?.main_menu?.length ? navigation.main_menu : [{ label: 'Home', url: '/' }, ...categories.map(c => ({ label: c.name, url: `/collections/${c.slug}` })), { label: 'Offers', url: '/offers' }]).map((item, i) => (
-                <Link
-                  key={`${item.url}-${i}`}
-                  href={safeLink(item.url)}
-                  onClick={handleNavLinkClick}
-                  className={pathname === item.url ? 'selected' : ''}
-                >
-                  {[<svg key="0" className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                    <polyline points="9 22 9 12 15 12 15 22" />
-                  </svg>,
-                  <svg key="1" className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z" />
-                  </svg>,
-                  <svg key="2" className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z" />
-                    <path d="M12 12v9" />
-                    <path d="M3 12c2.5-4 6.5-6 9-6s6.5 2 9 6" />
-                  </svg>,
-                  <svg key="3" className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M10 2h4v3h-4z" />
-                    <path d="M8 5h8v4l2 3v9a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-9l2-3z" />
-                    <line x1="10" y1="14" x2="14" y2="14" />
-                  </svg>,
-                  <svg key="4" className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1Z" />
-                    <path d="M6 12V7a3 3 0 0 1 6 0v1" />
-                    <path d="m5 20-1 2m15-2 1 2" />
-                  </svg>,
-                  <svg key="5" className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="7" cy="5" r="2.5" />
-                    <circle cx="17" cy="5" r="2.5" />
-                    <circle cx="12" cy="13" r="7" />
-                    <circle cx="9.5" cy="11.5" r=".7" fill="currentColor" />
-                    <circle cx="14.5" cy="11.5" r=".7" fill="currentColor" />
-                    <path d="M10 15a2 2 0 0 0 4 0" />
-                  </svg>,
-                  <svg key="6" className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-                    <path d="M12 13a2.5 2.5 0 0 0 2.5-2.5c0-1.5-1.5-2-2.5-1-1-1-2.5-.5-2.5 1A2.5 2.5 0 0 0 12 13Z" />
-                  </svg>,
-                  <svg key="7" className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1Z" />
-                  </svg>,
-                  <svg key="8" className="nav-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
-                    <line x1="7" y1="7" x2="7.01" y2="7" />
-                  </svg>][i % 9]}
-                  <span>{item.label}</span>
-                </Link>
-              ))}
+              {(navigation?.main_menu?.length ? navigation.main_menu : [{ label: 'Home', url: '/' }, ...categories.map(c => ({ label: c.name, url: `/collections/${c.slug}` })), { label: 'Offers', url: '/offers' }]).map((item, i) => {
+                const href = safeLink(item.url);
+                const slug = href.replace(/\/$/, '').replace(/^\/(?:collections\/)?/, '');
+                const category = categories.find(entry => entry.slug === slug);
+                const expanded = !!category && openCategory?.slug === category.slug;
+
+                return (
+                  <Link
+                    key={`${item.url}-${i}`}
+                    href={href}
+                    onClick={event => {
+                      handleNavLinkClick(event);
+                      setOpenCategory(null);
+                    }}
+                    onPointerEnter={event => {
+                      if (event.pointerType !== 'mouse' || event.buttons !== 0) return;
+                      megaTrigger.current = event.currentTarget;
+                      setOpenCategory(category ?? null);
+                    }}
+                    onFocus={event => {
+                      if (!event.currentTarget.matches(':focus-visible')) return;
+                      megaTrigger.current = event.currentTarget;
+                      setOpenCategory(category ?? null);
+                    }}
+                    onKeyDown={event => {
+                      if (event.key === 'ArrowDown' && expanded) {
+                        event.preventDefault();
+                        megaPanel.current?.querySelector('a')?.focus();
+                      }
+                    }}
+                    className={pathname === href ? 'selected' : ''}
+                    aria-current={pathname === href ? 'page' : undefined}
+                    aria-expanded={category ? expanded : undefined}
+                    aria-controls={expanded ? 'category-mega-menu' : undefined}
+                  >
+                    <span>{item.label}</span>
+                    {category && <ChevronDown className="nav-category-chevron" size={14} aria-hidden="true" />}
+                  </Link>
+                );
+              })}
             </nav>
 
             {canScrollNavRight && (
@@ -617,6 +627,31 @@ export function StoreNav() {
               </button>
             )}
           </div>
+          {openCategory && (
+            <div className="nav-mega-panel container" id="category-mega-menu" ref={megaPanel} key={openCategory.slug}>
+              <div className="nav-mega-intro">
+                <span>SHOP THE COLLECTION</span>
+                <h2>{openCategory.name}</h2>
+                {openCategory.description && <p>{openCategory.description}</p>}
+                <Link href={`/collections/${openCategory.slug}`} onClick={() => setOpenCategory(null)}>
+                  View collection <ArrowRight size={16} aria-hidden="true" />
+                </Link>
+              </div>
+              {featuredProducts.length > 0 ? (
+                <ul className="nav-mega-products">
+                  {featuredProducts.map(product => (
+                    <li key={product.id}>
+                      <Link href={`/products/${product.slug}`} onClick={() => setOpenCategory(null)}>
+                        <img src={product.image} alt="" width={160} height={120} />
+                        <strong>{product.name}</strong>
+                        <span>{money(product.price)}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : <p className="nav-mega-empty">No products in this collection yet.</p>}
+            </div>
+          )}
         </div>
       </header>
     </>

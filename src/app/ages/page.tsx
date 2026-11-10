@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { useStorefront, mediaUrl } from '@/lib/storefront';
+import { stagePhotography } from '@/lib/kidobox-data';
 import { Baby } from 'lucide-react';
 
 export default function AgesDirectoryPage() {
@@ -32,8 +33,8 @@ export default function AgesDirectoryPage() {
           {ages.map((a) => (
             <Link className={`directory-card ${a.color}`} href={`/shop?age=${encodeURIComponent(a.age)}`} key={a.slug}>
               <img
-                src={mediaUrl(a.image)}
-                alt={a.title}
+                src={stagePhotography[a.slug] || mediaUrl(a.image)}
+                alt=""
                 width={800}
                 height={800}
                 loading="lazy"

@@ -311,7 +311,7 @@ export default function AdminTestimonialsPage() {
                     <button
                       type="button"
                       onClick={() => handleDelete(id, item.author_name)}
-                      className="p-1.5 text-[#d32f2f] hover:bg-[#ffebee] rounded-lg transition"
+                      className="p-1.5 text-[#d32f2f] hover:bg-[#f9f1f4] rounded-lg transition"
                       title="Delete Testimonial"
                     >
                       <Trash2 className="w-4 h-4" />

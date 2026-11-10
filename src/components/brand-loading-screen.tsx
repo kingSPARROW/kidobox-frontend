@@ -39,12 +39,12 @@ export function BrandLoadingScreen({
     <div
       className={`${
         fullScreen ? 'fixed inset-0 z-[9999]' : 'w-full min-h-[380px]'
-      } bg-gradient-to-b from-[#fffbfd] via-[#fff5f8] to-[#f0f9ff] flex flex-col items-center justify-center p-6 select-none animate-in fade-in duration-300`}
+      } bg-gradient-to-b from-[#fefcfd] via-[#fcf8f9] to-[#f0f9ff] flex flex-col items-center justify-center p-6 select-none animate-in fade-in duration-300`}
       role="status"
       aria-label="Loading KIDOBOX content"
     >
       {/* Decorative ambient background glows */}
-      <div className="absolute w-72 h-72 rounded-full bg-gradient-to-tr from-[#ff268b]/15 via-[#ffbd12]/15 to-[#00b5df]/15 blur-3xl pointer-events-none animate-pulse" />
+      <div className="absolute w-72 h-72 rounded-full bg-gradient-to-tr from-[#802f4a]/15 via-[#ffbd12]/15 to-[#00b5df]/15 blur-3xl pointer-events-none animate-pulse" />
       <div className="absolute w-60 h-60 rounded-full bg-[#00adeb]/10 blur-2xl translate-x-20 -translate-y-16 pointer-events-none" />
 
       <div className="relative flex flex-col items-center max-w-sm text-center">
@@ -52,7 +52,7 @@ export function BrandLoadingScreen({
         <div className="absolute -top-4 -left-6 text-[#ffbd12] animate-bounce duration-1000">
           <Sparkles className="w-5 h-5 fill-current opacity-80" />
         </div>
-        <div className="absolute -bottom-2 -right-4 text-[#ff268b] animate-pulse">
+        <div className="absolute -bottom-2 -right-4 text-[#802f4a] animate-pulse">
           <Heart className="w-4 h-4 fill-current opacity-70" />
         </div>
 
@@ -63,7 +63,7 @@ export function BrandLoadingScreen({
             <img
               src="/logo.png"
               alt="KIDOBOX - Little Needs. Big Smiles."
-              className="w-full h-full object-contain filter drop-shadow-[0_8px_20px_rgba(255,38,139,0.22)]"
+              className="w-full h-full object-contain filter drop-shadow-[0_8px_20px_rgba(128,47,74,0.22)]"
             />
           </div>
         </div>
@@ -76,8 +76,8 @@ export function BrandLoadingScreen({
         )}
 
         {/* Animated Progress Bar */}
-        <div className="w-48 h-1.5 bg-[#ff268b]/10 rounded-full overflow-hidden relative shadow-inner mb-4">
-          <div className="h-full bg-gradient-to-r from-[#ff268b] via-[#ffbd12] to-[#00adeb] rounded-full animate-loading-bar" />
+        <div className="w-48 h-1.5 bg-[#802f4a]/10 rounded-full overflow-hidden relative shadow-inner mb-4">
+          <div className="h-full bg-gradient-to-r from-[#802f4a] via-[#ffbd12] to-[#00adeb] rounded-full animate-loading-bar" />
         </div>
 
         {/* Dynamic Rotating Message */}
@@ -89,7 +89,7 @@ export function BrandLoadingScreen({
 
         {/* Bouncing Brand Dots */}
         <div className="flex items-center gap-2 mt-4">
-          <span className="w-2 h-2 rounded-full bg-[#ff268b] animate-bounce [animation-delay:-0.3s]" />
+          <span className="w-2 h-2 rounded-full bg-[#802f4a] animate-bounce [animation-delay:-0.3s]" />
           <span className="w-2 h-2 rounded-full bg-[#ffbd12] animate-bounce [animation-delay:-0.15s]" />
           <span className="w-2 h-2 rounded-full bg-[#00adeb] animate-bounce" />
           <span className="w-2 h-2 rounded-full bg-[#72bd45] animate-bounce [animation-delay:-0.1s]" />

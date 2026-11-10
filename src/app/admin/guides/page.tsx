@@ -327,7 +327,7 @@ export default function AdminGuidesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search guides by title, category, slug..."
-            className="w-full pl-9 pr-3 py-1.5 text-xs bg-[#f6f6f7] border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b] focus:bg-white transition"
+            className="w-full pl-9 pr-3 py-1.5 text-xs bg-[#f6f6f7] border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#802f4a] focus:bg-white transition"
           />
         </div>
 
@@ -369,7 +369,7 @@ export default function AdminGuidesPage() {
       {/* ── LIST OF ARTICLES ───────────────────────────────────────────── */}
       {isLoading ? (
         <div className="bg-white p-12 rounded-xl border border-[#e1e3e5] text-center">
-          <Loader2 className="w-6 h-6 animate-spin text-[#ff268b] mx-auto mb-2" />
+          <Loader2 className="w-6 h-6 animate-spin text-[#802f4a] mx-auto mb-2" />
           <p className="text-xs text-[#6d7175]">Loading parenting guides…</p>
         </div>
       ) : isError ? (
@@ -454,7 +454,7 @@ export default function AdminGuidesPage() {
 
                       {/* Title & URL Slug */}
                       <td className="py-2.5 px-4 max-w-xs">
-                        <div className="font-bold text-[#1a1a1a] text-xs hover:text-[#ff268b] transition line-clamp-1">
+                        <div className="font-bold text-[#1a1a1a] text-xs hover:text-[#802f4a] transition line-clamp-1">
                           {article.title}
                         </div>
                         <div className="text-[10px] text-[#616161] font-mono mt-0.5">
@@ -564,7 +564,7 @@ export default function AdminGuidesPage() {
                 onClick={() => setEditorTab('content')}
                 className={`pb-2.5 text-xs font-semibold border-b-2 transition ${
                   editorTab === 'content'
-                    ? 'border-[#ff268b] text-[#ff268b]'
+                    ? 'border-[#802f4a] text-[#802f4a]'
                     : 'border-transparent text-[#616161] hover:text-[#1a1a1a]'
                 }`}
               >
@@ -575,7 +575,7 @@ export default function AdminGuidesPage() {
                 onClick={() => setEditorTab('seo')}
                 className={`pb-2.5 text-xs font-semibold border-b-2 transition flex items-center gap-1.5 ${
                   editorTab === 'seo'
-                    ? 'border-[#ff268b] text-[#ff268b]'
+                    ? 'border-[#802f4a] text-[#802f4a]'
                     : 'border-transparent text-[#616161] hover:text-[#1a1a1a]'
                 }`}
               >
@@ -595,7 +595,7 @@ export default function AdminGuidesPage() {
                       <select
                         value={form.status || 'published'}
                         onChange={(e) => setForm({ ...form, status: e.target.value as any, is_published: e.target.value === 'published' })}
-                        className="w-full px-3 py-1.5 border border-gray-300 rounded-lg font-semibold focus:outline-none focus:border-[#ff268b]"
+                        className="w-full px-3 py-1.5 border border-gray-300 rounded-lg font-semibold focus:outline-none focus:border-[#802f4a]"
                       >
                         <option value="published">Published (Visible on storefront)</option>
                         <option value="draft">Draft (Hidden from storefront)</option>
@@ -609,7 +609,7 @@ export default function AdminGuidesPage() {
                         value={form.author || ''}
                         onChange={(e) => setForm({ ...form, author: e.target.value })}
                         placeholder="e.g. Dr. Neha Sharma"
-                        className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff268b]"
+                        className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#802f4a]"
                       />
                     </div>
 
@@ -622,7 +622,7 @@ export default function AdminGuidesPage() {
                         required
                         value={form.minutes}
                         onChange={(e) => setForm({ ...form, minutes: Number(e.target.value) })}
-                        className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff268b]"
+                        className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#802f4a]"
                       />
                     </div>
                   </div>
@@ -647,7 +647,7 @@ export default function AdminGuidesPage() {
                         }));
                       }}
                       placeholder="e.g. 5 Simple Steps to Calm a Fussy Newborn"
-                      className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff268b]"
+                      className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#802f4a]"
                     />
                   </div>
 
@@ -662,7 +662,7 @@ export default function AdminGuidesPage() {
                           onClick={() => setForm((prev) => ({ ...prev, category: cat }))}
                           className={`px-2 py-0.5 text-[10px] font-semibold rounded-md border transition ${
                             form.category === cat
-                              ? 'bg-pink-50 border-pink-400 text-[#ff268b]'
+                              ? 'bg-pink-50 border-pink-400 text-[#802f4a]'
                               : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'
                           }`}
                         >
@@ -675,7 +675,7 @@ export default function AdminGuidesPage() {
                       value={form.category}
                       onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
                       placeholder="Or enter custom category..."
-                      className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff268b]"
+                      className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#802f4a]"
                     />
                   </div>
 
@@ -687,7 +687,7 @@ export default function AdminGuidesPage() {
                       value={form.excerpt}
                       onChange={(e) => setForm((prev) => ({ ...prev, excerpt: e.target.value, seo_description: prev.seo_description || e.target.value }))}
                       placeholder="Brief preview text displayed on blog cards and search results..."
-                      className="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff268b]"
+                      className="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#802f4a]"
                     />
                   </div>
 
@@ -701,7 +701,7 @@ export default function AdminGuidesPage() {
                           key={preset.value}
                           onClick={() => setForm((prev) => ({ ...prev, image: preset.value }))}
                           className={`relative aspect-4/3 rounded-lg overflow-hidden border-2 transition ${
-                            form.image === preset.value ? 'border-[#ff268b] shadow-xs' : 'border-transparent hover:opacity-80'
+                            form.image === preset.value ? 'border-[#802f4a] shadow-xs' : 'border-transparent hover:opacity-80'
                           }`}
                         >
                           <img src={preset.value} alt={preset.label} className="w-full h-full object-cover" />
@@ -717,7 +717,7 @@ export default function AdminGuidesPage() {
                           value={form.image}
                           onChange={(e) => setForm((prev) => ({ ...prev, image: e.target.value }))}
                           placeholder="Image URL..."
-                          className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff268b]"
+                          className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#802f4a]"
                         />
                       </div>
 
@@ -728,7 +728,7 @@ export default function AdminGuidesPage() {
                           value={form.image_alt || ''}
                           onChange={(e) => setForm((prev) => ({ ...prev, image_alt: e.target.value }))}
                           placeholder={form.title ? `${form.title} featured image` : 'Descriptive alt text for Google Images...'}
-                          className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff268b]"
+                          className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#802f4a]"
                         />
                       </div>
                     </div>
@@ -744,7 +744,7 @@ export default function AdminGuidesPage() {
                       <button
                         type="button"
                         onClick={() => setForm((prev) => ({ ...prev, sections: [...prev.sections, ['New Section Heading', 'Detailed content...']] }))}
-                        className="px-2.5 py-1 bg-pink-50 hover:bg-pink-100 text-[#ff268b] font-bold rounded-lg transition inline-flex items-center gap-1 text-[11px]"
+                        className="px-2.5 py-1 bg-pink-50 hover:bg-pink-100 text-[#802f4a] font-bold rounded-lg transition inline-flex items-center gap-1 text-[11px]"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>Add Section</span>
@@ -769,7 +769,7 @@ export default function AdminGuidesPage() {
                                 }));
                               }}
                               placeholder="Section Heading..."
-                              className="flex-1 font-bold text-xs px-2.5 py-1 border border-gray-300 rounded focus:outline-none focus:border-[#ff268b]"
+                              className="flex-1 font-bold text-xs px-2.5 py-1 border border-gray-300 rounded focus:outline-none focus:border-[#802f4a]"
                             />
                             <button
                               type="button"
@@ -791,7 +791,7 @@ export default function AdminGuidesPage() {
                               }));
                             }}
                             placeholder="Write comprehensive, helpful parenting tips for this section..."
-                            className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff268b]"
+                            className="w-full p-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#802f4a]"
                           />
                         </div>
                       ))}
@@ -805,7 +805,7 @@ export default function AdminGuidesPage() {
                   {/* Google SERP Preview */}
                   <div className="p-3.5 bg-[#f8f9fa] border border-[#e1e3e5] rounded-xl space-y-1 font-sans">
                     <div className="text-[10px] text-[#202124] flex items-center gap-1.5">
-                      <span className="w-3.5 h-3.5 rounded-full bg-[#ff268b] text-white flex items-center justify-center text-[8px] font-bold">
+                      <span className="w-3.5 h-3.5 rounded-full bg-[#802f4a] text-white flex items-center justify-center text-[8px] font-bold">
                         K
                       </span>
                       <span>kidobox.store &gt; guides &gt; {form.slug || 'guide-slug'}</span>
@@ -843,7 +843,7 @@ export default function AdminGuidesPage() {
                         type="text"
                         value={form.slug}
                         onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}
-                        className="flex-1 px-3 py-1.5 bg-white border border-[#c9cccf] rounded-r-lg font-mono focus:outline-none focus:border-[#ff268b]"
+                        className="flex-1 px-3 py-1.5 bg-white border border-[#c9cccf] rounded-r-lg font-mono focus:outline-none focus:border-[#802f4a]"
                       />
                     </div>
                   </div>
@@ -862,7 +862,7 @@ export default function AdminGuidesPage() {
                         value={form.seo_title || ''}
                         onChange={(e) => setForm({ ...form, seo_title: e.target.value })}
                         placeholder={form.title || 'Article SEO Title'}
-                        className="w-full px-3 py-1.5 bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b]"
+                        className="w-full px-3 py-1.5 bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#802f4a]"
                       />
                     </div>
 
@@ -878,7 +878,7 @@ export default function AdminGuidesPage() {
                         value={form.seo_description || ''}
                         onChange={(e) => setForm({ ...form, seo_description: e.target.value })}
                         placeholder="Search snippet summary"
-                        className="w-full px-3 py-1.5 bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b]"
+                        className="w-full px-3 py-1.5 bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#802f4a]"
                       />
                     </div>
                   </div>
@@ -894,7 +894,7 @@ export default function AdminGuidesPage() {
                       value={form.heading_h1 || ''}
                       onChange={(e) => setForm({ ...form, heading_h1: e.target.value })}
                       placeholder={form.title || 'Defaults to article title'}
-                      className="w-full px-3 py-1.5 bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b]"
+                      className="w-full px-3 py-1.5 bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#802f4a]"
                     />
                   </div>
 
@@ -907,7 +907,7 @@ export default function AdminGuidesPage() {
                         value={form.canonical_url || ''}
                         onChange={(e) => setForm({ ...form, canonical_url: e.target.value })}
                         placeholder={`https://kidobox.store/guides/${form.slug}`}
-                        className="w-full px-3 py-1.5 bg-white border border-[#c9cccf] rounded-lg font-mono focus:outline-none focus:border-[#ff268b]"
+                        className="w-full px-3 py-1.5 bg-white border border-[#c9cccf] rounded-lg font-mono focus:outline-none focus:border-[#802f4a]"
                       />
                     </div>
 
@@ -916,7 +916,7 @@ export default function AdminGuidesPage() {
                       <select
                         value={form.meta_robots || 'index, follow'}
                         onChange={(e) => setForm({ ...form, meta_robots: e.target.value })}
-                        className="w-full px-3 py-1.5 bg-white border border-[#c9cccf] rounded-lg font-semibold focus:outline-none focus:border-[#ff268b]"
+                        className="w-full px-3 py-1.5 bg-white border border-[#c9cccf] rounded-lg font-semibold focus:outline-none focus:border-[#802f4a]"
                       >
                         <option value="index, follow">index, follow (Standard - indexed by Google)</option>
                         <option value="noindex, follow">noindex, follow (Hide from search)</option>
@@ -973,7 +973,7 @@ export default function AdminGuidesPage() {
                         }
                       }}
                       placeholder='{\n  "@context": "https://schema.org",\n  "@type": "Article"\n}'
-                      className="w-full p-2.5 text-xs bg-[#f8f9fa] border border-[#c9cccf] rounded-lg font-mono focus:outline-none focus:border-[#ff268b]"
+                      className="w-full p-2.5 text-xs bg-[#f8f9fa] border border-[#c9cccf] rounded-lg font-mono focus:outline-none focus:border-[#802f4a]"
                     />
                     {schemaError && (
                       <div className="text-[11px] text-rose-600 font-semibold flex items-center gap-1">
@@ -997,7 +997,7 @@ export default function AdminGuidesPage() {
                 <button
                   type="submit"
                   disabled={saveMutation.isPending}
-                  className="px-5 py-2 bg-[#ff268b] hover:bg-[#e01977] text-white text-xs font-bold rounded-lg shadow-sm inline-flex items-center gap-1.5"
+                  className="px-5 py-2 bg-[#802f4a] hover:bg-[#802f4a] text-white text-xs font-bold rounded-lg shadow-sm inline-flex items-center gap-1.5"
                 >
                   {saveMutation.isPending ? (
                     <>
@@ -1042,7 +1042,7 @@ export default function AdminGuidesPage() {
                   alt={previewArticle.image_alt || previewArticle.title}
                   className="w-full h-full object-cover"
                 />
-                <span className="absolute top-3 left-3 bg-white/90 text-[#ff268b] text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
+                <span className="absolute top-3 left-3 bg-white/90 text-[#802f4a] text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
                   {previewArticle.category}
                 </span>
               </div>
@@ -1057,7 +1057,7 @@ export default function AdminGuidesPage() {
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" /> {previewArticle.minutes} min read
                   </span>
-                  <span className="text-[#ff268b] font-bold flex items-center gap-0.5">
+                  <span className="text-[#802f4a] font-bold flex items-center gap-0.5">
                     Read Guide →
                   </span>
                 </div>

@@ -1,21 +1,14 @@
 import type { Metadata } from "next";
-import { Fredoka, Nunito } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import "./kidobox.css";
 import { Providers } from "@/lib/providers";
 import { CartDrawer } from "@/components/cart-drawer";
 
-const fredoka = Fredoka({
-  variable: "--font-fredoka",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const nunito = Nunito({
-  variable: "--font-nunito",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+const jakarta = localFont({
+  src: "./fonts/PlusJakartaSans.ttf",
+  variable: "--font-jakarta",
+  weight: "200 800",
   display: "swap",
 });
 
@@ -63,7 +56,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="girl"
-      className={`${fredoka.variable} ${nunito.variable} h-full antialiased`}
+      className={`${jakarta.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

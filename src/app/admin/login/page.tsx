@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { ShoppingBag, Lock, Mail, ArrowRight, Loader2, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, ArrowRight, Loader2, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -50,15 +50,13 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-sm">
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="w-12 h-12 bg-gradient-to-tr from-[#ff268b] via-[#f43f5e] to-[#0284c7] rounded-2xl flex items-center justify-center text-white mx-auto mb-3 shadow-md">
-            <ShoppingBag className="w-6 h-6 text-white" />
-          </div>
+          <img src="/logo.png" alt="KIDOBOX" width={164} height={64} className="mx-auto mb-4 h-16 w-auto object-contain" />
           <h1 className="text-xl font-bold text-[#1a1a1a] tracking-tight">KIDOBOX Admin</h1>
           <p className="text-xs text-[#616161] mt-1">Single-Store Merchant Console • Secure Sign-in</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl border border-[#fed7e2] p-6 shadow-sm">
+        <div className="bg-white rounded-2xl border border-[#f2e3e8] p-6 shadow-sm">
           {errorMsg && (
             <div className="mb-4 p-3 bg-[#fff4f2] border border-[#fedad4] text-[#8c1e0b] rounded-lg text-xs font-medium">
               {errorMsg}
@@ -77,7 +75,7 @@ export default function AdminLoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b] focus:ring-1 focus:ring-[#ff268b] transition"
+                  className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#802f4a] focus:ring-1 focus:ring-[#802f4a] transition"
                   placeholder="admin@kidobox.com"
                   autoComplete="email"
                 />
@@ -95,7 +93,7 @@ export default function AdminLoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-9 pr-10 py-2 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#ff268b] focus:ring-1 focus:ring-[#ff268b] transition"
+                  className="w-full pl-9 pr-10 py-2 text-xs bg-white border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#802f4a] focus:ring-1 focus:ring-[#802f4a] transition"
                   placeholder="Enter store password"
                   autoComplete="current-password"
                 />
@@ -113,7 +111,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-[#ff268b] to-[#0284c7] hover:opacity-95 text-white text-xs font-semibold rounded-xl shadow transition flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-[#802f4a] to-[#0284c7] hover:opacity-95 text-white text-xs font-semibold rounded-xl shadow transition flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isLoading ? (
                 <>

@@ -1,5 +1,6 @@
 'use client';
 
+import { ProductQuickView } from '@/components/product-quick-view';
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -142,7 +143,7 @@ export default function ProductDetailPage() {
               {categoryObj?.name || product.category}
             </Link>
             <h1>{product.heading_h1 || product.name}</h1>
-            {product.heading_h2 && <h2 className="text-xs font-semibold text-[#ff268b] tracking-wide uppercase mt-1">{product.heading_h2}</h2>}
+            {product.heading_h2 && <h2 className="text-xs font-semibold text-[#802f4a] tracking-wide uppercase mt-1">{product.heading_h2}</h2>}
             <p className="product-subtitle">{product.detail}</p>
 
             <a className="detail-rating" href="#product-reviews">
@@ -345,6 +346,7 @@ export default function ProductDetailPage() {
               return (
                 <article className="product-card" key={rel.id}>
                   <div className="product-image-wrap">
+                    <ProductQuickView product={rel} />
                     <Link href={`/products/${rel.slug}`}>
                       <img
                         className="product-photo"
@@ -492,7 +494,7 @@ export default function ProductDetailPage() {
         <span>{toastMessage}</span>
         <button
           onClick={() => setIsOpen(true)}
-          style={{ color: '#ffbbd9', textDecoration: 'underline', marginLeft: '10px', background: 'none', border: 0, font: 'inherit', cursor: 'pointer' }}
+          style={{ color: '#ddb4c2', textDecoration: 'underline', marginLeft: '10px', background: 'none', border: 0, font: 'inherit', cursor: 'pointer' }}
         >
           View Bag →
         </button>

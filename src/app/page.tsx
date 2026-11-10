@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { ProductQuickView } from '@/components/product-quick-view';
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { useCart } from '@/lib/cart-context';
-import { money, Product } from '@/lib/kidobox-data';
+import { money, Product, stagePhotography, type Category } from '@/lib/kidobox-data';
 import { useStorefront, mediaUrl, cartItem, safeLink } from '@/lib/storefront';
 import { HeroSlider } from '@/components/hero-slider';
 import { ProductSlider } from '@/components/product-slider';
@@ -22,13 +23,11 @@ import {
   TrendingUp,
   BookOpen,
   Camera,
-  Feather,
   Leaf,
   ShieldCheck,
   Compass,
   Gift,
   Truck,
-  Star,
   Flame,
   Clock,
   ArrowRight,
@@ -37,7 +36,39 @@ import {
   Copy,
 } from 'lucide-react';
 
+const benefitIcons = [Leaf, Heart, Compass, Gift, ShieldCheck, Truck];
+
 export default function KidoboxHomePage() {
+  const [categoryPreview, setCategoryPreview] = useState<{ category: Category; center: number } | null>(null);
+  const categoryPreviewRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const preview = categoryPreviewRef.current;
+    const section = preview?.parentElement;
+    if (!preview || !section) return;
+
+    const updatePlacement = () => {
+      const bounds = section.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - bounds.bottom;
+      preview.dataset.placement =
+        spaceBelow < preview.offsetHeight + 14 && bounds.top > spaceBelow ? 'above' : 'below';
+    };
+
+    updatePlacement();
+    window.addEventListener('scroll', updatePlacement, { passive: true });
+    window.addEventListener('resize', updatePlacement);
+    return () => {
+      window.removeEventListener('scroll', updatePlacement);
+      window.removeEventListener('resize', updatePlacement);
+    };
+  }, [categoryPreview]);
+
+  function showCategoryPreview(category: Category, link: HTMLAnchorElement) {
+    const section = link.closest('section');
+    if (!section) return;
+    const bounds = link.getBoundingClientRect();
+    setCategoryPreview({ category, center: bounds.left + bounds.width / 2 - section.getBoundingClientRect().left });
+  }
   const { categories, products, ages, articles, brands, isLoading, isError, refetch, content, banners, offers, globalSeo, pageSeo } = useStorefront();
   const { addItem, setIsOpen } = useCart();
   const [activeTab, setActiveTab] = useState('all');
@@ -48,7 +79,6 @@ export default function KidoboxHomePage() {
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
   const categoryStripRef = useRef<HTMLDivElement>(null);
   const bestsellersSliderRef = useRef<HTMLDivElement>(null);
-  const ageSliderRef = useRef<HTMLDivElement>(null);
   const offersSliderRef = useRef<HTMLDivElement>(null);
   const guidesSliderRef = useRef<HTMLDivElement>(null);
 
@@ -295,7 +325,7 @@ export default function KidoboxHomePage() {
         {isError && (
           <p className="container" role="alert">
             Unable to load the store.{' '}
-            <button onClick={() => refetch()} className="underline font-bold text-[#ff268b]">
+            <button onClick={() => refetch()} className="underline font-bold text-[#802f4a]">
               Retry
             </button>
           </p>
@@ -306,7 +336,13 @@ export default function KidoboxHomePage() {
 
         <div className="container main-content">
           {/* ── 2. Shop by Category with Quick-Glide Arrows ────────────── */}
-          <section id="categories" className="category-strip-wrap">
+          <section
+            id="categories"
+            className="category-strip-wrap category-preview-section"
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') setCategoryPreview(null);
+            }}
+          >
             <div className="section-title">
               <div>
                 <h2>
@@ -339,9 +375,24 @@ export default function KidoboxHomePage() {
               </div>
             </div>
 
-            <div className="category-slider-track" id="category-grid" ref={categoryStripRef}>
+            <div className="category-slider-track" id="category-grid" ref={categoryStripRef} onScroll={() => setCategoryPreview(null)}>
               {categories.map((c) => (
-                <Link className="category category-card-compact" href={`/collections/${c.slug}`} key={c.slug}>
+                <Link
+                  className="category category-card-compact"
+                  href={`/collections/${c.slug}`}
+                  key={c.slug}
+                  aria-describedby={categoryPreview?.category.slug === c.slug ? 'category-preview-description' : undefined}
+                  onPointerEnter={(event) => {
+                    if (event.pointerType === 'mouse') showCategoryPreview(c, event.currentTarget);
+                  }}
+                  onPointerLeave={(event) => {
+                    if (event.pointerType === 'mouse' && !event.currentTarget.matches(':focus-visible')) setCategoryPreview(null);
+                  }}
+                  onFocus={(event) => {
+                    if (event.currentTarget.matches(':focus-visible')) showCategoryPreview(c, event.currentTarget);
+                  }}
+                  onBlur={() => setCategoryPreview(null)}
+                >
                   <LazyImage
                     src={mediaUrl(c.image)}
                     alt={c.name}
@@ -355,6 +406,22 @@ export default function KidoboxHomePage() {
                 </Link>
               ))}
             </div>
+            {categoryPreview && (
+              <div
+                className="category-preview"
+                ref={categoryPreviewRef}
+                key={categoryPreview.category.slug}
+                style={{ '--category-preview-center': `${categoryPreview.center}px` } as React.CSSProperties}
+              >
+                <LazyImage src={mediaUrl(categoryPreview.category.image)} alt="" width={340} height={180} priority />
+                <div className="category-preview-copy">
+                  <h3>{categoryPreview.category.name}</h3>
+                  <p id="category-preview-description">
+                    {categoryPreview.category.description || `Explore the ${categoryPreview.category.name} collection.`}
+                  </p>
+                </div>
+              </div>
+            )}
           </section>
 
           {/* ── 3. Featured Promo Banners (Full-Width Responsive) ────────── */}
@@ -380,14 +447,37 @@ export default function KidoboxHomePage() {
             onAddToCart={handleAddToCart}
           />
 
-          {/* ── 5. Tabbed Bestsellers Catalog ─────────────────────────── */}
-          <section id="bestsellers" style={{ marginTop: '45px' }}>
+          {/* ── 5. Newborn Essentials Full-Width Banner ───────────────── */}
+          {newborn?.title && (
+            <section className="newborn-editorial" aria-labelledby="newborn-heading">
+              <div className="newborn-editorial-copy">
+                <span className="newborn-editorial-kicker">THE FIRST SIX MONTHS</span>
+                <h2 id="newborn-heading">{newborn.title}</h2>
+                <p>{newborn.description}</p>
+                <Link className="newborn-editorial-link" href={safeLink(newborn.link)}>
+                  {newborn.cta || 'Shop Newborn Essentials'}
+                  <ArrowRight size={18} aria-hidden="true" />
+                </Link>
+              </div>
+              <LazyImage
+                src={newborn.image && !['newborn', '/assets/hd/newborn.webp'].includes(newborn.image)
+                  ? mediaUrl(newborn.image)
+                  : '/assets/hd/newborn-editorial.webp'}
+                alt={newbornBanner?.alt_text || ''}
+                width={1440}
+                height={810}
+              />
+            </section>
+          )}
+
+          {/* ── 6. Tabbed Bestsellers Catalog ─────────────────────────── */}
+          <section id="bestsellers" className="home-bestsellers">
             <div className="section-title">
               <div>
                 <h2>
                   <span className="section-icon-wrap"><Heart size={20} fill="currentColor" /></span> Most-Loved Bestsellers
                 </h2>
-                <p>Pediatrician-recommended, parent-approved everyday staples</p>
+                <p>Explore favorite finds for playtime, mealtime, and everything in between.</p>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -416,12 +506,16 @@ export default function KidoboxHomePage() {
             </div>
 
             {/* Category Filter Tabs on dedicated clean row */}
-            <div className="bestsellers-filter-strip" style={{ marginTop: '8px', marginBottom: '16px' }}>
-              <div className="filter-tabs" aria-label="Product categories" style={{ margin: 0 }}>
+            <div className="bestsellers-filter-strip" >
+              <div className="filter-tabs" aria-label="Product categories">
                   {[['all', 'All Favorites'], ...categories.map(c => [c.slug, c.name])].map(([tabKey, label]) => (
                     <button
                       key={tabKey}
-                      onClick={() => setActiveTab(tabKey)}
+                      type="button"
+                      onClick={() => {
+                        setActiveTab(tabKey);
+                        bestsellersSliderRef.current?.scrollTo({ left: 0, behavior: 'instant' });
+                      }}
                       className={activeTab === tabKey ? 'active' : ''}
                       aria-pressed={activeTab === tabKey}
                     >
@@ -436,6 +530,7 @@ export default function KidoboxHomePage() {
               id="bestsellers-slider-track"
               ref={bestsellersSliderRef}
             >
+              {!filteredProducts.length && <p className="bestsellers-empty">No bestsellers in this category yet.</p>}
               {filteredProducts.map((p) => {
                 const isSaved = wishlist.includes(p.id);
                 const categoryObj = categories.find((c) => c.slug === p.category);
@@ -447,6 +542,7 @@ export default function KidoboxHomePage() {
                 return (
                   <article className="product-card product-slider-card" key={p.id}>
                     <div className="product-image-wrap">
+                      <ProductQuickView product={p} />
                       <Link href={`/products/${p.slug}`} aria-label={`View ${p.name}`}>
                         <LazyImage
                           className="product-photo"
@@ -460,7 +556,7 @@ export default function KidoboxHomePage() {
 
                       {hasDiscount && (
                         <span className="product-tag discount-tag">
-                          SAVE {discountPercent}%
+                          −{discountPercent}%
                         </span>
                       )}
                       {p.isNew && !hasDiscount && (
@@ -487,19 +583,20 @@ export default function KidoboxHomePage() {
                         <Link href={`/products/${p.slug}`}>{p.name}</Link>
                       </h3>
                       <p className="detail">{p.detail}</p>
-                      <div className="rating">
+                      {p.reviews > 0 && <div className="rating">
                         <span className="stars" aria-label={`${p.rating} stars`}>
                           {"★".repeat(Math.round(p.rating))}
                         </span>{' '}
                         &nbsp;{p.rating} <span>({p.reviews})</span>
-                      </div>
+                      </div>}
                       <div className="product-bottom">
                         <div>
                           <span className="price">{money(p.price)}</span>
                           {hasDiscount && <span className="old-price">{money(p.old)}</span>}
                         </div>
                         <button
-                          className="add-cart glow-btn"
+                          className="add-cart"
+                          type="button"
                           disabled={!p.inStock} onClick={() => handleAddToCart(p)}
                           aria-label={`Add ${p.name} to cart`}
                         >
@@ -518,75 +615,6 @@ export default function KidoboxHomePage() {
             </div>
           </section>
 
-          {/* ── 6. Newborn Essentials Full-Width Banner ───────────────── */}
-          {newborn?.title && <section className="newborn-banner">
-            <div className="newborn-banner-media">
-              <LazyImage
-                src={mediaUrl(newborn?.image)}
-                alt="A peacefully sleeping newborn"
-                priority
-              />
-            </div>
-            <div className="newborn-banner-content">
-              <span className="newborn-eyebrow">
-                <Sparkles size={13} color="#ffbc00" />
-                <span>0 – 6 MONTHS ESSENTIALS</span>
-              </span>
-              <h2>{newborn?.title}</h2>
-              <p>{newborn?.description}</p>
-              <Link className="button pink glow-on-hover newborn-cta" href={safeLink(newborn?.link)}>
-                <span>{newborn?.cta}</span>
-                <ArrowRight size={14} />
-              </Link>
-            </div>
-            <div className="newborn-benefits-card">
-              <div className="newborn-benefits-top">
-                <span className="benefits-seal">★ CERTIFIED CARE ★</span>
-              </div>
-              <div className="newborn-benefits-grid">
-                <div className="newborn-benefit-item benefit-soft">
-                  <div className="benefit-icon-box">
-                    <Feather size={20} strokeWidth={2.2} />
-                  </div>
-                  <div className="benefit-text">
-                    <strong>Ultra Soft</strong>
-                    <small>Cloud-touch</small>
-                  </div>
-                </div>
-
-                <div className="newborn-benefit-item benefit-hypo">
-                  <div className="benefit-icon-box">
-                    <Sparkles size={20} strokeWidth={2.2} />
-                  </div>
-                  <div className="benefit-text">
-                    <strong>Hypoallergenic</strong>
-                    <small>Derm tested</small>
-                  </div>
-                </div>
-
-                <div className="newborn-benefit-item benefit-organic">
-                  <div className="benefit-icon-box">
-                    <Leaf size={20} strokeWidth={2.2} />
-                  </div>
-                  <div className="benefit-text">
-                    <strong>100% Organic</strong>
-                    <small>Zero toxins</small>
-                  </div>
-                </div>
-
-                <div className="newborn-benefit-item benefit-safe">
-                  <div className="benefit-icon-box">
-                    <ShieldCheck size={20} strokeWidth={2.2} />
-                  </div>
-                  <div className="benefit-text">
-                    <strong>Certified Safe</strong>
-                    <small>Pediatrician OK</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>}
-
           {/* ── 7. Shop by Age Slider ───────────────────────────────── */}
           <section id="ages">
             <div className="section-title">
@@ -596,71 +624,56 @@ export default function KidoboxHomePage() {
                 </h2>
                 <p>Find the perfect gear and toys crafted for every stage</p>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Link className="view-link" href="/ages">
-                  View All Stages →
-                </Link>
-                <div className="slider-nav-arrows">
-                  <button
-                    type="button"
-                    className="slider-nav-btn"
-                    onClick={() => scrollTrack(ageSliderRef, 'left')}
-                    aria-label="Scroll ages left"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    type="button"
-                    className="slider-nav-btn"
-                    onClick={() => scrollTrack(ageSliderRef, 'right')}
-                    aria-label="Scroll ages right"
-                  >
-                    ›
-                  </button>
-                </div>
-              </div>
+              <Link className="view-link" href="/ages">
+                View All Stages <ArrowRight size={16} aria-hidden="true" />
+              </Link>
             </div>
-            <div className="age-slider-track" id="age-grid" ref={ageSliderRef}>
+            <div className="home-stage-grid" id="age-grid">
               {ages.map((a) => (
-                <article className={`age-card age-slider-card ${a.color}`} key={a.slug}>
-                  <h3>{a.title}</h3>
-                  <p>{a.subtitle}</p>
+                <Link className="home-stage-tile" href={`/shop?age=${encodeURIComponent(a.age)}`} key={a.slug}>
                   <LazyImage
-                    src={mediaUrl(a.image)}
-                    alt={a.subtitle}
-                    width={800}
-                    height={800}
-                    style={{ position: 'absolute', right: 0, bottom: 0, height: '100%', width: '70%', objectFit: 'cover' }}
+                    src={stagePhotography[a.slug] || mediaUrl(a.image)}
+                    alt=""
+                    width={768}
+                    height={512}
                   />
-                  <Link
-                    className={`button ${a.color.includes('mint') ? 'mint' : a.color.includes('blue') ? 'blue' : 'pink'} glow-on-hover`}
-                    href={`/shop?age=${encodeURIComponent(a.age)}`}
-                  >
-                    Shop Now <span>→</span>
-                  </Link>
-                </article>
+                  <div className="home-stage-copy">
+                    <div>
+                      <p>{a.title}</p>
+                      <h3>{a.subtitle}</h3>
+                    </div>
+                    <span className="home-stage-arrow"><ArrowRight size={18} aria-hidden="true" /></span>
+                  </div>
+                </Link>
               ))}
             </div>
           </section>
 
 
 
-          {/* ── 9. Why Choose KIDOBOX (Full-Width Pill Grid) ─────────── */}
-          <section className="why">
-            <div className="section-title">
-              <div>
-                <h2>
-                  <span className="section-icon-wrap"><Award size={20} /></span> Why Choose KIDOBOX?
-                </h2>
-                <p>Because your little one deserves absolute care and safety</p>
+          {!!content.benefits?.length && (
+            <section className="home-benefits" aria-labelledby="home-benefits-heading">
+              <div className="home-benefits-intro">
+                <span className="home-benefits-kicker"><Award size={16} aria-hidden="true" /> THE KIDOBOX PROMISE</span>
+                <h2 id="home-benefits-heading">Why Choose KIDOBOX?</h2>
+                <p>Thoughtfully chosen essentials for everyday moments with your little one.</p>
               </div>
-              <span className="why-star float-anim"><Star size={28} fill="#ffbc00" color="#ffbc00" /></span>
-            </div>
-            <div className="benefit-grid" id="benefit-grid">
-              {(content.benefits || []).map((benefit, i) => <div className="benefit" key={i}><span className="benefit-icon-badge">{[<Leaf key="leaf" size={22} color="#10b981" />, <Heart key="heart" size={22} color="#ff268b" />, <Compass key="compass" size={22} color="#00adeb" />, <Gift key="gift" size={22} color="#f59e0b" />, <ShieldCheck key="shield" size={22} color="#0284c7" />, <Truck key="truck" size={22} color="#8b5cf6" />][i % 6]}</span><p>{benefit.title}<small>{benefit.subtitle}</small></p></div>)}
-            </div>
-          </section>
-
+              <ul className="home-benefits-list">
+                {content.benefits.map((benefit, index) => {
+                  const Icon = benefitIcons[index % benefitIcons.length];
+                  return (
+                    <li key={index}>
+                      <span className="home-benefit-icon"><Icon size={22} aria-hidden="true" /></span>
+                      <div>
+                        <strong>{benefit.title}</strong>
+                        <span>{benefit.subtitle}</span>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          )}
 
           {/* ── 11. Parenting Tips & Guides Slider (Single Row) ───────── */}
           <section id="guides" className="guides-section">
@@ -757,14 +770,13 @@ export default function KidoboxHomePage() {
           </section>
 
           {/* ── 14. VIP Family Club & Welcome Voucher ───────────────── */}
-          <section className="family-club-banner" aria-label="Kidobox Family Club">
-            <span className="family-club-decor-star float-anim">✨</span>
+          <section className="family-club-banner family-club-feature" aria-labelledby="family-club-heading">
             <div className="family-club-content">
               <span className="family-club-badge">
-                <Sparkles size={14} color="#ffbc00" />
+                <Sparkles size={14} aria-hidden="true" />
                 <span>KIDOBOX LITTLE FAMILY CLUB</span>
               </span>
-              <h2>Join Our Family &amp; Get ₹500 Off</h2>
+              <h2 id="family-club-heading">Join our family. Get ₹500 off.</h2>
               <p>
                 Subscribe for gentle milestone tips, early access to organic drops,
                 and an instant ₹500 welcome voucher for your next order.
@@ -776,6 +788,7 @@ export default function KidoboxHomePage() {
                     <Mail size={18} className="family-input-icon" />
                     <input
                       type="email"
+                      autoComplete="email"
                       value={newsletterEmail}
                       onChange={(e) => setNewsletterEmail(e.target.value)}
                       placeholder="Enter your email address..."
@@ -783,7 +796,7 @@ export default function KidoboxHomePage() {
                       aria-label="Email address for family club"
                     />
                   </div>
-                  <button type="submit" className="family-club-btn glow-btn">
+                  <button type="submit" className="family-club-btn">
                     <span>Claim ₹500 Off</span>
                     <ArrowRight size={16} />
                   </button>
@@ -814,7 +827,7 @@ export default function KidoboxHomePage() {
               <div className="family-club-perks">
                 <span><ShieldCheck size={16} color="#10b981" /> 100% Certified Baby-Safe</span>
                 <span><Truck size={16} color="#00adeb" /> Free Express Delivery</span>
-                <span><Gift size={16} color="#ff268b" /> Secret Birthday Perks</span>
+                <span><Gift size={16} color="#802f4a" /> Secret Birthday Perks</span>
               </div>
             </div>
 
@@ -822,7 +835,7 @@ export default function KidoboxHomePage() {
               <div className="family-ticket-card">
                 <div className="ticket-top">
                   <span className="ticket-tag">WELCOME VOUCHER</span>
-                  <span className="ticket-stars">★ ★ ★ ★ ★</span>
+                  <Gift size={22} aria-hidden="true" />
                 </div>
                 <div className="ticket-body">
                   <span className="ticket-amount">₹500</span>
@@ -885,7 +898,7 @@ export default function KidoboxHomePage() {
             }}
             style={{
               marginLeft: '12px',
-              color: '#ffa8cb',
+              color: '#d7a7b7',
               textDecoration: 'underline',
               fontWeight: 800,
             }}
