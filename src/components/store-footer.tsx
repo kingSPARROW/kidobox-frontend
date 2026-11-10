@@ -68,8 +68,8 @@ export function StoreFooter() {
       : DEFAULT_FOOTER_COLUMNS;
 
   return (
-    <footer className="container">
-      <div className="footer-grid">
+    <footer className="store-footer">
+      <div className="container footer-grid">
         <div className="footer-about">
           <Link href="/">
             <img
@@ -241,7 +241,7 @@ export function StoreFooter() {
         </div>
       </div>
 
-      <div className="footer-bottom">
+      <div className="container footer-bottom">
         {copyrightText}{' '}
         <Heart
           size={13}

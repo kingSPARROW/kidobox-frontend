@@ -71,6 +71,7 @@ export default function KidoboxHomePage() {
   }
   const { categories, products, ages, articles, brands, isLoading, isError, refetch, content, banners, offers, globalSeo, pageSeo } = useStorefront();
   const { addItem, setIsOpen } = useCart();
+  const [showBackToTop, setShowBackToTop] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -90,6 +91,13 @@ export default function KidoboxHomePage() {
         if (Array.isArray(parsed)) setWishlist(parsed);
       }
     } catch (e) { }
+  }, []);
+
+  useEffect(() => {
+    const updateVisibility = () => setShowBackToTop(window.scrollY > 0);
+    updateVisibility();
+    window.addEventListener('scroll', updateVisibility, { passive: true });
+    return () => window.removeEventListener('scroll', updateVisibility);
   }, []);
 
   const triggerToast = (msg: string, hasLink = true) => {
@@ -871,15 +879,21 @@ export default function KidoboxHomePage() {
         </div>
       </main>
 
-      {/* Floating Back to Top Button */}
-      <button
-        className="back-top glow-btn"
-        id="back-top"
-        aria-label="Back to top"
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-      >
-        ↑
-      </button>
+      {showBackToTop && (
+        <button
+          type="button"
+          className="back-top glow-btn"
+          id="back-top"
+          aria-label="Back to top"
+          title="Back to top"
+          onClick={() => window.scrollTo({
+            top: 0,
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+          })}
+        >
+          <Baby size={22} aria-hidden="true" />
+        </button>
+      )}
 
       {/* Interactive Toast Notification */}
       <aside

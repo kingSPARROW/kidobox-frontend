@@ -296,7 +296,7 @@ export function StoreNav() {
       </div>
 
       {/* Main Header */}
-      <header>
+      <header className="store-header">
         <div className="container header-main">
           <Link className="logo" href="/" aria-label="KIDOBOX home">
             <img

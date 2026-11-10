@@ -23,8 +23,8 @@ export function CartDrawer() {
         onClick={() => setIsOpen(false)}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col font-['Nunito',sans-serif]">
+      <div className="fixed inset-y-0 right-0 max-w-full flex sm:pl-10">
+        <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col font-[family-name:var(--font-jakarta)]">
           {/* Header */}
           <div className="p-5 border-b border-[#edf0f4] bg-[#fef2f2] flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -32,7 +32,7 @@ export function CartDrawer() {
                 <ShoppingBag className="w-4 h-4" />
               </div>
               <div>
-                <h2 className="font-['Fredoka',sans-serif] text-xl font-semibold text-[#122e50]">
+                <h2 className="text-xl font-semibold text-[#122e50]">
                   Your Shopping Bag
                 </h2>
                 <span className="text-[11px] font-bold text-[#637389]">{itemCount} little treasures</span>
@@ -40,7 +40,7 @@ export function CartDrawer() {
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-1.5 text-[#637389] hover:text-[#802f4a] rounded-full transition"
+              className="grid size-11 place-items-center text-[#637389] hover:text-[#802f4a] rounded-full transition"
               aria-label="Close cart"
             >
               <X className="w-5 h-5" />
@@ -72,7 +72,7 @@ export function CartDrawer() {
                 <div className="w-16 h-16 bg-[#fef2f2] text-[#802f4a] rounded-full flex items-center justify-center mx-auto mb-4">
                   <ShoppingBag className="w-7 h-7 text-[#802f4a]" />
                 </div>
-                <h3 className="font-['Fredoka',sans-serif] text-xl font-semibold text-[#122e50]">
+                <h3 className="text-xl font-semibold text-[#122e50]">
                   Your bag is empty
                 </h3>
                 <p className="text-xs text-[#637389] mt-2 max-w-xs mx-auto leading-relaxed">
@@ -138,7 +138,7 @@ export function CartDrawer() {
 
           {/* Footer with totals */}
           {items.length > 0 && (
-            <div className="p-5 border-t border-[#edf0f4] bg-[#fcfdff] space-y-3">
+            <div className="p-5 border-t border-[#edf0f4] bg-[#fcfdff] space-y-3 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
               <div className="flex justify-between items-center text-xs font-bold text-[#637389]">
                 <span>Subtotal</span>
                 <span className="font-black text-sm text-[#122e50]">{money(subtotal)}</span>
@@ -150,10 +150,10 @@ export function CartDrawer() {
                 </span>
               </div>
               <div className="pt-2 border-t border-[#edf0f4] flex justify-between items-center">
-                <span className="font-['Fredoka',sans-serif] text-base font-semibold text-[#122e50]">
+                <span className="text-base font-semibold text-[#122e50]">
                   Total
                 </span>
-                <span className="font-['Fredoka',sans-serif] text-xl font-bold text-[#122e50]">
+                <span className="text-xl font-bold text-[#122e50]">
                   {money(subtotal + (isFreeShipping ? 0 : 79))}
                 </span>
               </div>
