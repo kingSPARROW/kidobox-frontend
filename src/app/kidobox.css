@@ -3856,19 +3856,20 @@ button.search-clear-btn:hover {
 
   /* 8. Product Sliders & Cards */
   .product-slider-track {
-    gap: 12px !important;
-    padding: 4px 2px 16px !important;
+    gap: 0 !important;
+    padding: 4px 0 16px !important;
   }
   .product-slider-card {
-    flex: 0 0 168px !important;
-    width: 168px !important;
-    min-width: 168px !important;
-    max-width: 168px !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    scroll-snap-stop: always;
     padding: 8px !important;
     border-radius: 12px !important;
   }
   .product-slider-card .product-photo {
-    height: 135px !important;
+    height: 100% !important;
     border-radius: 8px !important;
   }
   .product-slider-card h3 {
@@ -5108,13 +5109,33 @@ main .catalog-banner h1 {
     overflow-wrap: anywhere;
   }
   .product-card .product-card-info .detail { font-size: .75rem !important; }
-  .product-card .product-bottom { gap: 4px; }
+  .product-card .product-bottom { gap: 4px; flex-wrap: wrap; }
   .product-card .product-bottom > div { display: grid; }
   .product-card .product-bottom .price { font-size: .95rem !important; }
   .product-card .product-bottom .add-cart {
+    display: inline-flex;
+    min-width: 44px;
     min-height: 44px;
     padding-inline: 7px !important;
     font-size: .6875rem !important;
+  }
+  .product-card .product-bottom .add-cart span {
+    display: inline;
+    font-size: inherit;
+  }
+  .category-preview-section .category-slider-track {
+    gap: 10px !important;
+    padding-inline: 0 !important;
+  }
+  .category-preview-section .category-card-compact {
+    flex-basis: calc((100% - 20px) / 3) !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+  .category-preview-section .category-card-compact .lazy-img-container {
+    width: 100% !important;
+    height: auto !important;
   }
   .home-bestsellers .bestsellers-slider-track {
     grid-auto-columns: calc((100% - 10px) / 2);

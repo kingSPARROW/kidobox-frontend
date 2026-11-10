@@ -112,6 +112,11 @@ export default function AdminBannersPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminBanners'] });
+      queryClient.invalidateQueries({ queryKey: ['storefront'] });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('storefront-updated'));
+        try { localStorage.setItem('storefront-updated', String(Date.now())); } catch {}
+      }
       setIsEditorOpen(false);
       setEditingBanner(null);
     },
@@ -126,6 +131,11 @@ export default function AdminBannersPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminBanners'] });
+      queryClient.invalidateQueries({ queryKey: ['storefront'] });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('storefront-updated'));
+        try { localStorage.setItem('storefront-updated', String(Date.now())); } catch {}
+      }
     },
   });
 
@@ -141,13 +151,18 @@ export default function AdminBannersPage() {
 
   const handleOpenEdit = (banner: BannerItem) => {
     setEditingBanner(banner);
+    const validMobile = banner.mobile_image_url && !banner.mobile_image_url.startsWith('blob:')
+      ? banner.mobile_image_url
+      : (banner.desktop_image_url || '');
     setForm({
       ...banner,
       title: banner.title || '',
-      mobile_image_url: banner.mobile_image_url || banner.desktop_image_url,
+      mobile_image_url: validMobile,
       overlay_opacity: banner.overlay_opacity ?? 0.6,
       text_alignment: banner.text_alignment || 'left',
     });
+    setDesktopMediaMode(banner.desktop_image_url?.includes('storage/') ? 'upload' : 'url');
+    setMobileMediaMode(validMobile?.includes('storage/') ? 'upload' : 'url');
     setPreviewDevice('desktop');
     setIsEditorOpen(true);
   };
@@ -160,14 +175,26 @@ export default function AdminBannersPage() {
 
   // Image Upload Handler
   const handleFileUpload = async (file: File, target: 'desktop' | 'mobile') => {
-    // 1. Instant local preview
+    if (!file) return;
+
+    if (file.size > 30 * 1024 * 1024) {
+      alert(`File size is ${(file.size / (1024 * 1024)).toFixed(1)}MB. Maximum allowed upload size is 25MB.`);
+      return;
+    }
+
+    const prevDesktop = form.desktop_image_url;
+    const prevMobile = form.mobile_image_url;
+
+    // 1. Instant local preview and switch to target viewport
     const localUrl = URL.createObjectURL(file);
     if (target === 'desktop') {
       setForm((prev) => ({ ...prev, desktop_image_url: localUrl }));
       setIsUploadingDesktop(true);
+      setPreviewDevice('desktop');
     } else {
       setForm((prev) => ({ ...prev, mobile_image_url: localUrl }));
       setIsUploadingMobile(true);
+      setPreviewDevice('mobile');
     }
 
     // 2. Upload to backend
@@ -179,23 +206,49 @@ export default function AdminBannersPage() {
         body: formData,
       });
 
-      if (res.url) {
+      if (res && res.url) {
         if (target === 'desktop') {
           setForm((prev) => ({ ...prev, desktop_image_url: res.url }));
         } else {
           setForm((prev) => ({ ...prev, mobile_image_url: res.url }));
         }
+      } else {
+        throw new Error(res?.message || 'Server did not return a valid image URL');
       }
-    } catch (err) {
-      console.warn('Backend upload returned error; keeping preview data:', err);
+    } catch (err: any) {
+      console.error('Backend upload returned error:', err);
+      // Revert from dead blob URL back to previous valid URL
+      if (target === 'desktop') {
+        setForm((prev) => ({ ...prev, desktop_image_url: prevDesktop }));
+      } else {
+        setForm((prev) => ({ ...prev, mobile_image_url: prevMobile }));
+      }
+      alert(`Image upload failed: ${err?.message || 'Please check file format and size (max 25MB).'}`);
     } finally {
-      if (target === 'desktop') setIsUploadingDesktop(false);
-      else setIsUploadingMobile(false);
+      if (target === 'desktop') {
+        setIsUploadingDesktop(false);
+        if (desktopFileInputRef.current) desktopFileInputRef.current.value = '';
+      } else {
+        setIsUploadingMobile(false);
+        if (mobileFileInputRef.current) mobileFileInputRef.current.value = '';
+      }
     }
   };
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isUploadingDesktop || isUploadingMobile) {
+      alert('Please wait for image uploads to complete before saving.');
+      return;
+    }
+    if (form.desktop_image_url?.startsWith('blob:')) {
+      alert('Desktop image upload did not finish. Please re-upload.');
+      return;
+    }
+    if (form.mobile_image_url?.startsWith('blob:')) {
+      alert('Mobile image upload did not finish. Please re-upload.');
+      return;
+    }
     saveMutation.mutate(form);
   };
 
@@ -301,7 +354,7 @@ export default function AdminBannersPage() {
                     <div className="relative group">
                       <div className="w-12 h-16 rounded-lg overflow-hidden border border-[#c9cccf] bg-slate-100 relative">
                         <img
-                          src={b.mobile_image_url || b.desktop_image_url}
+                          src={b.mobile_image_url && !b.mobile_image_url.startsWith('blob:') ? b.mobile_image_url : b.desktop_image_url}
                           alt={b.alt_text || "Mobile View"}
                           className="w-full h-full object-cover"
                         />
@@ -722,7 +775,7 @@ export default function AdminBannersPage() {
 
                       {desktopMediaMode === 'upload' ? (
                         /* Desktop File Upload Area */
-                        <div>
+                        <div className="space-y-2">
                           <input
                             type="file"
                             ref={desktopFileInputRef}
@@ -756,6 +809,36 @@ export default function AdminBannersPage() {
                               </div>
                             )}
                           </div>
+
+                          {/* Desktop Image Preview Card */}
+                          {form.desktop_image_url && !form.desktop_image_url.startsWith('blob:') && (
+                            <div className="border border-[#e1e3e5] rounded-lg p-2.5 bg-[#f8f9fa] flex items-center justify-between gap-3">
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="w-16 h-9 rounded overflow-hidden border border-[#dadce0] bg-slate-900 flex-shrink-0">
+                                  <img
+                                    src={form.desktop_image_url}
+                                    alt="Desktop banner preview"
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <div className="min-w-0">
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-[11px] font-bold text-[#1a1a1a]">Desktop image uploaded</span>
+                                    <Check className="w-3 h-3 text-[#008060]" />
+                                  </div>
+                                  <p className="text-[10px] text-[#616161] truncate max-w-xs">{form.desktop_image_url}</p>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                disabled={isUploadingDesktop}
+                                onClick={() => desktopFileInputRef.current?.click()}
+                                className="px-2.5 py-1 text-[11px] font-semibold text-[#1a1a1a] bg-white border border-[#c9cccf] hover:bg-[#f1f2f4] rounded-md transition flex-shrink-0"
+                              >
+                                Replace
+                              </button>
+                            </div>
+                          )}
                         </div>
                       ) : (
                         /* Desktop Image URL Input */
@@ -807,7 +890,7 @@ export default function AdminBannersPage() {
 
                       {mobileMediaMode === 'upload' ? (
                         /* Mobile File Upload Area */
-                        <div>
+                        <div className="space-y-2">
                           <input
                             type="file"
                             ref={mobileFileInputRef}
@@ -836,11 +919,52 @@ export default function AdminBannersPage() {
                                   Click to upload mobile image <span className="text-[#616161] font-normal">or drag & drop</span>
                                 </div>
                                 <p className="text-[10px] text-[#616161]">
-                                  Recommended: 800×1000px vertical aspect ratio
+                                  Recommended: 800×1000px vertical aspect ratio (JPG, PNG, WebP)
                                 </p>
                               </div>
                             )}
                           </div>
+
+                          {/* Mobile Image Preview Card */}
+                          {form.mobile_image_url && !form.mobile_image_url.startsWith('blob:') && (
+                            <div className="border border-[#e1e3e5] rounded-lg p-2.5 bg-[#f8f9fa] flex items-center justify-between gap-3">
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="w-10 h-14 rounded overflow-hidden border border-[#dadce0] bg-slate-900 flex-shrink-0">
+                                  <img
+                                    src={form.mobile_image_url}
+                                    alt="Mobile banner preview"
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <div className="min-w-0">
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-[11px] font-bold text-[#1a1a1a]">Mobile image active</span>
+                                    <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded">Ready</span>
+                                  </div>
+                                  <p className="text-[10px] text-[#616161] truncate max-w-xs">{form.mobile_image_url}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1.5 flex-shrink-0">
+                                <button
+                                  type="button"
+                                  disabled={isUploadingMobile}
+                                  onClick={() => mobileFileInputRef.current?.click()}
+                                  className="px-2.5 py-1 text-[11px] font-semibold text-[#1a1a1a] bg-white border border-[#c9cccf] hover:bg-[#f1f2f4] rounded-md transition"
+                                >
+                                  Replace
+                                </button>
+                                <button
+                                  type="button"
+                                  disabled={isUploadingMobile}
+                                  onClick={() => setForm((prev) => ({ ...prev, mobile_image_url: '' }))}
+                                  className="p-1 text-slate-400 hover:text-rose-600 rounded"
+                                  title="Remove custom mobile image (fallback to desktop)"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       ) : (
                         /* Mobile Image URL Input */
@@ -960,11 +1084,29 @@ export default function AdminBannersPage() {
                   </button>
                   <button
                     type="submit"
-                    disabled={saveMutation.isPending || !form.desktop_image_url.trim()}
-                    className="px-5 py-2 bg-[#1a1a1a] hover:bg-[#303030] text-white text-xs font-semibold rounded-lg shadow-sm transition inline-flex items-center gap-1.5 disabled:opacity-50"
+                    disabled={
+                      saveMutation.isPending ||
+                      isUploadingDesktop ||
+                      isUploadingMobile ||
+                      !form.desktop_image_url.trim() ||
+                      form.desktop_image_url.startsWith('blob:') ||
+                      (form.mobile_image_url?.startsWith('blob:') ?? false)
+                    }
+                    className="px-5 py-2 bg-[#1a1a1a] hover:bg-[#303030] text-white text-xs font-semibold rounded-lg shadow-sm transition inline-flex items-center gap-1.5 disabled:opacity-50 cursor-pointer admin-btn-dark"
+                    style={{ color: '#ffffff', backgroundColor: '#1a1a1a' }}
                   >
-                    {saveMutation.isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                    Save banner
+                    {(saveMutation.isPending || isUploadingDesktop || isUploadingMobile) && (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: '#ffffff' }} />
+                    )}
+                    <span style={{ color: '#ffffff' }}>
+                      {isUploadingDesktop
+                        ? 'Uploading desktop image...'
+                        : isUploadingMobile
+                        ? 'Uploading mobile image...'
+                        : saveMutation.isPending
+                        ? 'Saving banner...'
+                        : 'Save banner'}
+                    </span>
                   </button>
                 </div>
               </form>

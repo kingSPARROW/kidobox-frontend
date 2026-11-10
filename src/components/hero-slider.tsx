@@ -35,18 +35,23 @@ export function HeroSlider() {
     },
   ];
 
-  const slides = heroBanners.length ? heroBanners.map((banner) => ({
-    id: banner.id,
-    image: mediaUrl(banner.desktop_image_url),
-    mobileImage: mediaUrl(banner.mobile_image_url || banner.desktop_image_url),
-    alt: banner.alt_text || banner.title || 'KIDOBOX Promotion',
-    link: safeLink(banner.cta_link),
-    editorial: Boolean(banner.title && banner.cta_text),
-    headline: banner.title,
-    kicker: banner.title_tag,
-    description: banner.subtitle,
-    cta: banner.cta_text,
-  })) : fallbackSlides;
+  const slides = heroBanners.length ? heroBanners.map((banner) => {
+    const rawMobile = banner.mobile_image_url && !banner.mobile_image_url.startsWith('blob:')
+      ? banner.mobile_image_url
+      : banner.desktop_image_url;
+    return {
+      id: banner.id,
+      image: mediaUrl(banner.desktop_image_url),
+      mobileImage: mediaUrl(rawMobile),
+      alt: banner.alt_text || banner.title || 'KIDOBOX Promotion',
+      link: safeLink(banner.cta_link),
+      editorial: Boolean(banner.title && banner.cta_text),
+      headline: banner.title,
+      kicker: banner.title_tag,
+      description: banner.subtitle,
+      cta: banner.cta_text,
+    };
+  }) : fallbackSlides;
 
   const hasMultiple = slides.length > 1;
 
@@ -179,7 +184,7 @@ export function HeroSlider() {
                   onClick={handleLinkClick}
                 >
                   <picture>
-                    <source media="(max-width: 640px)" srcSet={slide.mobileImage} />
+                    <source media="(max-width: 768px)" srcSet={slide.mobileImage} />
                     <img
                       className="hero-banner-image"
                       src={slide.image}
