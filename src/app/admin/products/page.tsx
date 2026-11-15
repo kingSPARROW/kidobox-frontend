@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -26,27 +26,43 @@ import {
   Layers,
 } from 'lucide-react';
 
+const PRODUCTS_PER_PAGE = 15;
+
 export default function AdminProductsPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<'all' | 'active' | 'draft' | 'archived'>('all');
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
+  const [page, setPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isImporting, setIsImporting] = useState(false);
 
   // Fetch Products
-  const { data, isLoading } = useQuery({
-    queryKey: ['adminProducts', search, activeTab],
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ['adminProducts', search, activeTab, typeFilter, page],
     queryFn: () => {
-      let q = '/products?';
-      if (search) q += `search=${encodeURIComponent(search)}&`;
-      if (activeTab !== 'all') q += `status=${encodeURIComponent(activeTab)}`;
-      return fetchApi(q);
+      const params = new URLSearchParams({ page: String(page), per_page: String(PRODUCTS_PER_PAGE), include_types: '1' });
+      if (search) params.set('search', search);
+      if (activeTab !== 'all') params.set('status', activeTab);
+      if (typeFilter !== 'all') params.set('product_type', typeFilter);
+      return fetchApi(`/products?${params}`);
     },
   });
 
   const products = data?.data || [];
+  const total = data?.meta?.total ?? 0;
+  const lastPage = data?.meta?.last_page ?? page;
+  const productTypes: string[] = data?.meta?.product_types ?? [];
+
+  function goToPage(nextPage: number) {
+    setPage(nextPage);
+    setSelectedIds([]);
+  }
+
+  useEffect(() => {
+    if (page > lastPage) setPage(lastPage);
+  }, [page, lastPage]);
 
   // Delete Mutation
   const deleteMutation = useMutation({
@@ -126,22 +142,10 @@ export default function AdminProductsPage() {
     },
   });
 
-  // Filtered Products
-  const filteredProducts = products.filter((p: any) => {
-    if (activeTab !== 'all' && p.status !== activeTab) return false;
-    if (typeFilter !== 'all' && (p.product_type || 'General') !== typeFilter) return false;
-    return true;
-  });
-
-  // Distinct product types for filter
-  const productTypes = Array.from(
-    new Set(products.map((p: any) => p.product_type).filter(Boolean))
-  ) as string[];
-
   // Selection handlers
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      setSelectedIds(filteredProducts.map((p: any) => p._id || p.id));
+      setSelectedIds(products.map((p: any) => p._id || p.id));
     } else {
       setSelectedIds([]);
     }
@@ -241,44 +245,44 @@ export default function AdminProductsPage() {
         {/* Shopify Status Tabs */}
         <div className="border-b border-[#e1e3e5] px-4 flex items-center gap-6 text-xs font-semibold">
           <button
-            onClick={() => setActiveTab('all')}
+            onClick={() => { setActiveTab('all'); goToPage(1); }}
             className={`py-3 border-b-2 transition ${
               activeTab === 'all'
                 ? 'border-[#1a1a1a] text-[#1a1a1a]'
                 : 'border-transparent text-[#616161] hover:text-[#1a1a1a]'
             }`}
           >
-            All ({products.length})
+            All
           </button>
           <button
-            onClick={() => setActiveTab('active')}
+            onClick={() => { setActiveTab('active'); goToPage(1); }}
             className={`py-3 border-b-2 transition ${
               activeTab === 'active'
                 ? 'border-[#1a1a1a] text-[#1a1a1a]'
                 : 'border-transparent text-[#616161] hover:text-[#1a1a1a]'
             }`}
           >
-            Active ({products.filter((p: any) => p.status === 'active').length})
+            Active
           </button>
           <button
-            onClick={() => setActiveTab('draft')}
+            onClick={() => { setActiveTab('draft'); goToPage(1); }}
             className={`py-3 border-b-2 transition ${
               activeTab === 'draft'
                 ? 'border-[#1a1a1a] text-[#1a1a1a]'
                 : 'border-transparent text-[#616161] hover:text-[#1a1a1a]'
             }`}
           >
-            Draft ({products.filter((p: any) => p.status === 'draft').length})
+            Draft
           </button>
           <button
-            onClick={() => setActiveTab('archived')}
+            onClick={() => { setActiveTab('archived'); goToPage(1); }}
             className={`py-3 border-b-2 transition ${
               activeTab === 'archived'
                 ? 'border-[#1a1a1a] text-[#1a1a1a]'
                 : 'border-transparent text-[#616161] hover:text-[#1a1a1a]'
             }`}
           >
-            Archived ({products.filter((p: any) => p.status === 'archived').length})
+            Archived
           </button>
         </div>
 
@@ -289,7 +293,7 @@ export default function AdminProductsPage() {
             <input
               type="text"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); goToPage(1); }}
               placeholder="Search by title, SKU, or tag..."
               className="w-full pl-9 pr-3 py-1.5 text-xs bg-[#f6f6f7] border border-[#c9cccf] rounded-lg focus:outline-none focus:border-[#008060] focus:bg-white transition"
             />
@@ -301,7 +305,7 @@ export default function AdminProductsPage() {
               <Filter className="w-3.5 h-3.5" />
               <select
                 value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
+                onChange={(e) => { setTypeFilter(e.target.value); goToPage(1); }}
                 className="px-2 py-1 text-xs bg-[#f6f6f7] border border-[#c9cccf] rounded-lg focus:outline-none"
               >
                 <option value="all">All Product Types</option>
@@ -314,7 +318,7 @@ export default function AdminProductsPage() {
             </div>
 
             <span className="text-[11px] text-[#8c9196]">
-              {filteredProducts.length} product(s)
+              {isLoading ? 'Loading…' : `${total} product(s)`}
             </span>
           </div>
         </div>
@@ -375,9 +379,10 @@ export default function AdminProductsPage() {
                 <th className="py-2.5 px-3 w-8">
                   <input
                     type="checkbox"
+                    aria-label="Select all products on this page"
                     checked={
-                      filteredProducts.length > 0 &&
-                      selectedIds.length === filteredProducts.length
+                      products.length > 0 &&
+                      products.every((p: any) => selectedIds.includes(p._id || p.id))
                     }
                     onChange={handleSelectAll}
                     className="rounded border-[#c9cccf] text-[#008060] focus:ring-[#008060]"
@@ -401,14 +406,20 @@ export default function AdminProductsPage() {
                     Loading product catalog...
                   </td>
                 </tr>
-              ) : filteredProducts.length === 0 ? (
+              ) : isError ? (
+                <tr>
+                  <td colSpan={8} className="px-4 py-8 text-center text-red-700">
+                    Couldn’t load products. <button type="button" onClick={() => refetch()} className="underline">Try again</button>
+                  </td>
+                </tr>
+              ) : products.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="py-12 text-center text-[#8c9196]">
                     No products found matching the criteria.
                   </td>
                 </tr>
               ) : (
-                filteredProducts.map((p: any) => {
+                products.map((p: any) => {
                   const pId = p._id || p.id;
                   const defaultVariant = p.variants?.[0];
                   const totalStock = p.variants?.reduce(
@@ -588,6 +599,16 @@ export default function AdminProductsPage() {
             </tbody>
           </table>
         </div>
+        {total > 0 && page <= lastPage && (
+          <nav aria-label="Product pagination" className="flex flex-wrap items-center justify-between gap-3 border-t border-[#e1e3e5] px-4 py-3 text-xs">
+            <span aria-live="polite">Showing {(page - 1) * PRODUCTS_PER_PAGE + 1}–{Math.min(page * PRODUCTS_PER_PAGE, total)} of {total}</span>
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={() => goToPage(page - 1)} disabled={page <= 1} className="rounded-lg border border-[#e1e3e5] px-3 py-2 disabled:opacity-40">Previous</button>
+              <span>Page {page} of {lastPage}</span>
+              <button type="button" onClick={() => goToPage(page + 1)} disabled={page >= lastPage} className="rounded-lg border border-[#e1e3e5] px-3 py-2 disabled:opacity-40">Next</button>
+            </div>
+          </nav>
+        )}
       </div>
     </div>
   );

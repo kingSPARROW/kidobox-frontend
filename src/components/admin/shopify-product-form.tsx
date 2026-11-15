@@ -162,6 +162,7 @@ export default function ShopifyProductForm({
   const [newTagInput, setNewTagInput] = useState('');
   const [imageUrlInput, setImageUrlInput] = useState('');
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [formTab, setFormTab] = useState<'details' | 'pricing' | 'variants' | 'seo' | 'all'>('details');
 
@@ -187,41 +188,30 @@ export default function ShopifyProductForm({
 
   // Image Upload Handler
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
+    const files = Array.from(e.target.files ?? []);
+    if (isUploadingImage || files.length === 0) return;
 
     setIsUploadingImage(true);
-    const token = localStorage.getItem('homzy_token');
+    setImageUploadError('');
+    const failures: string[] = [];
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      // Instant local preview
-      const localUrl = URL.createObjectURL(file);
-      setForm((prev) => ({ ...prev, images: [...prev.images, localUrl] }));
-
+    for (const file of files) {
       try {
         const formData = new FormData();
         formData.append('image', file);
-
-        const res = await fetch('http://127.0.0.1:8000/api/v1/products/upload', {
+        const { url } = await fetchApi('/products/upload', {
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
           body: formData,
         });
-        const data = await res.json();
-        if (data.url) {
-          // Replace temporary blob URL with actual uploaded URL
-          setForm((prev) => ({
-            ...prev,
-            images: prev.images.map((img) => (img === localUrl ? data.url : img)),
-          }));
+        if (typeof url !== 'string' || !url || url.startsWith('blob:')) {
+          throw new Error('The upload did not return a stored image URL.');
         }
+        setForm((prev) => ({ ...prev, images: [...prev.images, url] }));
       } catch (err) {
-        console.error('Image upload failed:', err);
+        failures.push(`${file.name}: ${err instanceof Error ? err.message : 'Upload failed'}`);
       }
     }
+    setImageUploadError(failures.join(' '));
     setIsUploadingImage(false);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
@@ -313,6 +303,9 @@ export default function ShopifyProductForm({
   // Save Mutation
   const saveMutation = useMutation({
     mutationFn: async () => {
+      if (isUploadingImage || form.images.some((url) => url.startsWith('blob:'))) {
+        throw new Error('Wait for uploads to finish and replace any temporary image URLs before saving.');
+      }
       // Format images with ALT text for Google Images & Accessibility
       const formattedImages = form.images.map((url, idx) => ({
         url,
@@ -457,7 +450,7 @@ export default function ShopifyProductForm({
           </Link>
           <button
             onClick={() => saveMutation.mutate()}
-            disabled={saveMutation.isPending || !form.title.trim()}
+            disabled={saveMutation.isPending || isUploadingImage || !form.title.trim()}
             className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg shadow-xs transition inline-flex items-center gap-1.5 disabled:opacity-50 cursor-pointer admin-btn-dark"
             style={{ color: '#ffffff', backgroundColor: '#0f172a' }}
           >
@@ -470,6 +463,10 @@ export default function ShopifyProductForm({
           </button>
         </div>
       </div>
+
+      {saveMutation.isError && (
+        <p role="alert" className="text-sm text-red-700">{saveMutation.error.message}</p>
+      )}
 
       {/* QUICK SECTION TABS: Avoid endless scrolling */}
       <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-200">
@@ -610,6 +607,7 @@ export default function ShopifyProductForm({
                     </div>
                   )}
                 </div>
+                {imageUploadError && <p role="alert" className="mt-2 text-xs text-red-700">{imageUploadError}</p>}
               </div>
 
               {/* Paste URL */}
