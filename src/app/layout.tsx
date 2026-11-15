@@ -4,6 +4,7 @@ import "./globals.css";
 import "./kidobox.css";
 import { Providers } from "@/lib/providers";
 import { CartDrawer } from "@/components/cart-drawer";
+import { SITE_URL } from "@/lib/site-url";
 
 const jakarta = localFont({
   src: "./fonts/PlusJakartaSans.ttf",
@@ -13,6 +14,7 @@ const jakarta = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Little Needs. Big Smiles. | KIDOBOX",
     template: "%s | KIDOBOX",
