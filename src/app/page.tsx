@@ -1,7 +1,7 @@
 'use client';
 
 import { ProductQuickView } from '@/components/product-quick-view';
-import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
@@ -161,163 +161,14 @@ export default function KidoboxHomePage() {
     (p) => p.tag === 'Bestseller' && (activeTab === 'all' || p.categorySlugs?.includes(activeTab))
   );
 
-  // Trending Nursery & Toddler Favorites
-  const nurseryToddlerFavorites = useMemo(() => {
-    const catalogMatches = products.filter((p) => {
-      const slugs = p.categorySlugs || [];
-      return (
-        slugs.includes('nursery') ||
-        slugs.includes('age-toddler') ||
-        slugs.includes('toys') ||
-        slugs.includes('feeding') ||
-        p.category === 'nursery' ||
-        p.category === 'toys' ||
-        p.category === 'feeding' ||
-        p.age === '1-2Y' ||
-        p.age === 'toddler'
-      );
-    });
-
-    const curatedNurseryToddler: Product[] = [
-      {
-        id: 'nursery-crib-convertible',
-        slug: 'convertible-wooden-crib-toddler-bed',
-        name: 'Solid Beechwood Convertible Crib & Toddler Bed',
-        detail: 'Sustainable solid wood crib with 3 adjustable heights that effortlessly transitions into a safe toddler daybed.',
-        price: 8999,
-        old: 11999,
-        category: 'nursery',
-        categorySlugs: ['nursery', 'age-toddler'],
-        image: '/assets/hd/nursery.webp',
-        images: ['/assets/hd/nursery.webp'],
-        rating: 4.9,
-        reviews: 42,
-        brand: 'KIDOBOX Home',
-        age: '0-4Y',
-        sizes: ['Standard'],
-        colors: ['Natural Oak', 'Warm White'],
-        tag: 'Bestseller',
-        isNew: true,
-        features: ['Solid Beechwood', 'Non-Toxic Finish', 'Convertible 3-in-1'],
-        inStock: true,
-        variantId: 'nursery-crib-v1',
-        variants: [
-          {
-            id: 'nursery-crib-v1',
-            title: 'Natural Oak',
-            price: 8999,
-            compare_at_price: 11999,
-            inventory_quantity: 25,
-          },
-        ],
-      },
-      {
-        id: 'nursery-rocker-bouncer',
-        slug: 'ergonomic-infant-toddler-bouncer',
-        name: 'Ergonomic Natural Bouncer & Toddler Rocker',
-        detail: 'Self-rocking soothing bouncer with 3 ergonomic recline levels and breathable organic cotton mesh cover.',
-        price: 3499,
-        old: 4499,
-        category: 'nursery',
-        categorySlugs: ['nursery', 'age-toddler'],
-        image: '/assets/hd/nursery2.webp',
-        images: ['/assets/hd/nursery2.webp'],
-        rating: 4.8,
-        reviews: 58,
-        brand: 'Chicco',
-        age: '0-2Y',
-        sizes: ['Standard'],
-        colors: ['Cloud Grey', 'Soft Pink'],
-        tag: 'Parent Favorite',
-        isNew: false,
-        features: ['Natural Motion', 'OEKO-TEX Certified', 'Flat Fold'],
-        inStock: true,
-        variantId: 'nursery-rocker-v1',
-        variants: [
-          {
-            id: 'nursery-rocker-v1',
-            title: 'Cloud Grey',
-            price: 3499,
-            compare_at_price: 4499,
-            inventory_quantity: 30,
-          },
-        ],
-      },
-      {
-        id: 'toddler-sensory-activity-cube',
-        slug: 'montessori-wooden-activity-learning-cube',
-        name: 'Montessori 5-in-1 Wooden Activity Learning Cube',
-        detail: 'Interactive multi-sided sensory play center featuring bead maze, shape sorter, gear spinners, and sliding animal track.',
-        price: 1299,
-        old: 1799,
-        category: 'toys',
-        categorySlugs: ['toys', 'age-toddler'],
-        image: '/assets/hd/toddler.webp',
-        images: ['/assets/hd/toddler.webp'],
-        rating: 4.9,
-        reviews: 76,
-        brand: 'Fisher-Price',
-        age: '1-3Y',
-        sizes: ['One Size'],
-        colors: ['Pastel Multi'],
-        tag: 'Trending',
-        isNew: true,
-        features: ['Montessori Play', 'Smooth Rounded Edges', 'Non-Toxic Colors'],
-        inStock: true,
-        variantId: 'toddler-cube-v1',
-        variants: [
-          {
-            id: 'toddler-cube-v1',
-            title: 'Pastel Multi',
-            price: 1299,
-            compare_at_price: 1799,
-            inventory_quantity: 40,
-          },
-        ],
-      },
-      {
-        id: 'toddler-anti-slip-training-cup',
-        slug: 'silicone-weighted-straw-sippy-cup',
-        name: 'Anti-Spill Weighted Straw Toddler Training Cup',
-        detail: 'Durable 360-degree weighted silicone straw that lets toddlers sip from any angle without spills or leaks.',
-        price: 499,
-        old: 699,
-        category: 'feeding',
-        categorySlugs: ['feeding', 'age-toddler'],
-        image: '/assets/hd/feeding2.webp',
-        images: ['/assets/hd/feeding2.webp'],
-        rating: 4.7,
-        reviews: 31,
-        brand: 'KIDOBOX',
-        age: '6M-3Y',
-        sizes: ['250ml'],
-        colors: ['Mint Green', 'Powder Pink'],
-        tag: 'Bestseller',
-        isNew: false,
-        features: ['Leak-Proof Valve', 'BPA & Phthalate Free', 'Easy Grip Handles'],
-        inStock: true,
-        variantId: 'toddler-cup-v1',
-        variants: [
-          {
-            id: 'toddler-cup-v1',
-            title: 'Mint Green',
-            price: 499,
-            compare_at_price: 699,
-            inventory_quantity: 60,
-          },
-        ],
-      },
-    ];
-
-    const catalogSlugs = new Set(catalogMatches.map((p) => p.slug));
-    const uniqueCurated = curatedNurseryToddler.filter((c) => !catalogSlugs.has(c.slug));
-
-    // Combine: specific nursery/toddler products first, then curated, then other catalog products
-    const allMatches = [...catalogMatches, ...uniqueCurated];
-    const otherCatalog = products.filter((p) => !catalogSlugs.has(p.slug));
-
-    return [...allMatches, ...otherCatalog];
-  }, [products]);
+  const nurseryCategories = ['nursery', 'age-toddler', 'baby-bedding-sheets', 'baby-blankets', 'knitted-baby-quilts'];
+  const nurseryToddlerFavorites = products.filter((product) =>
+    product.inStock && (
+      product.categorySlugs?.some((slug) => nurseryCategories.includes(slug)) ||
+      product.age === '1-2Y' ||
+      product.age === 'toddler'
+    )
+  );
 
   if (isLoading && products.length === 0) {
     return <BrandLoadingScreen fullScreen={true} />;
@@ -443,17 +294,19 @@ export default function KidoboxHomePage() {
           </section>
 
           {/* ── 4. Interactive Horizontal Product Slider: Trending Now ──── */}
-          <ProductSlider
-            title="Trending Nursery & Toddler Favorites"
-            subtitle="Most added to parent wishlists this week"
-            icon={<Flame size={20} />}
-            viewAllLink="/bestsellers"
-            viewAllText="Explore All Trending"
-            products={nurseryToddlerFavorites}
-            wishlist={wishlist}
-            onToggleWishlist={toggleWishlist}
-            onAddToCart={handleAddToCart}
-          />
+          {nurseryToddlerFavorites.length > 0 && (
+            <ProductSlider
+              title="Trending Nursery & Toddler Favorites"
+              subtitle="Shop available nursery and toddler essentials"
+              icon={<Flame size={20} />}
+              viewAllLink="/shop"
+              viewAllText="Shop All Products"
+              products={nurseryToddlerFavorites}
+              wishlist={wishlist}
+              onToggleWishlist={toggleWishlist}
+              onAddToCart={handleAddToCart}
+            />
+          )}
 
           {/* ── 5. Newborn Essentials Full-Width Banner ───────────────── */}
           {newborn?.title && (
