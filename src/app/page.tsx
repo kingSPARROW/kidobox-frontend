@@ -165,6 +165,7 @@ export default function KidoboxHomePage() {
   const nurseryToddlerFavorites = products.filter((product) =>
     product.inStock && (
       product.categorySlugs?.some((slug) => nurseryCategories.includes(slug)) ||
+      product.ageStages?.includes('1-2') ||
       product.age === '1-2Y' ||
       product.age === 'toddler'
     )

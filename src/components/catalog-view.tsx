@@ -86,7 +86,7 @@ export function CatalogView({
   const filteredList = useMemo(() => {
     let list = products.filter((p) => {
       if (initialCategory !== 'all' && !p.categorySlugs?.includes(initialCategory)) return false;
-      if (initialAge && p.age !== initialAge && p.age !== 'all') return false;
+      if (initialAge && !p.ageStages?.includes(initialAge)) return false;
       if (initialMode === 'offers' && p.old <= p.price) return false;
       if (initialMode === 'new' && !p.isNew) return false;
       if (initialMode === 'bestsellers' && p.tag !== 'Bestseller') return false;

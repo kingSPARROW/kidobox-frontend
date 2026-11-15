@@ -44,6 +44,7 @@ export interface Product {
   reviews: number;
   brand: string;
   age: string;
+  ageStages?: string[];
   sizes: string[];
   colors: string[];
   tag: string;

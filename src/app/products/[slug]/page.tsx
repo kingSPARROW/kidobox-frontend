@@ -279,10 +279,6 @@ export default function ProductDetailPage() {
                   <dd>{product.brand}</dd>
                 </div>
                 <div>
-                  <dt>Age suitability</dt>
-                  <dd>{product.age === 'all' ? 'All ages' : `${product.age} months`}</dd>
-                </div>
-                <div>
                   <dt>Product code</dt>
                   <dd>{product.id}</dd>
                 </div>

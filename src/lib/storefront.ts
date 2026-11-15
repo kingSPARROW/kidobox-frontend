@@ -79,6 +79,7 @@ export function mapProduct(raw: PublicProduct, categories: Category[]): Product 
   const variants = raw.variants || [];
   const first = variants.find(v => v.inventory_quantity > 0) || variants[0];
   const tags = raw.tags || [];
+  const ageStages = tags.filter(t => t.toLowerCase().startsWith('age:')).map(t => t.slice(4).trim());
   const hasTag = (tag: string) => tags.some(t => t.toLowerCase() === tag);
   const categorySlugs = categories.filter(c => raw.collection_ids?.includes(c.id || '')).map(c => c.slug);
   
@@ -101,7 +102,7 @@ export function mapProduct(raw: PublicProduct, categories: Category[]): Product 
     price: Number(first?.price || 0), old: Number(first?.compare_at_price || 0), category: categorySlugs[0] || '', categorySlugs,
     image: images[0] || mediaUrl(first?.image_url), images, imageAlts, imageAlt: imageAlts[0] || raw.title,
     rating: 0, reviews: 0, brand: raw.vendor || '',
-    age: tags.find(t => t.startsWith('age:'))?.slice(4) || 'all', sizes, colors: [],
+    age: ageStages[0] || 'all', ageStages, sizes, colors: [],
     tag: hasTag('bestseller') ? 'Bestseller' : hasTag('featured') ? 'Featured' : '',
     featured: hasTag('featured'), isNew: hasTag('new-arrival'), features: tags.filter(t => t.startsWith('feature:')).map(t => t.slice(8)),
     variants, variantId: first?.id || '', inStock: !!first && first.inventory_quantity > 0,
