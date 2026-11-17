@@ -277,7 +277,7 @@ export default function KidoboxHomePage() {
           {/* ── 4. Interactive Horizontal Product Slider: Trending Now ──── */}
           {nurseryToddlerFavorites.length > 0 && (
             <ProductSlider
-              title="Trending & Favorites"
+              title="Trending Favorites"
               subtitle="Shop available nursery and toddler essentials"
               icon={<Flame size={20} />}
               viewAllLink="/shop"
@@ -296,8 +296,8 @@ export default function KidoboxHomePage() {
                 <span className="newborn-editorial-kicker">THE FIRST SIX MONTHS</span>
                 <h2 id="newborn-heading">{newborn.title}</h2>
                 <p>{newborn.description}</p>
-                <Link className="newborn-editorial-link" href={safeLink(newborn.link)}>
-                  {newborn.cta || 'Shop Newborn Essentials'}
+                <Link className="newborn-editorial-link" href="/moms-stories">
+                  See what Moms Says
                   <ArrowRight size={18} aria-hidden="true" />
                 </Link>
               </div>
@@ -458,6 +458,7 @@ export default function KidoboxHomePage() {
           </section>
 
           {/* ── 7. Shop by Age Slider ───────────────────────────────── */}
+          {/* Shop by Age temporarily hidden.
           <section id="ages">
             <div className="section-title">
               <div>
@@ -490,6 +491,7 @@ export default function KidoboxHomePage() {
               ))}
             </div>
           </section>
+          */}
 
 
 
@@ -517,12 +519,12 @@ export default function KidoboxHomePage() {
             </section>
           )}
 
-          {/* ── 11. Parenting Tips & Guides Slider (Single Row) ───────── */}
+          {/* ── 11. Brand Circle Slider (Single Row) ───────── */}
           <section id="guides" className="guides-section">
             <div className="section-title">
               <div>
                 <h2>
-                  <span className="section-icon-wrap"><BookOpen size={20} /></span> Parenting Tips &amp; Guides
+                  <span className="section-icon-wrap"><BookOpen size={20} /></span> Brand Circle
                 </h2>
                 <p>Helpful advice and milestones for a happier parenting journey</p>
               </div>

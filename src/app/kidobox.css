@@ -5174,20 +5174,43 @@ main .catalog-banner h1 {
 }
 
 .store-primary-nav a {
+  position: relative;
   display: inline-flex;
   align-items: center;
   min-height: 44px;
   padding: 0 clamp(8px, 1vw, 14px);
-  border-radius: 999px;
-  font-size: .875rem;
+  border-radius: 6px;
+  font-size: 1rem;
   font-weight: 750;
   white-space: nowrap;
+  transition: color .2s ease;
+}
+
+.store-primary-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: clamp(8px, 1vw, 14px);
+  right: clamp(8px, 1vw, 14px);
+  height: 3px;
+  border-radius: 3px;
+  background: #802f4a;
+  transform: scaleX(0);
+  transition: transform .2s ease;
 }
 
 .store-primary-nav a:hover,
 .store-primary-nav a[aria-current="page"] {
   color: #802f4a;
-  background: #f6e8ed;
+  background: transparent;
+}
+
+.store-primary-nav a:hover::after,
+.store-primary-nav a[aria-current="page"]::after { transform: scaleX(1); }
+.store-primary-nav a:focus-visible { outline: 2px solid #802f4a; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  .store-primary-nav a,
+  .store-primary-nav a::after { transition: none; }
 }
 
 .store-header .store-search-panel {
@@ -5215,7 +5238,8 @@ main .catalog-banner h1 {
     grid-row: 2;
     gap: 2px;
   }
-  .store-primary-nav a { font-size: .75rem; }
+  .store-primary-nav a { font-size: .8125rem; padding-inline: 8px; }
+  .store-primary-nav a::after { left: 8px; right: 8px; }
   .store-footer .footer-grid.container {
     width: calc(100% - 2 * clamp(12px, 4vw, 24px)) !important;
   }
@@ -5346,4 +5370,29 @@ main :is(.about-values, .contact-page-grid) h2 {
   .category-page-hero .store-page-hero-copy { max-width: none; }
   .category-page-hero > img { position: static; object-position: right center; z-index: auto; }
   .category-page-hero::after { display: none; }
+}
+.moms-stories-page { padding-bottom: 64px; }
+.moms-stories-hero { margin-bottom: 48px; }
+.moms-stories-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.moms-stories-links a { display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 13px 20px; border: 1px solid #802f4a; border-radius: 999px; color: #802f4a; font-weight: 700; }
+.moms-stories-links a:first-child { background: #802f4a; color: #fff; }
+.moms-stories-links a:hover { background: #f2e1e6; color: #802f4a; }
+.moms-stories-section { margin-top: 48px; scroll-margin-top: 120px; }
+.moms-stories-section h2 { display: flex; align-items: center; gap: 10px; font-size: clamp(24px, 3vw, 32px); margin: 10px 0; }
+.moms-stories-section > p { color: var(--muted); margin-bottom: 24px; }
+.moms-reviews-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.moms-review { padding: clamp(22px, 3vw, 34px); border: 1px solid #eeddd4; border-radius: 24px; background: #fff; display: flex; flex-direction: column; }
+.moms-review blockquote { margin: 22px 0 28px; line-height: 1.8; color: #483b40; font-size: 17px; }
+.moms-review-author { display: flex; align-items: center; gap: 13px; margin-top: auto; padding-top: 20px; border-top: 1px solid #f0e3dc; }
+.moms-review-author img { flex-shrink: 0; border-radius: 50%; object-fit: cover; }
+.moms-review-author p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+.moms-article-meta { display: flex; justify-content: space-between; gap: 12px; margin-top: 18px; color: #802f4a; font-size: 12px; font-weight: 700; }
+.moms-article-meta > span:last-child { display: inline-flex; align-items: center; gap: 6px; }
+.moms-stories-notice { padding: 24px; background: #fbf0e9; border-radius: 18px; }
+.moms-stories-notice button { color: #802f4a; text-decoration: underline; font-weight: 700; }
+@media (max-width: 700px) {
+  .moms-reviews-grid { grid-template-columns: 1fr; gap: 16px; }
+  .moms-stories-section { margin-top: 36px; }
+  .moms-stories-hero { margin-bottom: 32px; }
+  .moms-stories-links a { padding: 12px 16px; font-size: 13px; }
 }
