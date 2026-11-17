@@ -5,10 +5,11 @@ import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
 import { useStorefront, mediaUrl } from '@/lib/storefront';
-import { Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { LazyImage } from '@/components/lazy-image';
 
 export default function CategoriesDirectoryPage() {
-  const { categories, content } = useStorefront();
+  const { categories, isLoading, isError, refetch } = useStorefront();
   return (
     <div className="min-h-screen flex flex-col bg-white" data-page="categories">
       <StoreNav />
@@ -20,28 +21,32 @@ export default function CategoriesDirectoryPage() {
           <span aria-current="page">Shop by Category</span>
         </nav>
 
-        <div className="page-intro">
-          <span className="mini-eyebrow">LITTLE NEEDS. BIG SMILES.</span>
-          <h1>
-            <span className="section-icon-wrap"><Sparkles size={26} /></span> A Little Something for Every Moment
-          </h1>
-          <p>Find just what your little one needs, from sleepy mornings to playful afternoons.</p>
-        </div>
+        <section className="store-page-hero category-page-hero" aria-labelledby="categories-title">
+          <div className="store-page-hero-copy">
+            <h1 id="categories-title">Shop by Category</h1>
+            <p>Explore baby essentials for bath time, bedtime, and the moments in between.</p>
+          </div>
+          <img src="/assets/hd/categories-banner.webp" alt="" width="1600" height="800" />
+        </section>
 
-        <div className="category-directory">
+        {isLoading && <p role="status">Loading categories…</p>}
+        {isError && !categories.length && (
+          <p role="alert">Categories couldn’t load. <button type="button" className="text-link" onClick={() => refetch()}>Try again</button></p>
+        )}
+        {!isLoading && !isError && !categories.length && <p>No categories are available right now.</p>}
+        <div className="category-collection-grid">
           {categories.map((c) => (
-            <Link className={`directory-card ${c.color}`} href={`/collections/${c.slug}`} key={c.slug}>
-              <img
+            <Link className="category-collection-card" href={`/collections/${c.slug}`} key={c.slug}>
+              <LazyImage
                 src={mediaUrl(c.image)}
-                alt={c.name}
-                width={800}
-                height={800}
-                loading="lazy"
+                alt=""
+                width={480}
+                height={400}
+                aspectRatio="6 / 5"
               />
               <div>
                 <h2>{c.name}</h2>
-                <p>{c.description}</p>
-                <span>Explore Collection →</span>
+                <ArrowRight size={18} aria-hidden="true" />
               </div>
             </Link>
           ))}

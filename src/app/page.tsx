@@ -5,9 +5,10 @@ import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import Link from 'next/link';
 import { StoreNav } from '@/components/store-nav';
 import { StoreFooter } from '@/components/store-footer';
+import { SocialIcon } from '@/components/social-icon';
 import { useCart } from '@/lib/cart-context';
 import { money, Product, stagePhotography, type Category } from '@/lib/kidobox-data';
-import { useStorefront, mediaUrl, cartItem, safeLink } from '@/lib/storefront';
+import { useStorefront, useNavigation, mediaUrl, cartItem, safeLink } from '@/lib/storefront';
 import { HeroSlider } from '@/components/hero-slider';
 import { ProductSlider } from '@/components/product-slider';
 import { ReviewsSlider } from '@/components/reviews-slider';
@@ -22,7 +23,6 @@ import {
   Award,
   TrendingUp,
   BookOpen,
-  Camera,
   Leaf,
   ShieldCheck,
   Compass,
@@ -70,6 +70,7 @@ export default function KidoboxHomePage() {
     setCategoryPreview({ category, center: bounds.left + bounds.width / 2 - section.getBoundingClientRect().left });
   }
   const { categories, products, ages, articles, brands, isLoading, isError, refetch, content, banners, offers, globalSeo, pageSeo } = useStorefront();
+  const { data: navigation } = useNavigation();
   const { addItem, setIsOpen } = useCart();
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
@@ -78,7 +79,6 @@ export default function KidoboxHomePage() {
   const [showToastLink, setShowToastLink] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
-  const categoryStripRef = useRef<HTMLDivElement>(null);
   const bestsellersSliderRef = useRef<HTMLDivElement>(null);
   const offersSliderRef = useRef<HTMLDivElement>(null);
   const guidesSliderRef = useRef<HTMLDivElement>(null);
@@ -214,31 +214,13 @@ export default function KidoboxHomePage() {
                 <Link className="view-link" href="/categories">
                   View All Categories <span>→</span>
                 </Link>
-                <div className="slider-nav-arrows">
-                  <button
-                    type="button"
-                    className="slider-nav-btn"
-                    onClick={() => scrollTrack(categoryStripRef, 'left', 0.5)}
-                    aria-label="Scroll categories left"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    type="button"
-                    className="slider-nav-btn"
-                    onClick={() => scrollTrack(categoryStripRef, 'right', 0.5)}
-                    aria-label="Scroll categories right"
-                  >
-                    ›
-                  </button>
-                </div>
               </div>
             </div>
 
-            <div className="category-slider-track" id="category-grid" ref={categoryStripRef} onScroll={() => setCategoryPreview(null)}>
+            <div className="home-category-grid" id="category-grid">
               {categories.map((c) => (
                 <Link
-                  className="category category-card-compact"
+                  className="home-category-card"
                   href={`/collections/${c.slug}`}
                   key={c.slug}
                   aria-describedby={categoryPreview?.category.slug === c.slug ? 'category-preview-description' : undefined}
@@ -255,12 +237,10 @@ export default function KidoboxHomePage() {
                 >
                   <LazyImage
                     src={mediaUrl(c.image)}
-                    alt={c.name}
-                    width={115}
-                    height={106}
-                    aspectRatio="1.08"
-                    priority
-                    style={{ borderRadius: '35%', marginBottom: '9px' }}
+                    alt=""
+                    width={320}
+                    height={256}
+                    aspectRatio="5 / 4"
                   />
                   <span>{c.name}</span>
                 </Link>
@@ -297,7 +277,7 @@ export default function KidoboxHomePage() {
           {/* ── 4. Interactive Horizontal Product Slider: Trending Now ──── */}
           {nurseryToddlerFavorites.length > 0 && (
             <ProductSlider
-              title="Trending Nursery & Toddler Favorites"
+              title="Trending & Favorites"
               subtitle="Shop available nursery and toddler essentials"
               icon={<Flame size={20} />}
               viewAllLink="/shop"
@@ -603,33 +583,40 @@ export default function KidoboxHomePage() {
           {/* ── 12. Interactive Reviews & Testimonials Slider ─────────── */}
           <ReviewsSlider />
 
-          {/* ── 13. Follow Us on Instagram (Full Width 6-Grid) ────────── */}
-          <section id="instagram">
-            <div className="section-title">
-              <div>
-                <h2>
-                  <span className="section-icon-wrap"><Camera size={20} /></span> Follow Us on Instagram
-                </h2>
-                <p>Get inspired by real moments and happy giggles from our KIDOBOX family</p>
-              </div>
-              <Link className="instagram-handle glow-on-hover" href={safeLink(content.copy?.instagram_link)}>
-                ◎ &nbsp;{content.copy?.instagram_handle}
-              </Link>
-            </div>
-            <div className="instagram-grid" id="instagram-grid">
-              {(content.instagram || []).map((post, i) => (
-                <Link href={safeLink(post.link)} aria-label={post.title} key={i}>
-                  <LazyImage
-                    src={mediaUrl(post.image)}
-                    width={600}
-                    height={600}
-                    alt={post.title}
-                    aspectRatio="1.14"
-                  />
-                </Link>
-              ))}
-            </div>
-          </section>
+          <div className="home-social-rows">
+              {([
+                { name: 'Facebook', platform: 'facebook', url: 'https://facebook.com/kidobox', subtitle: 'Family moments at home' },
+                { name: 'Instagram', platform: 'instagram', url: 'https://instagram.com/kidobox', subtitle: 'Everyday adventures with little ones' },
+                { name: 'Pinterest', platform: 'pinterest', url: 'https://pinterest.com/kidobox', subtitle: 'Nursery and packing ideas' },
+              ] as const).map(({ name, platform, url, subtitle }) => {
+                const configuredUrl = navigation?.footer?.social_links?.find(
+                  (link) => link.platform.toLowerCase() === platform,
+                )?.url;
+                const profile = configuredUrl && /^https:\/\/[^/]+\/[^/?#]+/i.test(configuredUrl)
+                  ? safeLink(configuredUrl)
+                  : url;
+                return (
+                  <section id={platform} key={name} aria-labelledby={`${platform}-heading`}>
+                    <div className="section-title">
+                      <div>
+                        <h2 id={`${platform}-heading`}>
+                          <span className="section-icon-wrap"><SocialIcon platform={platform} /></span> Follow Us on {name}
+                        </h2>
+                        <p>{subtitle}</p>
+                      </div>
+                      <a className="view-link" href={profile}>Visit {name} <ArrowRight size={16} aria-hidden="true" /></a>
+                    </div>
+                    <div className={`home-social-gallery home-social-gallery-${platform}`}>
+                      {[1, 2, 3, 4, 5].map((photo) => (
+                        <a href={profile} aria-label={`Visit KIDOBOX on ${name}`} key={photo}>
+                          <LazyImage src={`/assets/social/${platform}-${photo}.webp`} width={720} height={540} alt="" />
+                        </a>
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
+          </div>
 
           {/* ── 14. VIP Family Club & Welcome Voucher ───────────────── */}
           <section className="family-club-banner family-club-feature" aria-labelledby="family-club-heading">
