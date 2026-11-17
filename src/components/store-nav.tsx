@@ -1,8 +1,8 @@
 'use client';
 
-import { useStorefront, useNavigation, mediaUrl, safeLink } from '@/lib/storefront';
-import { Category, Product, money } from '@/lib/kidobox-data';
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useStorefront, mediaUrl } from '@/lib/storefront';
+import { Category, money } from '@/lib/kidobox-data';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCart } from '@/lib/cart-context';
@@ -19,74 +19,57 @@ import {
   Sparkles,
   ShoppingBag,
   ArrowRight,
-  TrendingUp,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
 } from 'lucide-react';
+
+const primaryLinks = [
+  { label: 'Home', href: '/' },
+  { label: 'Products', href: '/products' },
+  { label: 'Categories', href: '/categories' },
+  { label: 'About Us', href: '/about' },
+  { label: 'Contact Us', href: '/contact' },
+];
 
 export function StoreNav() {
   const { categories, products, content, store } = useStorefront();
-  const { data: navigation } = useNavigation();
   const router = useRouter();
   const pathname = usePathname();
   const { itemCount, setIsOpen } = useCart();
   const { gender, setGender } = useGenderTheme();
   const [searchQuery, setSearchQuery] = useState('');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [wishlistCount, setWishlistCount] = useState(0);
-  const [openCategory, setOpenCategory] = useState<Category | null>(null);
-  const megaTrigger = useRef<HTMLAnchorElement>(null);
-  const megaPanel = useRef<HTMLDivElement>(null);
-  const featuredProducts = openCategory
-    ? products.filter(product => product.category === openCategory.slug || product.categorySlugs?.includes(openCategory.slug)).slice(0, 4)
-    : [];
-
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const searchButtonRef = useRef<HTMLButtonElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const updateWishCount = () => {
-      try {
-        const raw = localStorage.getItem('kidobox-wishlist');
-        const list = raw ? JSON.parse(raw) : [];
-        setWishlistCount(Array.isArray(list) ? list.length : 0);
-      } catch (e) {
-        setWishlistCount(0);
-      }
-    };
+    if (!isSearchOpen) return;
+    searchInputRef.current?.focus();
 
-    updateWishCount();
-    window.addEventListener('storage', updateWishCount);
-    window.addEventListener('wishlist-updated', updateWishCount);
-    return () => {
-      window.removeEventListener('storage', updateWishCount);
-      window.removeEventListener('wishlist-updated', updateWishCount);
-    };
-  }, []);
+    function handleClickOutside(event: PointerEvent) {
+      if (event.target instanceof Node &&
+          !searchContainerRef.current?.contains(event.target) &&
+          !searchButtonRef.current?.contains(event.target)) {
+        setIsSearchOpen(false);
+      }
+    }
 
-  // Close dropdown on outside click or Escape
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
-        setIsDropdownOpen(false);
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape' && !event.defaultPrevented) {
+        setIsSearchOpen(false);
+        searchButtonRef.current?.focus();
       }
-    };
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    document.addEventListener('pointerdown', handleClickOutside);
     document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('pointerdown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [isSearchOpen]);
 
-  // Close dropdown on route change
   useEffect(() => {
-    setIsDropdownOpen(false);
+    setIsSearchOpen(false);
   }, [pathname]);
 
   const trimmedQuery = searchQuery.trim().toLowerCase();
@@ -126,7 +109,7 @@ export function StoreNav() {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsDropdownOpen(false);
+    setIsSearchOpen(false);
     if (searchQuery.trim()) {
       router.push(`/shop?q=${encodeURIComponent(searchQuery.trim())}`);
     } else {
@@ -135,109 +118,15 @@ export function StoreNav() {
   };
 
   const handleSelectCategory = (slug: string) => {
-    setIsDropdownOpen(false);
+    setIsSearchOpen(false);
     setSearchQuery('');
     router.push(`/collections/${slug}`);
   };
 
   const handleSelectProduct = (slug: string) => {
-    setIsDropdownOpen(false);
+    setIsSearchOpen(false);
     setSearchQuery('');
     router.push(`/products/${slug}`);
-  };
-
-  const handleQuickPillClick = (term: string) => {
-    setIsDropdownOpen(false);
-    setSearchQuery(term);
-    router.push(`/shop?q=${encodeURIComponent(term)}`);
-  };
-
-  // Horizontal category navigation scrolling
-  const navRef = useRef<HTMLElement>(null);
-  const [canScrollNavLeft, setCanScrollNavLeft] = useState(false);
-  const [canScrollNavRight, setCanScrollNavRight] = useState(false);
-  const isDraggingNavRef = useRef(false);
-  const startXNavRef = useRef(0);
-  const scrollLeftNavRef = useRef(0);
-  const hasDraggedNavRef = useRef(false);
-
-  const checkNavScroll = useCallback(() => {
-    const el = navRef.current;
-    if (!el) return;
-    const { scrollLeft, scrollWidth, clientWidth } = el;
-    setCanScrollNavLeft(scrollLeft > 4);
-    setCanScrollNavRight(scrollLeft < scrollWidth - clientWidth - 4);
-  }, []);
-
-  useEffect(() => {
-    const el = navRef.current;
-    if (!el) return;
-
-    checkNavScroll();
-
-    const handleNavWheel = (e: WheelEvent) => {
-      if (el.scrollWidth > el.clientWidth && e.deltaY !== 0) {
-        e.preventDefault();
-        el.scrollLeft += e.deltaY;
-        checkNavScroll();
-      }
-    };
-
-    el.addEventListener('wheel', handleNavWheel, { passive: false });
-    el.addEventListener('scroll', checkNavScroll, { passive: true });
-    window.addEventListener('resize', checkNavScroll);
-
-    const t = setTimeout(checkNavScroll, 150);
-
-    return () => {
-      clearTimeout(t);
-      el.removeEventListener('wheel', handleNavWheel);
-      el.removeEventListener('scroll', checkNavScroll);
-      window.removeEventListener('resize', checkNavScroll);
-    };
-  }, [categories, navigation, checkNavScroll]);
-
-  const scrollNav = (direction: 'left' | 'right') => {
-    const el = navRef.current;
-    if (!el) return;
-    const amount = Math.max(el.clientWidth * 0.6, 260);
-    el.scrollBy({
-      left: direction === 'left' ? -amount : amount,
-      behavior: 'smooth',
-    });
-  };
-
-  const handleNavMouseDown = (e: React.MouseEvent) => {
-    const el = navRef.current;
-    if (!el) return;
-    isDraggingNavRef.current = true;
-    hasDraggedNavRef.current = false;
-    startXNavRef.current = e.pageX - el.offsetLeft;
-    scrollLeftNavRef.current = el.scrollLeft;
-  };
-
-  const handleNavMouseMove = (e: React.MouseEvent) => {
-    if (!isDraggingNavRef.current) return;
-    const el = navRef.current;
-    if (!el) return;
-    const x = e.pageX - el.offsetLeft;
-    const walk = (x - startXNavRef.current) * 1.3;
-    if (Math.abs(walk) > 4) {
-      hasDraggedNavRef.current = true;
-    }
-    el.scrollLeft = scrollLeftNavRef.current - walk;
-    checkNavScroll();
-  };
-
-  const handleNavMouseUp = () => {
-    isDraggingNavRef.current = false;
-  };
-
-  const handleNavLinkClick = (e: React.MouseEvent) => {
-    if (hasDraggedNavRef.current) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
   };
 
   return (
@@ -256,7 +145,7 @@ export function StoreNav() {
             </span>
             <span className="topbar-item">
               <RotateCcw size={14} className="topbar-icon" />
-              <span>7-day easy returns</span>
+              <span>7 Days Exchange</span>
             </span>
             <span className="topbar-item">
               <ShieldCheck size={14} className="topbar-icon" />
@@ -309,204 +198,185 @@ export function StoreNav() {
             />
           </Link>
 
-          {/* Global Search Bar with Live Category & Product Autocomplete */}
-          <div className="search-wrap" ref={searchContainerRef}>
-            <form className="search" onSubmit={handleSearchSubmit} role="search">
-              <input
-                id="search"
-                name="q"
-                type="search"
-                placeholder="Search diapers, toys, feeding, clothing & more..."
-                aria-label="Search categories and products"
-                value={searchQuery}
-                onFocus={() => setIsDropdownOpen(true)}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setIsDropdownOpen(true);
-                }}
-                autoComplete="off"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  className="search-clear-btn"
-                  onClick={() => {
-                    setSearchQuery('');
-                  }}
-                  aria-label="Clear search query"
-                >
-                  <X size={16} />
+          <nav className="store-primary-nav" aria-label="Main navigation">
+            {primaryLinks.map(({ label, href }) => (
+              <Link key={href} href={href} aria-current={pathname === href ? 'page' : undefined}>
+                {label}
+              </Link>
+            ))}
+          </nav>
+
+          {isSearchOpen && (
+            <div className="search-wrap store-search-panel" id="store-search-panel" ref={searchContainerRef}>
+              <form className="search" onSubmit={handleSearchSubmit} role="search">
+                <input
+                  id="search"
+                  ref={searchInputRef}
+                  name="q"
+                  type="search"
+                  placeholder="Search products and categories…"
+                  aria-label="Search categories and products"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  autoComplete="off"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    className="search-clear-btn"
+                    onClick={() => {
+                      setSearchQuery('');
+                    }}
+                    aria-label="Clear search query"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+                <button aria-label="Search" type="submit" className="glow-btn">
+                  <Search size={18} />
                 </button>
-              )}
-              <button aria-label="Search" type="submit" className="glow-btn">
-                <Search size={18} />
-              </button>
-            </form>
+              </form>
 
-            {/* Live Autocomplete Dropdown */}
-            {isDropdownOpen && (
-              <div className="search-dropdown-menu" role="listbox">
-                {trimmedQuery.length > 0 ? (
-                  <>
-                    {/* Matching Categories */}
-                    {matchingCategories.length > 0 && (
-                      <div className="search-dropdown-section">
-                        <div className="search-section-header">
-                          <Sparkles size={13} color="var(--pink)" />
-                          <span>Matching Categories ({matchingCategories.length})</span>
-                        </div>
-                        <div className="search-categories-grid">
-                          {matchingCategories.map((cat: Category) => (
-                            <button
-                              key={cat.slug}
-                              type="button"
-                              className="search-category-card"
-                              onClick={() => handleSelectCategory(cat.slug)}
-                            >
-                              <img
-                                src={mediaUrl(cat.image)}
-                                alt={cat.name}
-                                className="search-category-img"
-                              />
-                              <div className="search-category-info">
-                                <strong>{cat.name}</strong>
-                                <span>Shop Category →</span>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Matching Products */}
-                    {matchingProducts.length > 0 && (
-                      <div className="search-dropdown-section">
-                        <div className="search-section-header">
-                          <ShoppingBag size={13} color="#00adeb" />
-                          <span>Matching Products ({matchingProducts.length})</span>
-                        </div>
-                        <div className="search-products-list">
-                          {matchingProducts.map((p: Product) => {
-                            const hasDiscount = p.old > p.price;
-                            const discountPercent = hasDiscount
-                              ? Math.round(((p.old - p.price) / p.old) * 100)
-                              : 0;
-                            return (
+              {/* Live Autocomplete Dropdown */}
+              <div className="search-dropdown-menu">
+                  {trimmedQuery.length > 0 ? (
+                    <>
+                      {/* Matching Categories */}
+                      {matchingCategories.length > 0 && (
+                        <div className="search-dropdown-section">
+                          <div className="search-section-header">
+                            <Sparkles size={13} color="var(--pink)" />
+                            <span>Matching Categories ({matchingCategories.length})</span>
+                          </div>
+                          <div className="search-categories-grid">
+                            {matchingCategories.map((cat: Category) => (
                               <button
-                                key={p.id}
+                                key={cat.slug}
                                 type="button"
-                                className="search-product-item"
-                                onClick={() => handleSelectProduct(p.slug)}
+                                className="search-category-card"
+                                onClick={() => handleSelectCategory(cat.slug)}
                               >
                                 <img
-                                  src={mediaUrl(p.image)}
-                                  alt={p.name}
-                                  className="search-product-thumb"
+                                  src={mediaUrl(cat.image)}
+                                  alt={cat.name}
+                                  className="search-category-img"
                                 />
-                                <div className="search-product-details">
-                                  <span className="search-product-title">{p.name}</span>
-                                  <div className="search-product-meta">
-                                    <span className="search-product-price">₹{p.price}</span>
-                                    {hasDiscount && (
-                                      <span className="search-product-discount">
-                                        {discountPercent}% OFF
-                                      </span>
-                                    )}
-                                    <span className="search-product-cat">
-                                      in {p.category || 'baby care'}
-                                    </span>
-                                  </div>
+                                <div className="search-category-info">
+                                  <strong>{cat.name}</strong>
+                                  <span>Shop Category →</span>
                                 </div>
-                                <ArrowRight size={14} className="search-arrow-icon" />
                               </button>
-                            );
-                          })}
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
-                    {/* No matches */}
-                    {matchingCategories.length === 0 && matchingProducts.length === 0 && (
-                      <div className="search-empty-state">
-                        <p>No direct matches found for &ldquo;{searchQuery}&rdquo;</p>
-                        <span className="search-section-header" style={{ justifyContent: 'center' }}>
-                          Explore popular collections:
-                        </span>
-                        <div className="search-quick-pills" style={{ justifyContent: 'center' }}>
-                          {categories.slice(0, 6).map((c: Category) => (
-                            <button
-                              key={c.slug}
-                              type="button"
-                              className="search-pill-btn"
-                              onClick={() => handleSelectCategory(c.slug)}
-                            >
-                              {c.name}
-                            </button>
-                          ))}
+                      {/* Matching Products */}
+                      {matchingProducts.length > 0 && (
+                        <div className="search-dropdown-section">
+                          <div className="search-section-header">
+                            <ShoppingBag size={13} color="#00adeb" />
+                            <span>Matching Products ({matchingProducts.length})</span>
+                          </div>
+                          <div className="search-products-list">
+                            {matchingProducts.map((p) => {
+                              const hasDiscount = p.old > p.price;
+                              const discountPercent = hasDiscount
+                                ? Math.round(((p.old - p.price) / p.old) * 100)
+                                : 0;
+                              return (
+                                <button
+                                  key={p.id}
+                                  type="button"
+                                  className="search-product-item"
+                                  onClick={() => handleSelectProduct(p.slug)}
+                                >
+                                  <img
+                                    src={mediaUrl(p.image)}
+                                    alt={p.name}
+                                    className="search-product-thumb"
+                                  />
+                                  <div className="search-product-details">
+                                    <span className="search-product-title">{p.name}</span>
+                                    <div className="search-product-meta">
+                                      <span className="search-product-price">₹{p.price}</span>
+                                      {hasDiscount && (
+                                        <span className="search-product-discount">
+                                          {discountPercent}% OFF
+                                        </span>
+                                      )}
+                                      <span className="search-product-cat">
+                                        in {p.category || 'baby care'}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <ArrowRight size={14} className="search-arrow-icon" />
+                                </button>
+                              );
+                            })}
+                          </div>
                         </div>
+                      )}
+
+                      {/* No matches */}
+                      {matchingCategories.length === 0 && matchingProducts.length === 0 && (
+                        <div className="search-empty-state">
+                          <p>No direct matches found for &ldquo;{searchQuery}&rdquo;</p>
+                          <span className="search-section-header" style={{ justifyContent: 'center' }}>
+                            Explore popular collections:
+                          </span>
+                          <div className="search-quick-pills" style={{ justifyContent: 'center' }}>
+                            {categories.slice(0, 6).map((c: Category) => (
+                              <button
+                                key={c.slug}
+                                type="button"
+                                className="search-pill-btn"
+                                onClick={() => handleSelectCategory(c.slug)}
+                              >
+                                {c.name}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Footer View All */}
+                      <div className="search-dropdown-footer">
+                        <button
+                          type="button"
+                          className="search-view-all-btn"
+                          onClick={handleSearchSubmit}
+                        >
+                          <span>View all results for &ldquo;{searchQuery}&rdquo;</span>
+                          <ArrowRight size={14} />
+                        </button>
                       </div>
-                    )}
+                    </>
+                  ) : (
+                    /* Initial State when focused */
+                    <div className="search-initial-state">
+                      <div className="search-section-header">
+                        <Sparkles size={13} color="var(--pink)" />
+                        <span>Popular Categories</span>
+                      </div>
+                      <div className="search-quick-pills">
+                        {categories.map((c: Category) => (
+                          <button
+                            key={c.slug}
+                            type="button"
+                            className="search-pill-btn"
+                            onClick={() => handleSelectCategory(c.slug)}
+                          >
+                            {c.name}
+                          </button>
+                        ))}
+                      </div>
 
-                    {/* Footer View All */}
-                    <div className="search-dropdown-footer">
-                      <button
-                        type="button"
-                        className="search-view-all-btn"
-                        onClick={handleSearchSubmit}
-                      >
-                        <span>View all results for &ldquo;{searchQuery}&rdquo;</span>
-                        <ArrowRight size={14} />
-                      </button>
                     </div>
-                  </>
-                ) : (
-                  /* Initial State when focused */
-                  <div className="search-initial-state">
-                    <div className="search-section-header">
-                      <Sparkles size={13} color="var(--pink)" />
-                      <span>Popular Categories</span>
-                    </div>
-                    <div className="search-quick-pills">
-                      {categories.map((c: Category) => (
-                        <button
-                          key={c.slug}
-                          type="button"
-                          className="search-pill-btn"
-                          onClick={() => handleSelectCategory(c.slug)}
-                        >
-                          {c.name}
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="search-section-header" style={{ marginTop: 12 }}>
-                      <TrendingUp size={13} color="#ffbc00" />
-                      <span>Trending Searches</span>
-                    </div>
-                    <div className="search-quick-pills">
-                      {[
-                        'Silicone Feeding Set',
-                        'Bamboo Muslin Swaddles',
-                        'Cloud Soft Baby Diapers',
-                        'Wooden Stacking Toys',
-                        'Maternity Dress',
-                        'Nursery Bedding',
-                      ].map((term) => (
-                        <button
-                          key={term}
-                          type="button"
-                          className="search-pill-btn"
-                          onClick={() => handleQuickPillClick(term)}
-                        >
-                          {term}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                  )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           <div className="header-actions" style={{ marginLeft: 'auto' }}>
             <Link href="/account" aria-label="Your account">
@@ -517,13 +387,17 @@ export function StoreNav() {
               <span>Account</span>
             </Link>
 
-            <Link href="/wishlist" aria-label="Your wishlist">
-              <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z" />
-              </svg>
-              <span>Wishlist</span>
-              {wishlistCount > 0 && <b id="wish-count" className="heart-bounce">{wishlistCount}</b>}
-            </Link>
+            <button
+              type="button"
+              ref={searchButtonRef}
+              aria-label={isSearchOpen ? 'Close search' : 'Open search'}
+              aria-expanded={isSearchOpen}
+              aria-controls={isSearchOpen ? 'store-search-panel' : undefined}
+              onClick={() => setIsSearchOpen((open) => !open)}
+            >
+              {isSearchOpen ? <X className="icon" aria-hidden="true" /> : <Search className="icon" aria-hidden="true" />}
+              <span>Search</span>
+            </button>
 
             <button type="button" onClick={() => setIsOpen(true)} aria-label="Your cart">
               <svg className="icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -537,122 +411,6 @@ export function StoreNav() {
           </div>
         </div>
 
-        {/* Navigation Categories Strip */}
-        <div
-          className="nav-bar-wrapper"
-          onPointerLeave={(event) => {
-            if (event.pointerType === 'mouse' && !megaPanel.current?.contains(document.activeElement)) setOpenCategory(null);
-          }}
-          onBlur={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget)) setOpenCategory(null);
-          }}
-          onKeyDown={(event) => {
-            if (event.key === 'Escape' && openCategory) {
-              megaTrigger.current?.focus();
-              setOpenCategory(null);
-            }
-          }}
-        >
-          <div className={`nav-scroll-container container ${canScrollNavLeft ? 'has-left' : ''} ${canScrollNavRight ? 'has-right' : ''}`}>
-            {canScrollNavLeft && (
-              <button
-                type="button"
-                className="nav-scroll-btn nav-scroll-left"
-                onClick={() => scrollNav('left')}
-                aria-label="Scroll categories left"
-              >
-                <ChevronLeft size={18} />
-              </button>
-            )}
-
-            <nav
-              ref={navRef}
-              className="nav"
-              aria-label="Shop navigation"
-              onMouseDown={handleNavMouseDown}
-              onMouseMove={handleNavMouseMove}
-              onMouseUp={handleNavMouseUp}
-              onMouseLeave={handleNavMouseUp}
-            >
-              {(navigation?.main_menu?.length ? navigation.main_menu : [{ label: 'Home', url: '/' }, ...categories.map(c => ({ label: c.name, url: `/collections/${c.slug}` })), { label: 'Offers', url: '/offers' }]).map((item, i) => {
-                const href = safeLink(item.url);
-                const slug = href.replace(/\/$/, '').replace(/^\/(?:collections\/)?/, '');
-                const category = categories.find(entry => entry.slug === slug);
-                const expanded = !!category && openCategory?.slug === category.slug;
-
-                return (
-                  <Link
-                    key={`${item.url}-${i}`}
-                    href={href}
-                    onClick={event => {
-                      handleNavLinkClick(event);
-                      setOpenCategory(null);
-                    }}
-                    onPointerEnter={event => {
-                      if (event.pointerType !== 'mouse' || event.buttons !== 0) return;
-                      megaTrigger.current = event.currentTarget;
-                      setOpenCategory(category ?? null);
-                    }}
-                    onFocus={event => {
-                      if (!event.currentTarget.matches(':focus-visible')) return;
-                      megaTrigger.current = event.currentTarget;
-                      setOpenCategory(category ?? null);
-                    }}
-                    onKeyDown={event => {
-                      if (event.key === 'ArrowDown' && expanded) {
-                        event.preventDefault();
-                        megaPanel.current?.querySelector('a')?.focus();
-                      }
-                    }}
-                    className={pathname === href ? 'selected' : ''}
-                    aria-current={pathname === href ? 'page' : undefined}
-                    aria-expanded={category ? expanded : undefined}
-                    aria-controls={expanded ? 'category-mega-menu' : undefined}
-                  >
-                    <span>{item.label}</span>
-                    {category && <ChevronDown className="nav-category-chevron" size={14} aria-hidden="true" />}
-                  </Link>
-                );
-              })}
-            </nav>
-
-            {canScrollNavRight && (
-              <button
-                type="button"
-                className="nav-scroll-btn nav-scroll-right"
-                onClick={() => scrollNav('right')}
-                aria-label="Scroll categories right"
-              >
-                <ChevronRight size={18} />
-              </button>
-            )}
-          </div>
-          {openCategory && (
-            <div className="nav-mega-panel container" id="category-mega-menu" ref={megaPanel} key={openCategory.slug}>
-              <div className="nav-mega-intro">
-                <span>SHOP THE COLLECTION</span>
-                <h2>{openCategory.name}</h2>
-                {openCategory.description && <p>{openCategory.description}</p>}
-                <Link href={`/collections/${openCategory.slug}`} onClick={() => setOpenCategory(null)}>
-                  View collection <ArrowRight size={16} aria-hidden="true" />
-                </Link>
-              </div>
-              {featuredProducts.length > 0 ? (
-                <ul className="nav-mega-products">
-                  {featuredProducts.map(product => (
-                    <li key={product.id}>
-                      <Link href={`/products/${product.slug}`} onClick={() => setOpenCategory(null)}>
-                        <img src={product.image} alt="" width={160} height={120} />
-                        <strong>{product.name}</strong>
-                        <span>{money(product.price)}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              ) : <p className="nav-mega-empty">No products in this collection yet.</p>}
-            </div>
-          )}
-        </div>
       </header>
     </>
   );

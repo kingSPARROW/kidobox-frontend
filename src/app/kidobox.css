@@ -5178,12 +5178,62 @@ main .catalog-banner h1 {
   background: #fff;
 }
 
+.store-header .header-main {
+  position: relative;
+  gap: clamp(12px, 2vw, 32px) !important;
+}
+
+.store-primary-nav {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px clamp(4px, 1vw, 14px);
+}
+
+.store-primary-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 clamp(8px, 1vw, 14px);
+  border-radius: 999px;
+  font-size: .875rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.store-primary-nav a:hover,
+.store-primary-nav a[aria-current="page"] {
+  color: #802f4a;
+  background: #f6e8ed;
+}
+
+.store-header .store-search-panel {
+  position: absolute;
+  inset: 100% 0 auto;
+  z-index: 30;
+  width: min(100%, 620px) !important;
+  margin: 0 auto !important;
+  padding: 8px;
+  border: 1px solid #e8d7de;
+  border-radius: 24px;
+  background: white;
+  box-shadow: 0 12px 32px rgb(18 46 80 / 12%);
+}
+
 .back-top {
   display: grid;
   place-items: center;
 }
 
 @media (max-width: 768px) {
+  .store-header .header-main { gap: 6px 10px !important; }
+  .store-primary-nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    gap: 2px;
+  }
+  .store-primary-nav a { font-size: .75rem; }
   .store-footer .footer-grid.container {
     width: calc(100% - 2 * clamp(12px, 4vw, 24px)) !important;
   }
